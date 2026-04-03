@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
+import ProtoRydeLogo from '../../src/components/ProtoRydeLogo';
 
 export default function SplashScreen() {
   const [fadeAnim] = useState(new Animated.Value(0));
@@ -32,7 +33,9 @@ export default function SplashScreen() {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
-        <Text style={styles.shieldIcon}>🛡️</Text>
+        <View style={{ marginBottom: 32, alignItems: 'center' }}>
+          <ProtoRydeLogo width={120} height={120} />
+        </View>
 
         <Text style={styles.title}>ProtoRyde</Text>
         <Text style={styles.subtitle}>Income Protection for Delivery Partners</Text>
