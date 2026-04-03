@@ -32,9 +32,7 @@ export default function SplashScreen() {
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.content, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
-        <View style={styles.iconContainer}>
-          <Text style={styles.shieldIcon}>🛡️</Text>
-        </View>
+        <Text style={styles.shieldIcon}>🛡️</Text>
 
         <Text style={styles.title}>ProtoRyde</Text>
         <Text style={styles.subtitle}>Income Protection for Delivery Partners</Text>
@@ -46,8 +44,6 @@ export default function SplashScreen() {
           <View style={styles.dot} />
           <View style={styles.dot} />
         </View>
-
-        <Text style={styles.footer}>Powered by Guidewire DEVTrails 2026</Text>
       </View>
     </View>
   );
@@ -66,18 +62,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-  },
-  iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 32,
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: colors.surfaceContainer,
+    paddingBottom: 60,
   },
   shieldIcon: {
     fontSize: 64,
+    paddingBottom: 20,
   },
   title: {
     fontSize: 36,
