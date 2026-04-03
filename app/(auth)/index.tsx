@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    paddingBottom: 60,
+    paddingBottom: 0,
   },
   shieldIcon: {
     fontSize: 64,
