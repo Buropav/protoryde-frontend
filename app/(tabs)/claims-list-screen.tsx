@@ -1,5 +1,24 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { router } from 'expo-router';
+import { AppPage, SectionCard } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
+
+const mockClaims = [
+  {
+    id: 'c1',
+    title: 'Rainfall Trigger - HSR Layout',
+    date: 'Apr 03, 2026',
+    payout: '₹840',
+    status: 'PAID',
+  },
+  {
+    id: 'c2',
+    title: 'Platform Advisory Trigger',
+    date: 'Mar 22, 2026',
+    payout: '₹590',
+    status: 'PAID',
+  },
+];
 
 export default function ClaimsListScreen() {
   return (
@@ -8,25 +27,34 @@ export default function ClaimsListScreen() {
         <Text style={styles.title}>Claims</Text>
       </View>
 
-      <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>📋</Text>
-          <Text style={styles.emptyTitle}>No Claims Yet</Text>
-          <Text style={styles.emptySubtitle}>
-            Your automatic claims will appear here when weather triggers are detected in your zone.
-          </Text>
-        </View>
+      <AppPage>
+        {mockClaims.map((claim) => (
+          <TouchableOpacity
+            key={claim.id}
+            onPress={() => router.push('/claims/claim-detail-fraud-audit')}
+            activeOpacity={0.85}
+          >
+            <SectionCard>
+              <View style={styles.claimHead}>
+                <Text style={styles.claimTitle}>{claim.title}</Text>
+                <Text style={styles.status}>{claim.status}</Text>
+              </View>
+              <View style={styles.claimMeta}>
+                <Text style={styles.claimDate}>{claim.date}</Text>
+                <Text style={styles.claimPayout}>{claim.payout}</Text>
+              </View>
+              <Text style={styles.openLink}>Open claim details and fraud audit →</Text>
+            </SectionCard>
+          </TouchableOpacity>
+        ))}
 
-        <View style={styles.infoCard}>
-          <Text style={styles.infoIcon}>ℹ️</Text>
-          <View style={styles.infoContent}>
-            <Text style={styles.infoTitle}>How Claims Work</Text>
-            <Text style={styles.infoText}>
-              ProtoRyde automatically detects weather triggers in your delivery zone and processes claims instantly — no paperwork needed.
-            </Text>
-          </View>
-        </View>
-      </ScrollView>
+        <SectionCard style={styles.infoCard}>
+          <Text style={styles.infoTitle}>How Claims Work</Text>
+          <Text style={styles.infoText}>
+            ProtoRyde automatically detects trigger conditions in your delivery zone and processes claims instantly after fraud-layer validation.
+          </Text>
+        </SectionCard>
+      </AppPage>
     </View>
   );
 }
@@ -37,65 +65,70 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   header: {
-    paddingHorizontal: 24,
-    paddingTop: 35,
-    paddingBottom: 16,
-    backgroundColor: colors.surface,
+    paddingHorizontal: 20,
+    paddingTop: 28,
+    paddingBottom: 12,
   },
   title: {
+    color: colors.primary,
     fontSize: 24,
     fontWeight: '800',
-    color: colors.primary,
   },
-  mainContent: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 80,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    marginBottom: 24,
-  },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.onSurface,
+  claimHead: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 10,
     marginBottom: 8,
   },
-  emptySubtitle: {
-    fontSize: 14,
-    color: colors.onSurfaceVariant,
-    textAlign: 'center',
-    lineHeight: 22,
-    paddingHorizontal: 32,
-  },
-  infoCard: {
-    flexDirection: 'row',
-    gap: 16,
-    backgroundColor: colors.primaryFixed + '20',
-    padding: 20,
-    borderRadius: 16,
-    marginBottom: 24,
-  },
-  infoIcon: {
-    fontSize: 24,
-  },
-  infoContent: {
+  claimTitle: {
+    color: colors.onSurface,
+    fontSize: 15,
+    fontWeight: '700',
     flex: 1,
   },
+  status: {
+    color: colors.secondary,
+    backgroundColor: colors.secondary + '22',
+    fontSize: 10,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    borderRadius: 999,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  claimMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  claimDate: {
+    color: colors.onSurfaceVariant,
+    fontSize: 12,
+  },
+  claimPayout: {
+    color: colors.primary,
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  openLink: {
+    color: colors.primary,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  infoCard: {
+    backgroundColor: colors.primaryFixed + '22',
+  },
   infoTitle: {
+    color: colors.primary,
     fontSize: 14,
     fontWeight: '700',
-    color: colors.primary,
     marginBottom: 4,
   },
   infoText: {
-    fontSize: 13,
     color: colors.onSurfaceVariant,
-    lineHeight: 20,
+    fontSize: 12,
+    lineHeight: 18,
   },
 });

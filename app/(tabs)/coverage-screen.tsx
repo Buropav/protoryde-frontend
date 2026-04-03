@@ -1,4 +1,6 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { router } from 'expo-router';
+import { AppPage, PrimaryButton, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 
 export default function CoverageScreen() {
@@ -8,77 +10,60 @@ export default function CoverageScreen() {
         <Text style={styles.title}>Coverage</Text>
       </View>
 
-      <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.currentPlan}>
-          <View style={styles.planHeader}>
-            <View style={styles.planBadge}>
-              <Text style={styles.badgeText}>ACTIVE</Text>
-            </View>
+      <AppPage>
+        <SectionCard style={styles.currentPlan}>
+          <View style={styles.planHead}>
+            <StatusChip label="Active" tone="active" />
             <Text style={styles.planName}>ProtoRyde Basic</Text>
           </View>
-
-          <View style={styles.planDetails}>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Weekly Premium</Text>
-              <Text style={styles.detailValue}>₹67</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Coverage Cap</Text>
-              <Text style={styles.detailValue}>₹2,300/week</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Payout Speed</Text>
-              <Text style={styles.detailValue}>&lt; 2 minutes</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Next Billing</Text>
-              <Text style={styles.detailValue}>Monday, Mar 24</Text>
-            </View>
+          <View style={styles.planRows}>
+            <View style={styles.row}><Text style={styles.rowLabel}>Weekly Premium</Text><Text style={styles.rowValue}>₹67</Text></View>
+            <View style={styles.row}><Text style={styles.rowLabel}>Coverage Cap</Text><Text style={styles.rowValue}>₹2,300/week</Text></View>
+            <View style={styles.row}><Text style={styles.rowLabel}>Payout Speed</Text><Text style={styles.rowValue}>under 2 minutes</Text></View>
+            <View style={styles.row}><Text style={styles.rowLabel}>Next Billing</Text><Text style={styles.rowValue}>Monday, Apr 6</Text></View>
           </View>
 
-          <View style={styles.protectionMeter}>
-            <View style={styles.meterHeader}>
-              <Text style={styles.meterLabel}>Protection Used This Week</Text>
-              <Text style={styles.meterValue}>₹0 / ₹2,300</Text>
-            </View>
-            <View style={styles.meterBar}>
-              <View style={[styles.meterFill, { width: '0%' }]} />
-            </View>
+          <View style={styles.meterBlock}>
+            <View style={styles.row}><Text style={styles.rowLabel}>Protection Used This Week</Text><Text style={styles.rowValue}>₹0 / ₹2,300</Text></View>
+            <View style={styles.meterTrack}><View style={styles.meterFill} /></View>
             <Text style={styles.meterNote}>Full protection available</Text>
           </View>
-        </View>
+        </SectionCard>
 
-        <View style={styles.upgradeSection}>
-          <Text style={styles.sectionTitle}>Available Upgrades</Text>
-          
-          <TouchableOpacity style={styles.upgradeCard} activeOpacity={0.9}>
-            <View style={styles.upgradeHeader}>
-              <Text style={styles.upgradeName}>ProtoRyde Enhanced</Text>
-              <View style={styles.upgradePrice}>
-                <Text style={styles.priceText}>+₹25/week</Text>
-              </View>
+        <SectionCard>
+          <Text style={styles.sectionTitle}>Policy & Documents</Text>
+          <TouchableOpacity style={styles.actionRow} onPress={() => router.push('/account/policy-document')}>
+            <View>
+              <Text style={styles.actionTitle}>Policy Document</Text>
+              <Text style={styles.actionSub}>Trigger definitions, legal terms, exclusions</Text>
             </View>
-            <Text style={styles.upgradeDescription}>
-              Increase coverage cap to ₹5,000/week with priority support
-            </Text>
-            <View style={styles.upgradeFeatures}>
-              <Text style={styles.feature}>✓ ₹5,000 coverage cap</Text>
-              <Text style={styles.feature}>✓ Priority processing</Text>
-              <Text style={styles.feature}>✓ Extended weather coverage</Text>
-            </View>
+            <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>
-        </View>
+          <TouchableOpacity style={styles.actionRow} onPress={() => router.push('/account/weekly-ledger')}>
+            <View>
+              <Text style={styles.actionTitle}>Weekly Ledger</Text>
+              <Text style={styles.actionSub}>Premium debits and claim history summary</Text>
+            </View>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+        </SectionCard>
 
-        <View style={styles.infoCard}>
-          <Text style={styles.infoIcon}>ℹ️</Text>
-          <View style={styles.infoContent}>
-            <Text style={styles.infoTitle}>Cancel Anytime</Text>
-            <Text style={styles.infoText}>
-              You can cancel your plan anytime. Your coverage will remain active until the end of the current billing period.
-            </Text>
+        <SectionCard>
+          <Text style={styles.sectionTitle}>Available Upgrades</Text>
+          <View style={styles.upgradeCard}>
+            <View style={styles.upgradeHead}>
+              <Text style={styles.upgradeName}>ProtoRyde Enhanced</Text>
+              <Text style={styles.upgradePrice}>+₹25/week</Text>
+            </View>
+            <Text style={styles.upgradeDesc}>Increase coverage cap to ₹5,000/week with priority support.</Text>
+            <Text style={styles.feature}>• ₹5,000 coverage cap</Text>
+            <Text style={styles.feature}>• Priority processing</Text>
+            <Text style={styles.feature}>• Extended weather coverage</Text>
           </View>
-        </View>
-      </ScrollView>
+        </SectionCard>
+
+        <PrimaryButton label="View Full Policy Details" onPress={() => router.push('/account/policy-document')} rightSlot={<Text style={styles.arrow}>→</Text>} />
+      </AppPage>
     </View>
   );
 }
@@ -89,178 +74,132 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   header: {
-    paddingHorizontal: 24,
-    paddingTop: 35,
-    paddingBottom: 16,
-    backgroundColor: colors.surface,
+    paddingHorizontal: 20,
+    paddingTop: 28,
+    paddingBottom: 12,
   },
   title: {
+    color: colors.primary,
     fontSize: 24,
     fontWeight: '800',
-    color: colors.primary,
-  },
-  mainContent: {
-    flex: 1,
-    paddingHorizontal: 24,
   },
   currentPlan: {
     backgroundColor: colors.primaryContainer,
-    borderRadius: 20,
-    padding: 24,
-    marginBottom: 32,
+    gap: 12,
   },
-  planHeader: {
-    marginBottom: 20,
-  },
-  planBadge: {
-    backgroundColor: '#22C55E',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-    marginBottom: 12,
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: colors.onPrimary,
-    letterSpacing: 1,
+  planHead: {
+    gap: 8,
   },
   planName: {
+    color: colors.onPrimary,
     fontSize: 24,
     fontWeight: '800',
-    color: colors.onPrimary,
   },
-  planDetails: {
-    gap: 12,
-    marginBottom: 24,
+  planRows: {
+    gap: 8,
   },
-  detailRow: {
+  row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: 8,
   },
-  detailLabel: {
-    fontSize: 14,
-    color: colors.onPrimary,
-    opacity: 0.7,
-  },
-  detailValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.onPrimary,
-  },
-  protectionMeter: {
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 12,
-    padding: 16,
-  },
-  meterHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  meterLabel: {
+  rowLabel: {
+    color: colors.onPrimaryContainer,
     fontSize: 12,
-    color: colors.onPrimary,
-    opacity: 0.8,
   },
-  meterValue: {
-    fontSize: 12,
+  rowValue: {
+    color: colors.onPrimary,
+    fontSize: 13,
     fontWeight: '700',
-    color: colors.onPrimary,
   },
-  meterBar: {
-    height: 8,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+  meterBlock: {
+    marginTop: 4,
+    backgroundColor: colors.surface + '33',
+    borderRadius: 12,
+    padding: 12,
+    gap: 8,
+  },
+  meterTrack: {
+    height: 7,
     borderRadius: 4,
-    marginBottom: 8,
+    backgroundColor: colors.onPrimary + '22',
     overflow: 'hidden',
   },
   meterFill: {
+    width: '0%',
     height: '100%',
-    backgroundColor: '#22C55E',
-    borderRadius: 4,
+    backgroundColor: '#1DD460',
   },
   meterNote: {
+    color: colors.onPrimaryContainer,
     fontSize: 11,
-    color: colors.onPrimary,
-    opacity: 0.6,
-  },
-  upgradeSection: {
-    marginBottom: 24,
   },
   sectionTitle: {
+    color: colors.onSurface,
     fontSize: 16,
     fontWeight: '700',
-    color: colors.primary,
-    marginBottom: 16,
+    marginBottom: 8,
   },
-  upgradeCard: {
-    backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: colors.secondaryContainer,
-  },
-  upgradeHeader: {
+  actionRow: {
+    paddingVertical: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.outlineVariant,
+  },
+  actionTitle: {
+    color: colors.onSurface,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  actionSub: {
+    color: colors.onSurfaceVariant,
+    fontSize: 11,
+    marginTop: 2,
+  },
+  chevron: {
+    color: colors.onSurfaceVariant,
+    fontSize: 22,
+    marginLeft: 12,
+  },
+  upgradeCard: {
+    borderRadius: 12,
+    backgroundColor: colors.surfaceContainer,
+    borderWidth: 1,
+    borderColor: colors.secondary + '50',
+    padding: 14,
+    gap: 6,
+  },
+  upgradeHead: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   upgradeName: {
-    fontSize: 18,
+    color: colors.onSurface,
+    fontSize: 15,
     fontWeight: '700',
-    color: colors.primary,
   },
   upgradePrice: {
-    backgroundColor: colors.secondaryFixed + '30',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  priceText: {
+    color: colors.secondary,
     fontSize: 12,
     fontWeight: '700',
-    color: colors.secondaryContainer,
   },
-  upgradeDescription: {
-    fontSize: 13,
+  upgradeDesc: {
     color: colors.onSurfaceVariant,
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  upgradeFeatures: {
-    gap: 8,
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 2,
   },
   feature: {
-    fontSize: 13,
     color: colors.onSurface,
-  },
-  infoCard: {
-    flexDirection: 'row',
-    gap: 12,
-    backgroundColor: colors.surfaceContainerLow,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 24,
-  },
-  infoIcon: {
-    fontSize: 20,
-  },
-  infoContent: {
-    flex: 1,
-  },
-  infoTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.onSurface,
-    marginBottom: 4,
-  },
-  infoText: {
     fontSize: 12,
-    color: colors.onSurfaceVariant,
-    lineHeight: 18,
+  },
+  arrow: {
+    color: colors.onPrimary,
+    fontSize: 18,
+    fontWeight: '800',
   },
 });

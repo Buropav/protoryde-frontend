@@ -1,5 +1,22 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Href, router } from 'expo-router';
+import { AppPage, SectionCard } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
+
+const menuItems: Array<{
+  id: string;
+  icon: string;
+  title: string;
+  subtitle: string;
+  route: Href;
+}> = [
+  { id: 'personal', icon: '👤', title: 'Personal Information', subtitle: 'Name, phone, DOB', route: '/(auth)/personal-details' },
+  { id: 'zone', icon: '📍', title: 'Delivery Zone', subtitle: 'HSR Layout, Bangalore', route: '/onboarding/zone-selection' },
+  { id: 'payments', icon: '💳', title: 'Payment Methods', subtitle: 'UPI and bank account', route: '/account/weekly-ledger' },
+  { id: 'notifications', icon: '🔔', title: 'Notifications', subtitle: 'Alerts, triggers, reminders', route: '/account/notifications-center' },
+  { id: 'policy', icon: '🛡️', title: 'Insurance Policy', subtitle: 'Terms and coverage details', route: '/account/policy-document' },
+  { id: 'claims', icon: '🧾', title: 'Recent Claim Detail', subtitle: 'Fraud audit and evidence', route: '/claims/claim-detail-fraud-audit' },
+];
 
 export default function ProfileScreen() {
   return (
@@ -8,92 +25,38 @@ export default function ProfileScreen() {
         <Text style={styles.title}>Profile</Text>
       </View>
 
-      <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.profileCard}>
-          <View style={styles.avatarLarge}>
-            <Text style={styles.avatarText}>PN</Text>
-          </View>
+      <AppPage>
+        <SectionCard style={styles.profileCard}>
+          <View style={styles.avatarLarge}><Text style={styles.avatarText}>PN</Text></View>
           <Text style={styles.name}>Pranav</Text>
           <Text style={styles.email}>pranav@okicici</Text>
-          <View style={styles.partnerBadge}>
-            <Text style={styles.badgeText}>DEL-BLR-284719</Text>
-          </View>
-        </View>
+          <View style={styles.partnerBadge}><Text style={styles.badgeText}>DEL-BLR-284719</Text></View>
+        </SectionCard>
 
-        <View style={styles.menuSection}>
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuIcon}>
-              <Text style={styles.iconText}>👤</Text>
-            </View>
-            <View style={styles.menuContent}>
-              <Text style={styles.menuTitle}>Personal Information</Text>
-              <Text style={styles.menuSubtitle}>Name, phone, DOB</Text>
-            </View>
-            <Text style={styles.chevron}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuIcon}>
-              <Text style={styles.iconText}>🏠</Text>
-            </View>
-            <View style={styles.menuContent}>
-              <Text style={styles.menuTitle}>Delivery Zone</Text>
-              <Text style={styles.menuSubtitle}>HSR Layout, Bangalore</Text>
-            </View>
-            <Text style={styles.chevron}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuIcon}>
-              <Text style={styles.iconText}>💳</Text>
-            </View>
-            <View style={styles.menuContent}>
-              <Text style={styles.menuTitle}>Payment Methods</Text>
-              <Text style={styles.menuSubtitle}>UPI, bank account</Text>
-            </View>
-            <Text style={styles.chevron}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuIcon}>
-              <Text style={styles.iconText}>🔔</Text>
-            </View>
-            <View style={styles.menuContent}>
-              <Text style={styles.menuTitle}>Notifications</Text>
-              <Text style={styles.menuSubtitle}>Alerts, triggers, reminders</Text>
-            </View>
-            <Text style={styles.chevron}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuIcon}>
-              <Text style={styles.iconText}>🛡️</Text>
-            </View>
-            <View style={styles.menuContent}>
-              <Text style={styles.menuTitle}>Insurance Policy</Text>
-              <Text style={styles.menuSubtitle}>Terms, coverage details</Text>
-            </View>
-            <Text style={styles.chevron}>›</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.menuItem}>
-            <View style={styles.menuIcon}>
-              <Text style={styles.iconText}>❓</Text>
-            </View>
-            <View style={styles.menuContent}>
-              <Text style={styles.menuTitle}>Help & Support</Text>
-              <Text style={styles.menuSubtitle}>FAQ, contact us</Text>
-            </View>
-            <Text style={styles.chevron}>›</Text>
-          </TouchableOpacity>
-        </View>
+        <SectionCard style={styles.menuSection}>
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={item.id}
+              style={[styles.menuItem, index > 0 && styles.menuDivider]}
+              onPress={() => router.push(item.route)}
+              activeOpacity={0.85}
+            >
+              <View style={styles.menuIcon}><Text style={styles.iconText}>{item.icon}</Text></View>
+              <View style={styles.menuContent}>
+                <Text style={styles.menuTitle}>{item.title}</Text>
+                <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
+              </View>
+              <Text style={styles.chevron}>›</Text>
+            </TouchableOpacity>
+          ))}
+        </SectionCard>
 
         <TouchableOpacity style={styles.logoutButton}>
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 
-        <Text style={styles.version}>ProtoRyde v1.0.0</Text>
-      </ScrollView>
+        <Text style={styles.version}>ProtoRyde v1.1.0</Text>
+      </AppPage>
     </View>
   );
 }
@@ -104,48 +67,42 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   header: {
-    paddingHorizontal: 24,
-    paddingTop: 35,
-    paddingBottom: 16,
-    backgroundColor: colors.surface,
+    paddingHorizontal: 20,
+    paddingTop: 28,
+    paddingBottom: 12,
   },
   title: {
+    color: colors.primary,
     fontSize: 24,
     fontWeight: '800',
-    color: colors.primary,
-  },
-  mainContent: {
-    flex: 1,
-    paddingHorizontal: 24,
   },
   profileCard: {
     alignItems: 'center',
-    paddingVertical: 32,
-    marginBottom: 24,
+    paddingVertical: 22,
   },
   avatarLarge: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 82,
+    height: 82,
+    borderRadius: 41,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 14,
   },
   avatarText: {
-    fontSize: 28,
-    fontWeight: '700',
     color: colors.onPrimary,
+    fontSize: 29,
+    fontWeight: '700',
   },
   name: {
-    fontSize: 24,
-    fontWeight: '800',
     color: colors.onSurface,
-    marginBottom: 4,
+    fontSize: 25,
+    fontWeight: '800',
+    marginBottom: 2,
   },
   email: {
-    fontSize: 14,
     color: colors.onSurfaceVariant,
+    fontSize: 13,
     marginBottom: 12,
   },
   partnerBadge: {
@@ -155,67 +112,65 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   badgeText: {
-    fontSize: 12,
-    fontWeight: '600',
     color: colors.primary,
+    fontSize: 12,
+    fontWeight: '700',
   },
   menuSection: {
-    backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    padding: 8,
-    marginBottom: 24,
+    paddingVertical: 2,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
+    paddingVertical: 12,
+    gap: 12,
+  },
+  menuDivider: {
+    borderTopWidth: 1,
+    borderTopColor: colors.outlineVariant,
   },
   menuIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: colors.surfaceContainerLow,
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: colors.surfaceContainer,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
   },
   iconText: {
-    fontSize: 20,
+    fontSize: 18,
   },
   menuContent: {
     flex: 1,
   },
   menuTitle: {
-    fontSize: 15,
-    fontWeight: '600',
     color: colors.onSurface,
-    marginBottom: 2,
+    fontSize: 14,
+    fontWeight: '700',
   },
   menuSubtitle: {
-    fontSize: 12,
     color: colors.onSurfaceVariant,
+    fontSize: 11,
+    marginTop: 2,
   },
   chevron: {
-    fontSize: 20,
     color: colors.onSurfaceVariant,
+    fontSize: 21,
   },
   logoutButton: {
-    backgroundColor: colors.errorContainer,
-    paddingVertical: 16,
+    backgroundColor: colors.error + '28',
+    paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
-    marginBottom: 24,
   },
   logoutText: {
-    fontSize: 16,
-    fontWeight: '600',
     color: colors.error,
+    fontSize: 15,
+    fontWeight: '700',
   },
   version: {
-    fontSize: 12,
     color: colors.onSurfaceVariant,
+    fontSize: 11,
     textAlign: 'center',
-    marginBottom: 24,
   },
 });

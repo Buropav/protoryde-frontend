@@ -98,7 +98,7 @@ export default function PartnerDetails() {
       <View style={styles.footer}>
         <TouchableOpacity 
           style={styles.continueButton}
-          onPress={() => router.push('/premium-reveal')}
+          onPress={() => router.push('/onboarding/coverage-exclusions')}
           activeOpacity={0.98}
         >
           <Text style={styles.continueText}>Continue</Text>
