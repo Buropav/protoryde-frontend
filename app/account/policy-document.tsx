@@ -1,10 +1,65 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Linking } from 'react-native';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { AppPage, PrimaryButton, SectionCard, StatusChip, TopBar } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
-import { policyExclusions, policyTriggerDefinitions } from '../../src/data/prototype-data';
+import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { triggerService } from '../../src/services/triggerService';
+import { policyService } from '../../src/services/policyService';
+import { API_BASE_URL } from '../../src/config/api';
+
+const TRIGGER_DEFINITIONS = [
+  {
+    id: 'rain',
+    title: 'Heavy Rainfall',
+    icon: '🌧️',
+    threshold: '≥ 30mm / 24h',
+    detail: 'Payout triggered when cumulative rainfall in the registered zone exceeds 30mm within any 24-hour window during active coverage.',
+  },
+  {
+    id: 'heat',
+    title: 'Extreme Heat',
+    icon: '☀️',
+    threshold: '≥ 40°C',
+    detail: 'Payout triggered when the maximum recorded temperature in the zone reaches or exceeds 40°C making outdoor delivery dangerous.',
+  },
+  {
+    id: 'aqi',
+    title: 'Severe AQI',
+    icon: '🌫️',
+    threshold: 'AQI ≥ 300',
+    detail: 'Payout triggered when the Air Quality Index in the zone is classified as Hazardous (≥300), impairing safe outdoor work.',
+  },
+];
 
 export default function PolicyDocumentScreen() {
+  const { phoneNumber } = useRider();
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  // Task 10.1: Fetch live exclusions from backend
+  const { data: exclusionsData, loading: loadingExclusions } = useApiCall(
+    () => triggerService.getExclusions(),
+    true,
+    []
+  );
+
+  const exclusions = exclusionsData?.items || [];
+
+  const handleDownloadPdf = async () => {
+    if (!phoneNumber) return;
+    setIsDownloading(true);
+    try {
+      // Opens PDF in the device's default browser/PDF viewer
+      const pdfUrl = `${API_BASE_URL}/policies/${phoneNumber}/current/document`;
+      await Linking.openURL(pdfUrl);
+    } catch (err) {
+      console.error('PDF download failed:', err);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TopBar title="Policy Document" onBack={() => router.back()} />
@@ -15,15 +70,18 @@ export default function PolicyDocumentScreen() {
             <StatusChip label="Live Shield" tone="active" />
           </View>
           <View style={styles.coverageGrid}>
-            <SectionCard style={styles.iconCard}><Text style={styles.icon}>🌧️</Text><Text style={styles.iconText}>Rain</Text></SectionCard>
-            <SectionCard style={styles.iconCard}><Text style={styles.icon}>☀️</Text><Text style={styles.iconText}>Heat</Text></SectionCard>
-            <SectionCard style={styles.iconCard}><Text style={styles.icon}>🌫️</Text><Text style={styles.iconText}>AQI</Text></SectionCard>
+            {TRIGGER_DEFINITIONS.map((t) => (
+              <SectionCard key={t.id} style={styles.iconCard}>
+                <Text style={styles.icon}>{t.icon}</Text>
+                <Text style={styles.iconText}>{t.title.split(' ')[0]}</Text>
+              </SectionCard>
+            ))}
           </View>
         </View>
 
         <View>
           <Text style={styles.sectionEyebrow}>Trigger Definitions</Text>
-          {policyTriggerDefinitions.map((item) => (
+          {TRIGGER_DEFINITIONS.map((item) => (
             <SectionCard key={item.id} style={styles.triggerCard}>
               <View style={styles.triggerHeader}>
                 <Text style={styles.triggerTitle}>{item.title}</Text>
@@ -35,13 +93,24 @@ export default function PolicyDocumentScreen() {
         </View>
 
         <SectionCard style={styles.exclusionWrap}>
-          <Text style={styles.sectionEyebrow}>Exclusions & Legal</Text>
-          {policyExclusions.map((item) => (
-            <View key={item} style={styles.exclusionRow}>
-              <Text style={styles.exclusionIcon}>⛔</Text>
-              <Text style={styles.exclusionText}>{item}</Text>
-            </View>
-          ))}
+          <View style={styles.exclusionHeader}>
+            <Text style={styles.sectionEyebrow}>Exclusions & Legal</Text>
+            {exclusionsData && (
+              <Text style={styles.exclusionVersion}>
+                {exclusionsData.version}
+              </Text>
+            )}
+          </View>
+          {loadingExclusions ? (
+            <Text style={styles.loadingText}>Loading exclusions...</Text>
+          ) : (
+            exclusions.map((item, index) => (
+              <View key={index} style={styles.exclusionRow}>
+                <Text style={styles.exclusionIcon}>⛔</Text>
+                <Text style={styles.exclusionText}>{item}</Text>
+              </View>
+            ))
+          )}
         </SectionCard>
 
         <View style={styles.twoCards}>
@@ -58,9 +127,9 @@ export default function PolicyDocumentScreen() {
         </View>
 
         <PrimaryButton
-          label="Download Policy PDF"
-          onPress={() => {}}
-          rightSlot={<Text style={styles.download}>↓</Text>}
+          label={isDownloading ? 'Generating PDF...' : 'Download Policy PDF'}
+          onPress={handleDownloadPdf}
+          rightSlot={<Text style={styles.download}>{isDownloading ? '⏳' : '↓'}</Text>}
         />
       </AppPage>
     </View>
@@ -147,6 +216,21 @@ const styles = StyleSheet.create({
   exclusionWrap: {
     backgroundColor: colors.surfaceContainerHigh,
   },
+  exclusionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  exclusionVersion: {
+    color: colors.onSurfaceVariant,
+    fontSize: 10,
+    fontWeight: '700',
+    backgroundColor: colors.outlineVariant + '55',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
   exclusionRow: {
     flexDirection: 'row',
     gap: 8,
@@ -161,6 +245,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     flex: 1,
     lineHeight: 18,
+  },
+  loadingText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 13,
+    fontStyle: 'italic',
+    paddingVertical: 8,
   },
   twoCards: {
     flexDirection: 'row',
