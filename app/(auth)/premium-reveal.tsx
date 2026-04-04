@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { premiumService } from '../../src/services/premiumService';
+import { demoService } from '../../src/services/demoService';
+import { LoadingOverlay } from '../../src/components/LoadingOverlay';
 
 export default function PremiumReveal() {
-  const { zone } = useRider();
+  const { riderName, zone, upiId, phoneNumber, setPolicyId, setBootstrapped } = useRider();
+  const [isActivating, setIsActivating] = useState(false);
 
   // Fetch final premium calculation
   const { 
@@ -24,9 +27,37 @@ export default function PremiumReveal() {
   const basePremium = premium?.base_premium || 0;
   const discountDelta = basePremium - finalPremium;
 
+  const handleActivate = async () => {
+    try {
+      setIsActivating(true);
+      
+      const response = await demoService.bootstrapDemo({
+        rider_id: phoneNumber, // Using phone as unique ID
+        rider_name: riderName,
+        zone: zone,
+        upi_id: upiId,
+        exclusions_accepted: true
+      });
+
+      setPolicyId(response.policy.policy_id);
+      setBootstrapped(true);
+
+      // Navigate to home
+      router.replace('/(tabs)/home-screen');
+    } catch (error: any) {
+      console.error('Activation failed:', error);
+      Alert.alert(
+        'Activation Failed',
+        error.message || 'We could not activate your policy at this time. Please try again.'
+      );
+    } finally {
+      setIsActivating(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
-
+      <LoadingOverlay visible={isActivating} message="Activating your ProtoRyde shield..." />
       <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
         <View style={styles.progressBar}>
           <View style={[styles.progressFill, { width: '100%' }]} />
@@ -122,10 +153,10 @@ export default function PremiumReveal() {
 
       <View style={styles.footer}>
         <TouchableOpacity 
-          style={[styles.activateButton, loadingPremium && styles.disabledButton]}
-          onPress={() => router.replace('/(tabs)/home-screen')}
+          style={[styles.activateButton, (loadingPremium || isActivating) && styles.disabledButton]}
+          onPress={handleActivate}
           activeOpacity={0.98}
-          disabled={loadingPremium}
+          disabled={loadingPremium || isActivating}
         >
             <Text style={styles.activateText}>Activate ProtoRyde (₹{finalPremium})</Text>
           <View style={styles.upiBadge}>
