@@ -31,16 +31,16 @@ export default function WeatherAlertScreen() {
 
             {/* Rainfall Threshold Progress Bar */}
             <View style={styles.progressSection}>
-              <Text style={styles.progressTitle}>Rainfall Forecast vs. Trigger</Text>
-              <View style={styles.progressBarTrack}>
-                <View style={[styles.progressBarFillSafe, { width: '30%' }]} />
-                <View style={[styles.progressBarFillDanger, { left: '30%', width: '44%' }]} />
+              <Text style={styles.progressTitle}>Rainfall Forecast:</Text>
+              <View style={styles.progressBarWrapper}>
+                <View style={styles.progressBarTrack}>
+                  <View style={styles.progressBarFillSafe} />
+                  <View style={styles.progressBarFillDanger} />
+                </View>
+                {/* Trigger divider line + label, outside track so it can overflow */}
                 <View style={styles.triggerMarker} />
-                <Text style={styles.triggerMarkerLabel}>30mm</Text>
-              </View>
-              <View style={styles.progressLabels}>
-                <Text style={styles.progressLabelLeft}>0mm</Text>
-                <Text style={styles.progressLabelRight}>74mm predicted</Text>
+                <Text style={styles.endLabel}>74mm</Text>
+                <Text style={styles.triggerMarkerLabel}>Trigger (30mm)</Text>
               </View>
             </View>
 
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   progressSection: {
-    gap: 8,
+    gap: 12,
   },
   progressTitle: {
     fontSize: 11,
@@ -200,48 +200,51 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
+  progressBarWrapper: {
+    position: 'relative',
+    paddingBottom: 20, // space for the trigger label below
+  },
   progressBarTrack: {
     height: 14,
     backgroundColor: colors.surfaceContainerHigh,
     borderRadius: 7,
+    flexDirection: 'row',
     overflow: 'hidden',
-    position: 'relative',
   },
   progressBarFillSafe: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
+    width: '40.5%', // 30/74 ≈ 40.5%
     backgroundColor: colors.primary,
-    borderTopLeftRadius: 7,
-    borderBottomLeftRadius: 7,
   },
   progressBarFillDanger: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
+    flex: 1,
     backgroundColor: '#EF4444',
-    borderTopRightRadius: 7,
-    borderBottomRightRadius: 7,
   },
   triggerMarker: {
     position: 'absolute',
-    left: '30%',
-    top: -3,
-    bottom: -3,
+    left: '40.5%',
+    top: -4,
+    bottom: 16,
     width: 2,
     backgroundColor: '#FFFFFF',
     borderRadius: 1,
     zIndex: 2,
   },
+  endLabel: {
+    position: 'absolute',
+    right: 0,
+    top: -18,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#EF4444',
+  },
   triggerMarkerLabel: {
     position: 'absolute',
-    left: '30%',
-    top: -18,
-    fontSize: 9,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    marginLeft: -10,
+    left: '40.5%',
+    bottom: 0,
+    fontSize: 10,
+    fontWeight: '600',
+    color: colors.onSurfaceVariant,
+    marginLeft: -2,
   },
   progressLabels: {
     flexDirection: 'row',
