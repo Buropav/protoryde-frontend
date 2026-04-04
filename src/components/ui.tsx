@@ -85,7 +85,7 @@ export function SectionCard({ children, style }: SectionCardProps) {
 
 interface StatusChipProps {
   label: string;
-  tone?: 'default' | 'active' | 'warning' | 'error';
+  tone?: 'default' | 'active' | 'success' | 'warning' | 'error';
   style?: StyleProp<ViewStyle>;
 }
 
@@ -106,6 +106,10 @@ const chipToneMap: Record<NonNullable<StatusChipProps['tone']>, { container: Vie
   active: {
     container: { backgroundColor: colors.tertiaryContainer + '24' },
     text: { color: colors.tertiaryFixedDim },
+  },
+  success: {
+    container: { backgroundColor: 'rgba(74, 222, 128, 0.1)' },
+    text: { color: '#4ADE80' },
   },
   warning: {
     container: { backgroundColor: colors.secondary + '26' },
