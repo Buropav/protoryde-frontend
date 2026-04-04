@@ -43,9 +43,20 @@ export default function HomeScreen() {
       <AppPage contentContainerStyle={styles.content}>
         <View style={styles.coverageCard}>
           <View style={styles.coverageHead}>
-            <View style={styles.activeBadge}>
-              <View style={styles.activeDot} />
-              <Text style={styles.activeBadgeText}>COVERAGE ACTIVE</Text>
+            <View style={[
+              styles.activeBadge, 
+              (!policy || policy.status !== 'active') && styles.inactiveBadge
+            ]}>
+              <View style={[
+                styles.activeDot, 
+                (!policy || policy.status !== 'active') && styles.inactiveDot
+              ]} />
+              <Text style={[
+                styles.activeBadgeText, 
+                (!policy || policy.status !== 'active') && styles.inactiveBadgeText
+              ]}>
+                {policy?.status === 'active' ? 'COVERAGE ACTIVE' : 'NO ACTIVE COVERAGE'}
+              </Text>
             </View>
             <TouchableOpacity onPress={() => router.push('/account/notifications-center')}>
               <Text style={styles.bell}>🔔</Text>
@@ -164,6 +175,16 @@ const styles = StyleSheet.create({
   avatarText: {
     color: colors.onPrimary,
     fontWeight: '700',
+  },
+  inactiveBadge: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+  },
+  inactiveDot: {
+    backgroundColor: '#EF4444',
+    shadowColor: '#EF4444',
+  },
+  inactiveBadgeText: {
+    color: '#EF4444',
   },
   content: {
     paddingTop: 4,
