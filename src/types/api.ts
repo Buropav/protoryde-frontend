@@ -74,9 +74,16 @@ export interface ClaimItem {
   trigger_value: number;
   trigger_threshold: number;
   fraud_check_passed: boolean;
-  fraud_layers: any[];
+  fraud_layers: FraudLayer[];
   payout_amount: number;
   payout_status: string;
   created_at: string;
   is_simulated: boolean;
+}
+
+export interface FraudLayer {
+  layer: string;
+  passed: boolean;
+  reason: string;
+  evidence: Record<string, any>;
 }
