@@ -5,22 +5,22 @@ import { colors } from '../../src/constants/colors';
 
 import { useRider } from '../../src/hooks/useRider';
 
-const menuItems: Array<{
-  id: string;
-  icon: string;
-  title: string;
-  subtitle: string;
-  route: Href;
-}> = [
-  { id: 'personal', icon: '👤', title: 'Personal Information', subtitle: 'Name, phone, DOB', route: '/(auth)/personal-details' },
-  { id: 'zone', icon: '📍', title: 'Delivery Zone', subtitle: 'HSR Layout, Bangalore', route: '/onboarding/zone-selection' },
-  { id: 'payments', icon: '💳', title: 'Payment Methods', subtitle: 'UPI and bank account', route: '/account/weekly-ledger' },
-  { id: 'policy', icon: '🛡️', title: 'Insurance Policy', subtitle: 'Terms and coverage details', route: '/account/policy-document' },
-  { id: 'claims', icon: '🧾', title: 'Recent Claim Detail', subtitle: 'Fraud audit and evidence', route: '/claims/claim-detail-fraud-audit' },
-];
-
 export default function ProfileScreen() {
-  const { riderName, upiId, riderId } = useRider();
+  const { riderName, upiId, riderId, zone } = useRider();
+
+  const menuItems: Array<{
+    id: string;
+    icon: string;
+    title: string;
+    subtitle: string;
+    route: Href;
+  }> = [
+    { id: 'personal', icon: '👤', title: 'Personal Information', subtitle: 'Name, phone, DOB', route: '/(auth)/personal-details' },
+    { id: 'zone', icon: '📍', title: 'Delivery Zone', subtitle: zone || 'HSR Layout, Bangalore', route: '/onboarding/zone-selection' },
+    { id: 'payments', icon: '💳', title: 'Payment Methods', subtitle: 'UPI and bank account', route: '/account/weekly-ledger' },
+    { id: 'policy', icon: '🛡️', title: 'Insurance Policy', subtitle: 'Terms and coverage details', route: '/account/policy-document' },
+    { id: 'claims', icon: '🧾', title: 'Recent Claim Detail', subtitle: 'Fraud audit and evidence', route: '/claims/claim-detail-fraud-audit' },
+  ];
 
   return (
     <View style={styles.container}>
