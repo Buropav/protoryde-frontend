@@ -1,5 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
 
@@ -16,18 +15,6 @@ export default function WeatherAlertScreen() {
 
       <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
         <View style={styles.alertCard}>
-          <View style={styles.imageSection}>
-            <Image
-              source={{ uri: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDI5jcxWtVZDXxtmwTDxHSo75aYvg5b5RFfCeDGz5_XJjuYoJejbp4VNOkv1qI8oRUpbUTvssO1o-ZdmgzSTWSBEONRlGWHVOxSqDVh3QYX4Go2ccclZT-D6IDCtIc3-jHCH6AcrnugGvbOksB1uX1djHGKHdNoSsEzVBs5C45d-xfCRONRiER-d_QyS12Ht71oRp9A3KCYy1CcewlBqAOKOPiu2L6BUSCB1S_nUx3i6D83XQlubB7R73qhIpzoGXyL1bnxkeqOlQ' }}
-              style={styles.alertImage}
-              resizeMode="cover"
-            />
-            <LinearGradient
-              colors={['rgba(0,0,0,0.6)', 'transparent']}
-              style={styles.imageOverlay}
-            />
-          </View>
-
           <View style={styles.cardContent}>
             <View style={styles.riskBadge}>
               <Text style={styles.riskIcon}>⚠️</Text>
@@ -141,23 +128,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.15,
     shadowRadius: 24,
-  },
-  imageSection: {
-    height: 160,
-    backgroundColor: colors.primaryContainer,
-    position: 'relative',
-  },
-  alertImage: {
-    width: '100%',
-    height: '100%',
-    opacity: 0.7,
-  },
-  imageOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 80,
   },
   riskBadge: {
     flexDirection: 'row',
