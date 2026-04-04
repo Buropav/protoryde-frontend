@@ -6,6 +6,7 @@ import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { policyService } from '../../src/services/policyService';
 import { weatherService } from '../../src/services/weatherService';
+import { mockDataService } from '../../src/services/mockDataService';
 
 export default function HomeScreen() {
   const { riderName, phoneNumber, zone } = useRider();
@@ -26,6 +27,16 @@ export default function HomeScreen() {
     error: weatherError 
   } = useApiCall(
     () => weatherService.getCurrentWeather(zone || 'HSR Layout', false),
+    !!zone,
+    [zone]
+  );
+
+  const { 
+    data: branchMetrics, 
+    loading: loadingBranches, 
+    error: branchError 
+  } = useApiCall(
+    () => mockDataService.getBranchMetrics(zone || 'HSR Layout'),
     !!zone,
     [zone]
   );
@@ -142,7 +153,13 @@ export default function HomeScreen() {
               </Text>
               <Text style={styles.metricState}>No trigger</Text>
             </View>
-            <View style={styles.metricCard}><Text style={styles.metricLabel}>Banks</Text><Text style={styles.metricValue}>Normal</Text><Text style={styles.metricState}>No trigger</Text></View>
+            <View style={styles.metricCard}>
+              <Text style={styles.metricLabel}>Banks</Text>
+              <Text style={styles.metricValue}>
+                {branchMetrics ? (branchMetrics.closure_rate_pct > 0 ? `${branchMetrics.closure_rate_pct}% Closed` : 'Normal') : '--'}
+              </Text>
+              <Text style={styles.metricState}>No trigger</Text>
+            </View>
           </View>
         </SectionCard>
 
