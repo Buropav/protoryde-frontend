@@ -16,8 +16,8 @@ export default function ClaimDetailFraudAuditScreen() {
             <View>
               <Text style={styles.statusLabel}>Payout Status</Text>
               <View style={styles.payoutRow}>
-                <StatusChip label="Paid" tone="success" />
                 <Text style={styles.payout}>₹840</Text>
+                <StatusChip label="Paid" tone="success" />
               </View>
             </View>
           </View>
@@ -77,8 +77,6 @@ const styles = StyleSheet.create({
   },
   statusRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
   statusLabel: {
     color: colors.onSurfaceVariant,
@@ -92,8 +90,9 @@ const styles = StyleSheet.create({
   },
   payout: {
     color: '#22C55E',
-    fontSize: 24,
-    fontWeight: '800',
+    fontSize: 28,
+    fontWeight: '900',
+    letterSpacing: -0.5,
   },
   auditHeader: {
     flexDirection: 'row',
