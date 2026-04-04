@@ -5,9 +5,9 @@ import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 
 export default function PartnerDetails() {
-  const { zone: contextZone, setRiderInfo } = useRider();
+  const { zone: contextZone, upiId: contextUpiId, setRiderInfo } = useRider();
   const [zone, setZone] = useState(contextZone || 'HSR Layout');
-  const [upiId, setUpiId] = useState('pranav@okicici');
+  const [upiId, setUpiId] = useState(contextUpiId || 'pranav@okicici');
 
   const handleContinue = () => {
     setRiderInfo({ 
