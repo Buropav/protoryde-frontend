@@ -3,6 +3,8 @@ import { Href, router } from 'expo-router';
 import { AppPage, SectionCard } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 
+import { useRider } from '../../src/hooks/useRider';
+
 const menuItems: Array<{
   id: string;
   icon: string;
@@ -18,6 +20,8 @@ const menuItems: Array<{
 ];
 
 export default function ProfileScreen() {
+  const { riderName } = useRider();
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -27,7 +31,7 @@ export default function ProfileScreen() {
       <AppPage>
         <SectionCard style={styles.profileCard}>
           <View style={styles.avatarLarge}><Text style={styles.avatarText}>PN</Text></View>
-          <Text style={styles.name}>Pranav</Text>
+          <Text style={styles.name}>{riderName || 'Pranav'}</Text>
           <Text style={styles.email}>pranav@okicici</Text>
           <View style={styles.partnerBadge}><Text style={styles.badgeText}>DEL-BLR-284719</Text></View>
         </SectionCard>
