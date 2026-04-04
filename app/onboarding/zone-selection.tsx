@@ -1,11 +1,23 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { premiumService } from '../../src/services/premiumService';
 
 export default function ZoneSelectionScreen() {
   const { zone } = useRider();
+
+  // Fetch supported zones from model status
+  const { 
+    data: modelStatus, 
+    loading: loadingZones 
+  } = useApiCall(premiumService.getModelStatus);
+
+  const availableZones = modelStatus?.zone_defaults 
+    ? Object.keys(modelStatus.zone_defaults) 
+    : ['HSR Layout'];
 
   return (
     <View style={styles.container}>
