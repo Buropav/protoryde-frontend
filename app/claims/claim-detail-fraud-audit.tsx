@@ -33,7 +33,7 @@ export default function ClaimDetailFraudAuditScreen() {
             <View>
               <Text style={styles.statusLabel}>Payout Status</Text>
               <View style={styles.payoutRow}>
-                <Text style={styles.payout}>₹840</Text>
+                <Text style={styles.payout}>₹{claim?.payout_amount ?? '---'}</Text>
                 <StatusChip label="Paid" tone="success" />
               </View>
             </View>
