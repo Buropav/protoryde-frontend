@@ -1,4 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { useState, useEffect } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Modal, FlatList } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
@@ -7,7 +8,9 @@ import { useApiCall } from '../../src/hooks/useApiCall';
 import { premiumService } from '../../src/services/premiumService';
 
 export default function ZoneSelectionScreen() {
-  const { zone } = useRider();
+  const { zone: contextZone } = useRider();
+  const [selectedZone, setSelectedZone] = useState(contextZone || 'HSR Layout');
+  const [showDropdown, setShowDropdown] = useState(false);
 
   // Fetch supported zones from model status
   const { 
@@ -39,11 +42,58 @@ export default function ZoneSelectionScreen() {
 
         <View style={styles.selectorWrap}>
           <Text style={styles.label}>Risk Assessment Zone</Text>
-          <TouchableOpacity style={styles.zoneSelector} activeOpacity={0.85}>
-            <Text style={styles.zoneText}>{zone || 'HSR Layout'}</Text>
-            <Text style={styles.zoneIcon}>⌄</Text>
+          <TouchableOpacity 
+            style={styles.zoneSelector} 
+            activeOpacity={0.85}
+            onPress={() => setShowDropdown(true)}
+          >
+            <Text style={styles.zoneText}>{selectedZone}</Text>
+            {loadingZones ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <Text style={styles.zoneIcon}>⌄</Text>
+            )}
           </TouchableOpacity>
         </View>
+
+        <Modal
+          visible={showDropdown}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowDropdown(false)}
+        >
+          <TouchableOpacity 
+            style={styles.modalOverlay} 
+            activeOpacity={1} 
+            onPress={() => setShowDropdown(false)}
+          >
+            <View style={styles.dropdownMenu}>
+              <Text style={styles.dropdownTitle}>Select Your Zone</Text>
+              <FlatList
+                data={availableZones}
+                keyExtractor={(item) => item}
+                renderItem={({ item }) => (
+                  <TouchableOpacity 
+                    style={[
+                      styles.dropdownItem, 
+                      selectedZone === item && styles.selectedItem
+                    ]}
+                    onPress={() => {
+                      setSelectedZone(item);
+                      setShowDropdown(false);
+                    }}
+                  >
+                    <Text style={[
+                      styles.dropdownItemText,
+                      selectedZone === item && styles.selectedItemText
+                    ]}>{item}</Text>
+                    {selectedZone === item && <Text style={styles.checkIcon}>✓</Text>}
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </TouchableOpacity>
+        </Modal>
 
         <SectionCard style={styles.mapCard}>
           <View style={styles.fakeMap}>
@@ -278,6 +328,52 @@ const styles = StyleSheet.create({
   arrowIcon: {
     color: colors.onPrimary,
     fontSize: 18,
+    fontWeight: '800',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  dropdownMenu: {
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    maxHeight: '70%',
+  },
+  dropdownTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: colors.primary,
+    marginBottom: 16,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.outlineVariant + '20',
+  },
+  selectedItem: {
+    backgroundColor: colors.primaryContainer + '20',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    marginHorizontal: -12,
+  },
+  dropdownItemText: {
+    fontSize: 16,
+    color: colors.onSurface,
+    fontWeight: '500',
+  },
+  selectedItemText: {
+    color: colors.primary,
+    fontWeight: '700',
+  },
+  checkIcon: {
+    fontSize: 18,
+    color: colors.primary,
     fontWeight: '800',
   },
 });
