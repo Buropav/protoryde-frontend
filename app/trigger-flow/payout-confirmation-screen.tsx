@@ -27,10 +27,6 @@ export default function PayoutConfirmationScreen() {
 
       <View style={styles.summarySection}>
         <Text style={styles.amount}>₹840 Credited!</Text>
-        <Text style={styles.transferInfo}>
-          Transferred to <Text style={styles.email}>pranav@okicici</Text>
-        </Text>
-        <Text style={styles.timestamp}>Processed in 1m 47s (Today, 10:24 AM)</Text>
       </View>
 
       <View style={styles.detailsCard}>
@@ -143,7 +139,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceContainerLowest,
   },
   successHeader: {
-    height: 180,
+    height: 260,
     backgroundColor: '#0D2818',
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
@@ -169,8 +165,8 @@ const styles = StyleSheet.create({
   c5: { top: 48, right: 128, backgroundColor: colors.primaryContainer, transform: [{ rotate: '12deg' }] },
   
   successCircle: {
-    width: 95,
-    height: 95,
+    width: 120,
+    height: 120,
     borderRadius: 60,
     backgroundColor: colors.surfaceContainerLowest,
     alignItems: 'center',
@@ -183,27 +179,27 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   innerCircle: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 100,
     borderRadius: 50,
     backgroundColor: '#22C55E',
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkIcon: {
-    fontSize: 46,
+    fontSize: 48,
     fontWeight: '700',
     color: colors.onPrimary,
   },
   statusPill: {
-    marginTop: 10,
+    marginTop: 20,
     backgroundColor: '#0D2818',
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
   },
   statusText: {
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: '700',
     color: '#4ADE80',
     letterSpacing: 0.5,
@@ -220,24 +216,9 @@ const styles = StyleSheet.create({
     color: colors.primary,
     letterSpacing: -0.5,
   },
-  transferInfo: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.onSurface,
-    marginTop: 4,
-  },
-  email: {
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  timestamp: {
-    fontSize: 13,
-    color: colors.onSurfaceVariant,
-    marginTop: 8,
-  },
   detailsCard: {
     marginHorizontal: 24,
-    marginTop: 32,
+    marginTop: 16,
     backgroundColor: colors.surfaceContainerLow,
     borderRadius: 16,
     padding: 20,
