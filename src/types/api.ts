@@ -55,3 +55,9 @@ export interface CurrentPolicyResponse {
   exclusions_version: string;
   exclusions_acknowledged_at: string;
 }
+
+export interface PolicyHistoryResponse {
+  rider_id: string;
+  count: number;
+  policies: CurrentPolicyResponse[];
+}
