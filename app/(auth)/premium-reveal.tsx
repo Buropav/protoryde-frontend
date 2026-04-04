@@ -9,7 +9,7 @@ import { demoService } from '../../src/services/demoService';
 import { LoadingOverlay } from '../../src/components/LoadingOverlay';
 
 export default function PremiumReveal() {
-  const { riderName, zone, upiId, phoneNumber, setPolicyId, setBootstrapped } = useRider();
+  const { riderName, zone, upiId, phoneNumber, setPolicyId, setBootstrapped, setRiderInfo } = useRider();
   const [isActivating, setIsActivating] = useState(false);
 
   // Fetch final premium calculation
@@ -39,6 +39,7 @@ export default function PremiumReveal() {
         exclusions_accepted: true
       });
 
+      setRiderInfo({ riderId: response.rider?.rider_id || response.rider?.id || 'DEL-BLR-284719' });
       setPolicyId(response.policy.policy_id);
       setBootstrapped(true);
 
