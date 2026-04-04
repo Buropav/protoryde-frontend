@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
-import { AppPage, PrimaryButton, SectionCard, StatusChip } from '../../src/components/ui';
+import { AppPage, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 
 export default function CoverageScreen() {
@@ -54,14 +54,12 @@ export default function CoverageScreen() {
               <Text style={styles.upgradeName}>ProtoRyde Enhanced</Text>
               <Text style={styles.upgradePrice}>+₹25/week</Text>
             </View>
-            <Text style={styles.upgradeDesc}>Increase coverage cap to ₹5,000/week with priority support.</Text>
             <Text style={styles.feature}>• ₹5,000 coverage cap</Text>
             <Text style={styles.feature}>• Priority processing</Text>
             <Text style={styles.feature}>• Extended weather coverage</Text>
           </View>
         </SectionCard>
 
-        <PrimaryButton label="View Full Policy Details" onPress={() => router.push('/account/policy-document')} rightSlot={<Text style={styles.arrow}>→</Text>} />
       </AppPage>
     </View>
   );
@@ -182,19 +180,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
-  upgradeDesc: {
-    color: colors.onSurfaceVariant,
-    fontSize: 12,
-    lineHeight: 18,
-    marginBottom: 2,
-  },
   feature: {
     color: colors.onSurface,
     fontSize: 12,
-  },
-  arrow: {
-    color: colors.onPrimary,
-    fontSize: 18,
-    fontWeight: '800',
   },
 });
