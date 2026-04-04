@@ -43,7 +43,12 @@ export default function CoverageScreen() {
               <Text style={styles.rowValue}>₹{policy?.coverage_cap ?? '---'}/week</Text>
             </View>
             <View style={styles.row}><Text style={styles.rowLabel}>Payout Speed</Text><Text style={styles.rowValue}>under 2 minutes</Text></View>
-            <View style={styles.row}><Text style={styles.rowLabel}>Next Billing</Text><Text style={styles.rowValue}>Monday, Apr 6</Text></View>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>Next Billing</Text>
+              <Text style={styles.rowValue}>
+                {policy ? new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'short', day: 'numeric' }).format(new Date(new Date(policy.week_end_date).getTime() + 86400000)) : '---'}
+              </Text>
+            </View>
           </View>
 
           <View style={styles.meterBlock}>
