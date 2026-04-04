@@ -35,29 +35,39 @@ export default function ClaimsListScreen() {
           </View>
         ) : (
           <>
-            {claims.map((claim) => (
-              <TouchableOpacity
-                key={claim.claim_id}
-                onPress={() => router.push('/claims/claim-detail-fraud-audit')}
-                activeOpacity={0.85}
-              >
-                <SectionCard>
-                  <View style={styles.claimHead}>
-                    <Text style={styles.claimTitle}>
-                      {claim.trigger_type.replace(/_/g, ' ')} - {zone}
-                    </Text>
-                    <Text style={styles.status}>{claim.payout_status}</Text>
-                  </View>
-                  <View style={styles.claimMeta}>
-                    <Text style={styles.claimDate}>
-                      {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(claim.created_at))}
-                    </Text>
-                    <Text style={styles.claimPayout}>₹{claim.payout_amount}</Text>
-                  </View>
-                  <Text style={styles.openLink}>Open claim details and fraud audit →</Text>
-                </SectionCard>
-              </TouchableOpacity>
-            ))}
+            {claims.length > 0 ? (
+              claims.map((claim) => (
+                <TouchableOpacity
+                  key={claim.claim_id}
+                  onPress={() => router.push('/claims/claim-detail-fraud-audit')}
+                  activeOpacity={0.85}
+                >
+                  <SectionCard>
+                    <View style={styles.claimHead}>
+                      <Text style={styles.claimTitle}>
+                        {claim.trigger_type.replace(/_/g, ' ')} - {zone}
+                      </Text>
+                      <Text style={styles.status}>{claim.payout_status}</Text>
+                    </View>
+                    <View style={styles.claimMeta}>
+                      <Text style={styles.claimDate}>
+                        {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(claim.created_at))}
+                      </Text>
+                      <Text style={styles.claimPayout}>₹{claim.payout_amount}</Text>
+                    </View>
+                    <Text style={styles.openLink}>Open claim details and fraud audit →</Text>
+                  </SectionCard>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <SectionCard style={styles.emptyCard}>
+                <Text style={styles.emptyIcon}>📂</Text>
+                <Text style={styles.emptyTitle}>No claims yet</Text>
+                <Text style={styles.emptyText}>
+                  Your claims will appear here once a trigger condition is met in your zone.
+                </Text>
+              </SectionCard>
+            )}
           </>
         )}
 
@@ -122,6 +132,31 @@ const styles = StyleSheet.create({
     color: colors.onSurfaceVariant,
     fontSize: 14,
     fontWeight: '600',
+  },
+  emptyCard: {
+    alignItems: 'center',
+    paddingVertical: 40,
+    gap: 8,
+    backgroundColor: colors.surfaceVariant + '33',
+    borderStyle: 'dashed',
+    borderWidth: 1,
+    borderColor: colors.outlineVariant,
+  },
+  emptyIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  emptyTitle: {
+    color: colors.onSurface,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  emptyText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 13,
+    textAlign: 'center',
+    paddingHorizontal: 20,
+    lineHeight: 20,
   },
   claimMeta: {
     flexDirection: 'row',
