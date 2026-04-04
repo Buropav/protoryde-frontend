@@ -58,17 +58,17 @@ export default function CoverageExclusionsScreen() {
           <Text style={styles.checkText}>I acknowledge these coverage terms and exclusions.</Text>
         </TouchableOpacity>
 
-        <PrimaryButton
-          label="I Understand and Accept"
-          subLabel="As of 24 MAY 2024"
+        <TouchableOpacity
+          style={[styles.continueButton, !accepted && styles.continueButtonDisabled]}
+          activeOpacity={0.9}
           onPress={() => {
-            if (!accepted) {
-              return;
-            }
+            if (!accepted) return;
             router.push('/onboarding/zone-selection');
           }}
-          rightSlot={<Text style={styles.buttonIcon}>✓</Text>}
-        />
+        >
+          <Text style={styles.continueText}>I Understand and Accept</Text>
+          <Text style={styles.buttonIcon}>✓</Text>
+        </TouchableOpacity>
       </AppPage>
     </View>
   );
@@ -208,8 +208,26 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
   },
-  buttonIcon: {
+  continueButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.primary,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 14,
+    marginTop: 10,
+  },
+  continueButtonDisabled: {
+    opacity: 0.5,
+  },
+  continueText: {
+    fontSize: 16,
+    fontWeight: '800',
     color: colors.onPrimary,
+  },
+  buttonIcon: {
+    color: colors.onSurface,
     fontWeight: '800',
     fontSize: 18,
   },
