@@ -41,3 +41,17 @@ export interface DemoBootstrapResponse {
   rider: Record<string, any>;
   policy: PolicyActivateResponse;
 }
+
+export interface CurrentPolicyResponse {
+  policy_id: string;
+  rider_id: string;
+  week_start_date: string;
+  week_end_date: string;
+  base_premium: number;
+  final_premium: number;
+  premium_breakdown: PremiumAdjustment[];
+  coverage_cap: number;
+  status: string;
+  exclusions_version: string;
+  exclusions_acknowledged_at: string;
+}
