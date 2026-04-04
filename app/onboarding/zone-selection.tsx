@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Modal, FlatList, Dimensions, Platform } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, FlatList } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
@@ -104,26 +104,21 @@ export default function ZoneSelectionScreen() {
             onPress={() => setShowDropdown(true)}
           >
             <Text style={styles.zoneText}>{selectedZone}</Text>
-              {loadingZones ? (
-                <ActivityIndicator size="small" color={colors.primary} />
-              ) : (
-                <View style={styles.dropdownIconContainer}>
-                  <Text style={styles.zoneIcon}>▼</Text>
-                </View>
-              )}
-            </TouchableOpacity>
+            {loadingZones ? (
+              <ActivityIndicator size="small" color={colors.primary} />
+            ) : (
+              <View style={styles.dropdownIconContainer}>
+                <Text style={styles.zoneIcon}>⌄</Text>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
 
-        <Modal
-          visible={showDropdown}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => setShowDropdown(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <TouchableOpacity 
-              style={StyleSheet.absoluteFill} 
-              activeOpacity={1} 
+        {showDropdown && (
+          <View style={styles.dropdownOverlay} pointerEvents="box-none">
+            <TouchableOpacity
+              style={StyleSheet.absoluteFill}
+              activeOpacity={1}
               onPress={() => setShowDropdown(false)}
             />
             <View style={styles.dropdownMenu}>
@@ -132,27 +127,31 @@ export default function ZoneSelectionScreen() {
                 data={availableZones}
                 keyExtractor={(item) => item}
                 renderItem={({ item }) => (
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={[
-                      styles.dropdownItem, 
-                      selectedZone === item && styles.selectedItem
+                      styles.dropdownItem,
+                      selectedZone === item && styles.selectedItem,
                     ]}
                     onPress={() => {
                       setSelectedZone(item);
                       setShowDropdown(false);
                     }}
                   >
-                    <Text style={[
-                      styles.dropdownItemText,
-                      selectedZone === item && styles.selectedItemText
-                    ]}>{item}</Text>
+                    <Text
+                      style={[
+                        styles.dropdownItemText,
+                        selectedZone === item && styles.selectedItemText,
+                      ]}
+                    >
+                      {item}
+                    </Text>
                     {selectedZone === item && <Text style={styles.checkIcon}>✓</Text>}
                   </TouchableOpacity>
                 )}
               />
             </View>
           </View>
-        </Modal>
+        )}
 
         <SectionCard style={styles.mapCard}>
           <View style={styles.fakeMap}>
@@ -257,6 +256,8 @@ const styles = StyleSheet.create({
   selectorWrap: {
     gap: 8,
     marginTop: -10,
+    position: 'relative',
+    zIndex: 20,
   },
   label: {
     color: colors.onSurfaceVariant,
@@ -402,21 +403,26 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
+  dropdownOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 50,
   },
   dropdownMenu: {
     backgroundColor: '#0F1A24',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
-    maxHeight: '70%',
+    maxHeight: '58%',
     width: '100%',
-    maxWidth: Platform.OS === 'web' ? 480 : '100%',
-    alignSelf: 'center',
-    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingBottom: 24,
   },
   dropdownTitle: {
     fontSize: 20,
