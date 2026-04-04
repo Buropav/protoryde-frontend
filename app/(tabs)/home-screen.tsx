@@ -120,7 +120,13 @@ export default function HomeScreen() {
         <SectionCard>
           <Text style={styles.sectionTitle}>Live Conditions</Text>
           <View style={styles.metricRow}>
-            <View style={styles.metricCard}><Text style={styles.metricLabel}>Weather</Text><Text style={styles.metricValue}>Clear 28°C</Text><Text style={styles.metricState}>No trigger</Text></View>
+            <View style={styles.metricCard}>
+              <Text style={styles.metricLabel}>Weather</Text>
+              <Text style={styles.metricValue}>
+                {weather?.conditions ? `${weather.conditions.description} ${weather.conditions.temp_c}°C` : '--'}
+              </Text>
+              <Text style={styles.metricState}>No trigger</Text>
+            </View>
             <View style={styles.metricCard}><Text style={styles.metricLabel}>AQI</Text><Text style={styles.metricValue}>Moderate 142</Text><Text style={styles.metricState}>No trigger</Text></View>
             <View style={styles.metricCard}><Text style={styles.metricLabel}>Banks</Text><Text style={styles.metricValue}>Normal</Text><Text style={styles.metricState}>No trigger</Text></View>
           </View>
