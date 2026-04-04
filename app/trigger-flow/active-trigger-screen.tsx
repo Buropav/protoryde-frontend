@@ -33,9 +33,6 @@ export default function ActiveTriggerScreen() {
               <Text style={styles.claimTitle}>Your Claim is Being Processed</Text>
               <Text style={styles.claimSubtitle}>Zero action needed from you.</Text>
             </View>
-            <View style={styles.securityIcon}>
-              <Text style={styles.iconSmall}>🛡️</Text>
-            </View>
           </View>
 
           <View style={styles.timeline}>
@@ -194,17 +191,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.onSurfaceVariant,
     marginTop: 2,
-  },
-  securityIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(34, 197, 94, 0.12)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconSmall: {
-    fontSize: 20,
   },
   timeline: {
     position: 'relative',
