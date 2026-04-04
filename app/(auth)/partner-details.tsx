@@ -2,10 +2,20 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
+import { useRider } from '../../src/hooks/useRider';
 
 export default function PartnerDetails() {
+  const { setRiderInfo } = useRider();
   const [zone, setZone] = useState('HSR Layout');
   const [upiId, setUpiId] = useState('pranav@okicici');
+
+  const handleContinue = () => {
+    setRiderInfo({ 
+      zone, 
+      upiId 
+    });
+    router.push('/onboarding/coverage-exclusions');
+  };
 
   return (
     <KeyboardAvoidingView 
@@ -112,7 +122,7 @@ export default function PartnerDetails() {
       <View style={styles.footer}>
         <TouchableOpacity 
           style={styles.continueButton}
-          onPress={() => router.push('/onboarding/coverage-exclusions')}
+          onPress={handleContinue}
           activeOpacity={0.98}
         >
           <Text style={styles.continueText}>Continue</Text>
