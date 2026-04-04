@@ -108,50 +108,11 @@ export default function ZoneSelectionScreen() {
               <ActivityIndicator size="small" color={colors.primary} />
             ) : (
               <View style={styles.dropdownIconContainer}>
-                <Text style={styles.zoneIcon}>⌄</Text>
+                <Text style={styles.zoneIcon}>▼</Text>
               </View>
             )}
           </TouchableOpacity>
         </View>
-
-        {showDropdown && (
-          <View style={styles.dropdownOverlay} pointerEvents="box-none">
-            <TouchableOpacity
-              style={StyleSheet.absoluteFill}
-              activeOpacity={1}
-              onPress={() => setShowDropdown(false)}
-            />
-            <View style={styles.dropdownMenu}>
-              <Text style={styles.dropdownTitle}>Select Your Zone</Text>
-              <FlatList
-                data={availableZones}
-                keyExtractor={(item) => item}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={[
-                      styles.dropdownItem,
-                      selectedZone === item && styles.selectedItem,
-                    ]}
-                    onPress={() => {
-                      setSelectedZone(item);
-                      setShowDropdown(false);
-                    }}
-                  >
-                    <Text
-                      style={[
-                        styles.dropdownItemText,
-                        selectedZone === item && styles.selectedItemText,
-                      ]}
-                    >
-                      {item}
-                    </Text>
-                    {selectedZone === item && <Text style={styles.checkIcon}>✓</Text>}
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
-          </View>
-        )}
 
         <SectionCard style={styles.mapCard}>
           <View style={styles.fakeMap}>
@@ -205,6 +166,46 @@ export default function ZoneSelectionScreen() {
           <Text style={styles.arrowIcon}>{'\u2192'}</Text>
         </TouchableOpacity>
       </AppPage>
+
+      {showDropdown && (
+        <View style={styles.dropdownOverlay} pointerEvents="box-none">
+          <TouchableOpacity
+            style={StyleSheet.absoluteFill}
+            activeOpacity={1}
+            onPress={() => setShowDropdown(false)}
+          />
+          <View style={styles.dropdownMenu}>
+            <Text style={styles.dropdownTitle}>Select Your Zone</Text>
+            <FlatList
+              data={availableZones}
+              keyExtractor={(item) => item}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.dropdownItem,
+                    selectedZone === item && styles.selectedItem,
+                  ]}
+                  onPress={() => {
+                    setSelectedZone(item);
+                    setShowDropdown(false);
+                  }}
+                >
+                  <Text
+                    style={[
+                      styles.dropdownItemText,
+                      selectedZone === item && styles.selectedItemText,
+                    ]}
+                  >
+                    {item}
+                  </Text>
+                  {selectedZone === item && <Text style={styles.checkIcon}>✓</Text>}
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      )}
     </View>
   );
 }
@@ -439,7 +440,6 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.outlineVariant + '20',
   },
   selectedItem: {
-    backgroundColor: colors.primaryContainer + '20',
     borderRadius: 12,
     paddingHorizontal: 12,
     marginHorizontal: -12,
