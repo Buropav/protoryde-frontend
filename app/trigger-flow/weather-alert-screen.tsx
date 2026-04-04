@@ -76,14 +76,6 @@ export default function WeatherAlertScreen() {
               >
                 <Text style={styles.upgradeText}>Upgrade to Enhanced Cover (+₹25)</Text>
               </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={styles.stayButton}
-                onPress={() => router.push('/trigger-flow/active-trigger-screen')}
-                activeOpacity={0.95}
-              >
-                <Text style={styles.stayText}>Stay on ₹67 Plan</Text>
-              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -323,23 +315,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111827',
   },
-  stayButton: {
-    backgroundColor: '#1F2937',
-    paddingVertical: 16,
-    borderRadius: 12,
-  },
-  stayText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#D1D5DB',
-    textAlign: 'center',
-  },
   disclaimer: {
     fontSize: 12,
     color: colors.onSurfaceVariant,
     textAlign: 'center',
     lineHeight: 20,
-    marginTop: -20,
+    marginTop: -27,
     paddingHorizontal: 16,
     opacity: 0.6,
   },
