@@ -179,7 +179,7 @@ export default function NotificationsCenterScreen() {
           })}
         </View>
 
-        {error ? <ErrorBanner message={error} onRetry={retryAll} /> : null}
+        {error ? <ErrorBanner message={error.userMessage} onRetry={retryAll} /> : null}
 
         {loading ? (
           <View style={styles.loadingContainer}>
