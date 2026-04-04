@@ -136,3 +136,13 @@ export interface ModelStatusResponse {
   error?: string;
   zone_defaults: Record<string, any>;
 }
+
+export interface DelhiveryMetricsResponse {
+  zone: string;
+  date: string;
+  total_banking_orders: number;
+  cancelled_orders: number;
+  cancellation_rate_pct: number;
+  note?: string;
+  fixture_version?: string;
+}
