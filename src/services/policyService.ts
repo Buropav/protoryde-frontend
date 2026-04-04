@@ -1,4 +1,5 @@
 import { apiPost, apiGet } from './apiClient';
+import { API_BASE_URL } from '../config/api';
 import { PolicyActivateResponse, CurrentPolicyResponse, PolicyHistoryResponse } from '../types/api';
 
 export interface PolicyActivateParams {
@@ -20,5 +21,12 @@ export const policyService = {
   },
   getPolicyHistory: async (riderId: string): Promise<PolicyHistoryResponse> => {
     return apiGet<PolicyHistoryResponse>(`/policies/${riderId}/history`);
+  },
+  downloadPolicyPdf: async (riderId: string): Promise<Blob> => {
+    const response = await fetch(`${API_BASE_URL}/policies/${riderId}/current/document`);
+    if (!response.ok) {
+      throw new Error(`Failed to download policy PDF: ${response.status}`);
+    }
+    return response.blob();
   }
 };
