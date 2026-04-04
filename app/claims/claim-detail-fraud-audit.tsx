@@ -1,8 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { AppPage, PrimaryButton, SectionCard, StatusChip, TopBar } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
-import { claimAuditSteps } from '../../src/data/prototype-data';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { claimsService } from '../../src/services/claimsService';
@@ -42,51 +41,60 @@ export default function ClaimDetailFraudAuditScreen() {
     <View style={styles.container}>
       <TopBar title="Claim Details" onBack={() => router.back()} />
       <AppPage contentContainerStyle={styles.content}>
-        <SectionCard>
-          <Text style={styles.referenceLabel}>Reference ID</Text>
-          <Text style={styles.reference}>#{claim_id || '---'}</Text>
-          <View style={styles.statusRow}>
-            <View>
-              <Text style={styles.statusLabel}>Payout Status</Text>
-              <View style={styles.payoutRow}>
-                <Text style={styles.payout}>₹{claim?.payout_amount ?? '---'}</Text>
-                <StatusChip 
-                  label={claim?.payout_status || 'Processing'} 
-                  tone={claim?.payout_status === 'validated' ? 'success' : claim?.payout_status === 'rejected' ? 'error' : 'warning'} 
-                />
-              </View>
-            </View>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.loadingText}>Verifying fraud audit logs...</Text>
           </View>
-        </SectionCard>
-
-        <View>
-          <View style={styles.auditHeader}>
-            <Text style={styles.auditTitle}>Fraud Audit Trail</Text>
-            <Text style={styles.auditMeta}>System Validated</Text>
-          </View>
-          {claim?.fraud_layers.map((layer, index) => {
-            const info = getAuditStepInfo(layer.layer);
-            return (
-              <SectionCard key={index} style={styles.auditStep}>
-                <View style={styles.auditIconWrap}>
-                  <Text style={styles.auditIcon}>{info.icon}</Text>
-                </View>
-                <View style={styles.auditBody}>
-                  <View style={styles.auditBodyTop}>
-                    <Text style={styles.auditStepTitle}>{info.title}</Text>
-                    <StatusChip label={layer.passed ? 'Passed' : 'Failed'} tone={layer.passed ? 'success' : 'error'} />
+        ) : (
+          <>
+            <SectionCard>
+              <Text style={styles.referenceLabel}>Reference ID</Text>
+              <Text style={styles.reference}>#{claim_id || '---'}</Text>
+              <View style={styles.statusRow}>
+                <View>
+                  <Text style={styles.statusLabel}>Payout Status</Text>
+                  <View style={styles.payoutRow}>
+                    <Text style={styles.payout}>₹{claim?.payout_amount ?? '---'}</Text>
+                    <StatusChip 
+                      label={claim?.payout_status || 'Processing'} 
+                      tone={claim?.payout_status === 'validated' ? 'success' : claim?.payout_status === 'rejected' ? 'error' : 'warning'} 
+                    />
                   </View>
-                  <Text style={styles.auditText}>{layer.reason}</Text>
                 </View>
-              </SectionCard>
-            );
-          })}
-        </View>
+              </View>
+            </SectionCard>
 
-        <PrimaryButton
-          label="View Proof for Rainfall Data 🌧️"
-          onPress={() => {}}
-        />
+            <View>
+              <View style={styles.auditHeader}>
+                <Text style={styles.auditTitle}>Fraud Audit Trail</Text>
+                <Text style={styles.auditMeta}>System Validated</Text>
+              </View>
+              {claim?.fraud_layers.map((layer, index) => {
+                const info = getAuditStepInfo(layer.layer);
+                return (
+                  <SectionCard key={index} style={styles.auditStep}>
+                    <View style={styles.auditIconWrap}>
+                      <Text style={styles.auditIcon}>{info.icon}</Text>
+                    </View>
+                    <View style={styles.auditBody}>
+                      <View style={styles.auditBodyTop}>
+                        <Text style={styles.auditStepTitle}>{info.title}</Text>
+                        <StatusChip label={layer.passed ? 'Passed' : 'Failed'} tone={layer.passed ? 'success' : 'error'} />
+                      </View>
+                      <Text style={styles.auditText}>{layer.reason}</Text>
+                    </View>
+                  </SectionCard>
+                );
+              })}
+            </View>
+
+            <PrimaryButton
+              label="View Proof for Rainfall Data 🌧️"
+              onPress={() => {}}
+            />
+          </>
+        )}
       </AppPage>
     </View>
   );
@@ -99,6 +107,18 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingTop: 8,
+  },
+  loadingContainer: {
+    padding: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  loadingText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 14,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   referenceLabel: {
     color: colors.onSurfaceVariant,
