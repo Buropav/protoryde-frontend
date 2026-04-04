@@ -2,17 +2,22 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, PrimaryButton, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
+import { useRider } from '../../src/hooks/useRider';
 
 export default function HomeScreen() {
+  const { riderName } = useRider();
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.greeting}>Good morning, Pranav</Text>
+          <Text style={styles.greeting}>Good morning, {riderName || 'Rider'}</Text>
           <Text style={styles.date}>Friday, April 3, 2026</Text>
         </View>
         <TouchableOpacity style={styles.avatar} onPress={() => router.push('/(tabs)/profile-screen')}>
-          <Text style={styles.avatarText}>PN</Text>
+          <Text style={styles.avatarText}>
+            {riderName ? riderName.split(' ').map(n => n[0]).join('').toUpperCase() : 'PN'}
+          </Text>
         </TouchableOpacity>
       </View>
 
