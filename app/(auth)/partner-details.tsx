@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
 
 export default function PartnerDetails() {
+  const [zone, setZone] = useState('HSR Layout');
+  const [upiId, setUpiId] = useState('pranav@okicici');
+
   return (
     <KeyboardAvoidingView 
       style={styles.container}
@@ -66,10 +70,13 @@ export default function PartnerDetails() {
               </View>
               <View style={styles.mapFooter}>
                 <View>
-                  <Text style={styles.zoneName}>HSR Layout, South Bangalore</Text>
+                  <Text style={styles.zoneName}>{zone}, South Bangalore</Text>
                   <Text style={styles.zoneStatus}>Active Coverage Zone</Text>
                 </View>
-                <TouchableOpacity style={styles.editButton}>
+                <TouchableOpacity 
+                   style={styles.editButton}
+                   onPress={() => router.push('/onboarding/zone-selection')}
+                >
                   <Text style={styles.editText}>Edit Zone</Text>
                 </TouchableOpacity>
               </View>
@@ -82,7 +89,14 @@ export default function PartnerDetails() {
               <View style={styles.upiIcon}>
                 <Text style={styles.paymentsIcon}>💳</Text>
               </View>
-              <Text style={styles.upiId}>pranav@okicici</Text>
+              <TextInput 
+                style={styles.upiId}
+                value={upiId}
+                onChangeText={setUpiId}
+                placeholder="upi@handle"
+                placeholderTextColor={colors.onSurfaceVariant + '66'}
+                autoCapitalize="none"
+              />
             </View>
           </View>
 
