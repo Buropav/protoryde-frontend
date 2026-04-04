@@ -146,3 +146,13 @@ export interface DelhiveryMetricsResponse {
   note?: string;
   fixture_version?: string;
 }
+
+export interface BranchMetricsResponse {
+  zone: string;
+  total_branches: number;
+  closed_branches: number;
+  closure_rate_pct: number;
+  threshold_pct: number;
+  trigger_breached: boolean;
+  fixture_version?: string;
+}
