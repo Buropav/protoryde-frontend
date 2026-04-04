@@ -7,12 +7,19 @@ import { useRider } from '../../src/hooks/useRider';
 export default function HomeScreen() {
   const { riderName } = useRider();
 
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date());
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View>
           <Text style={styles.greeting}>Good morning, {riderName || 'Rider'}</Text>
-          <Text style={styles.date}>Friday, April 3, 2026</Text>
+          <Text style={styles.date}>{formattedDate}</Text>
         </View>
         <TouchableOpacity style={styles.avatar} onPress={() => router.push('/(tabs)/profile-screen')}>
           <Text style={styles.avatarText}>
