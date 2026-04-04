@@ -85,7 +85,7 @@ export default function PayoutConfirmationScreen() {
 
       <View style={styles.progressSection}>
         <View style={styles.progressHeader}>
-          <Text style={styles.progressLabel}>Current Period Protection</Text>
+          <Text style={styles.progressLabel}>CURRENT COVERAGE VALIDITY</Text>
           <Text style={styles.protectedAmount}>₹840 protected</Text>
         </View>
         <View style={styles.progressBar}>
@@ -99,7 +99,7 @@ export default function PayoutConfirmationScreen() {
           onPress={() => router.replace('/(tabs)/home-screen')}
           activeOpacity={0.98}
         >
-          <Text style={styles.shareButtonText}>Share My Protection Story</Text>
+          <Text style={styles.shareButtonText}>Tell a Friend</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.downloadButton}>
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceContainerLowest,
   },
   successHeader: {
-    height: 260,
+    height: 200,
     backgroundColor: '#0D2818',
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
@@ -167,8 +167,8 @@ const styles = StyleSheet.create({
   c5: { top: 48, right: 128, backgroundColor: colors.primaryContainer, transform: [{ rotate: '12deg' }] },
   
   successCircle: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
     borderRadius: 60,
     backgroundColor: colors.surfaceContainerLowest,
     alignItems: 'center',
@@ -178,11 +178,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 24,
     zIndex: 10,
-    marginTop: 20,
+    marginTop: 10,
   },
   innerCircle: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 50,
     backgroundColor: '#22C55E',
     alignItems: 'center',
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     color: colors.onPrimary,
   },
   statusPill: {
-    marginTop: 20,
+    marginTop: 10,
     backgroundColor: '#0D2818',
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -393,6 +393,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     paddingVertical: 8,
+    marginBottom: -20,
   },
   downloadIcon: {
     fontSize: 20,
