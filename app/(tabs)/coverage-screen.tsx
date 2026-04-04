@@ -38,7 +38,10 @@ export default function CoverageScreen() {
               <Text style={styles.rowLabel}>Weekly Premium</Text>
               <Text style={styles.rowValue}>₹{policy?.final_premium ?? '---'}</Text>
             </View>
-            <View style={styles.row}><Text style={styles.rowLabel}>Coverage Cap</Text><Text style={styles.rowValue}>₹2,300/week</Text></View>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>Coverage Cap</Text>
+              <Text style={styles.rowValue}>₹{policy?.coverage_cap ?? '---'}/week</Text>
+            </View>
             <View style={styles.row}><Text style={styles.rowLabel}>Payout Speed</Text><Text style={styles.rowValue}>under 2 minutes</Text></View>
             <View style={styles.row}><Text style={styles.rowLabel}>Next Billing</Text><Text style={styles.rowValue}>Monday, Apr 6</Text></View>
           </View>
