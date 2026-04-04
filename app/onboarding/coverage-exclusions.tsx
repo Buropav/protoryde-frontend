@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, LayoutAnimation, UIManager, Platform, Animated } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard } from '../../src/components/ui';
 import { ErrorBanner } from '../../src/components/ErrorBanner';
@@ -8,8 +8,79 @@ import { coverageItems } from '../../src/data/prototype-data';
 import { exclusionsService } from '../../src/services/exclusionsService';
 import { useApiCall } from '../../src/hooks/useApiCall';
 
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+interface ExclusionItemProps {
+  text: string;
+  originalIndex: number;
+}
+
+interface ExclusionAccordionGroupProps {
+  groupKey: string;
+  label: string;
+  items: ExclusionItemProps[];
+  isOpen: boolean;
+  onToggle: () => void;
+  hasBeenOpened: boolean;
+}
+
+const ExclusionAccordionGroup = ({ groupKey, label, items, isOpen, onToggle, hasBeenOpened }: ExclusionAccordionGroupProps) => {
+  const rotation = useRef(new Animated.Value(isOpen ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.timing(rotation, {
+      toValue: isOpen ? 1 : 0,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
+  }, [isOpen]);
+
+  const chevronRotate = rotation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
+
+  return (
+    <View style={styles.accordionContainer}>
+      <TouchableOpacity 
+        style={styles.accordionHeader} 
+        onPress={onToggle}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.accordionLabel}>{label}</Text>
+        <View style={styles.accordionBadge}>
+          <Text style={styles.accordionBadgeText}>{items.length} item{items.length !== 1 ? 's' : ''}</Text>
+        </View>
+        <Animated.Text style={[styles.accordionChevron, { transform: [{ rotate: chevronRotate }] }]}>
+          ▼
+        </Animated.Text>
+      </TouchableOpacity>
+
+      {isOpen && (
+        <View style={styles.accordionBody}>
+          {items.map((item, index) => (
+            <View key={index} style={styles.exclusionItem}>
+              <Text style={styles.exclusionIcon}>⛔</Text>
+              <View style={styles.exclusionTextContainer}>
+                <Text style={styles.exclusionTitle}>Exclusion {item.originalIndex + 1}</Text>
+                <Text style={styles.exclusionText}>{item.text}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+};
+
 export default function CoverageExclusionsScreen() {
   const [accepted, setAccepted] = useState(false);
+  const [openGroupKeys, setOpenGroupKeys] = useState(new Set());
+  const [openedOnceGroups, setOpenedOnceGroups] = useState(new Set());
+  const [showGateMessage, setShowGateMessage] = useState(false);
+
   const { data, loading, error, execute, refetch } = useApiCall(
     exclusionsService.getExclusions
   );
@@ -17,6 +88,62 @@ export default function CoverageExclusionsScreen() {
   useEffect(() => {
     execute();
   }, [execute]);
+
+  const groupedExclusions = [
+    { key: 'bodily_vehicle', label: 'Bodily & Vehicle Harms', items: [] },
+    { key: 'platform_account', label: 'Platform & Account Issues', items: [] },
+    { key: 'extraordinary', label: 'Extraordinary Events', items: [] },
+    { key: 'scope_boundaries', label: 'Scope Boundaries', items: [] },
+  ];
+
+  if (data?.items) {
+    data.items.forEach((text, i) => {
+      const lowerText = text.toLowerCase();
+      const itemProps = { text, originalIndex: i };
+      if (lowerText.includes('health') || lowerText.includes('vehicle damage')) {
+        groupedExclusions[0].items.push(itemProps);
+      } else if (lowerText.includes('platform') || lowerText.includes('bans')) {
+        groupedExclusions[1].items.push(itemProps);
+      } else if (lowerText.includes('pandemic') || lowerText.includes('nuclear') || lowerText.includes('civil unrest')) {
+        groupedExclusions[2].items.push(itemProps);
+      } else {
+        groupedExclusions[3].items.push(itemProps);
+      }
+    });
+  }
+
+  const TOTAL_GROUPS = 4;
+  const isGateMet = openedOnceGroups.size === TOTAL_GROUPS;
+
+  const toggleGroup = (key) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    
+    const newOpenKeys = new Set(openGroupKeys);
+    if (newOpenKeys.has(key)) {
+      newOpenKeys.delete(key);
+    } else {
+      newOpenKeys.add(key);
+    }
+    setOpenGroupKeys(newOpenKeys);
+    
+    if (!openedOnceGroups.has(key)) {
+      const newOpenedOnce = new Set(openedOnceGroups).add(key);
+      setOpenedOnceGroups(newOpenedOnce);
+      
+      if (showGateMessage && newOpenedOnce.size === TOTAL_GROUPS) {
+        setShowGateMessage(false);
+      }
+    }
+  };
+
+  const handleCheck = () => {
+    if (!isGateMet) {
+      setShowGateMessage(true);
+      return;
+    }
+    setShowGateMessage(false);
+    setAccepted((value) => !value);
+  };
 
   return (
     <View style={styles.container}>
@@ -56,23 +183,33 @@ export default function CoverageExclusionsScreen() {
         {loading && !data ? (
           <Text style={styles.subtitle}>Loading exclusions...</Text>
         ) : (
-          data?.items.map((item, index) => (
-            <SectionCard key={index} style={styles.exclusionCard}>
-              <Text style={styles.exclusionIcon}>⛔</Text>
-              <View style={styles.exclusionTextContainer}>
-                <Text style={styles.exclusionTitle}>Exclusion {index + 1}</Text>
-                <Text style={styles.exclusionText}>{item}</Text>
-              </View>
-            </SectionCard>
-          ))
+          <View style={styles.accordionList}>
+            {groupedExclusions.map((group) => (
+              <ExclusionAccordionGroup
+                key={group.key}
+                groupKey={group.key}
+                label={group.label}
+                items={group.items}
+                isOpen={openGroupKeys.has(group.key)}
+                onToggle={() => toggleGroup(group.key)}
+                hasBeenOpened={openedOnceGroups.has(group.key)}
+              />
+            ))}
+          </View>
         )}
 
-        <TouchableOpacity style={styles.checkRow} onPress={() => setAccepted((value) => !value)} activeOpacity={0.8}>
-          <View style={[styles.checkbox, accepted && styles.checkboxChecked]}>
+        <TouchableOpacity style={styles.checkRow} onPress={handleCheck} activeOpacity={0.8}>
+          <View style={[styles.checkbox, accepted && styles.checkboxChecked, !isGateMet && styles.checkboxDisabled]}>
             {accepted ? <Text style={styles.checkboxTick}>✓</Text> : null}
           </View>
           <Text style={styles.checkText}>I acknowledge these coverage terms and exclusions.</Text>
         </TouchableOpacity>
+
+        {showGateMessage && (
+          <Text style={styles.gateMessageText}>
+            Please review all exclusion groups above before acknowledging.
+          </Text>
+        )}
 
         <TouchableOpacity
           style={[styles.continueButton, !accepted && styles.continueButtonDisabled]}
@@ -172,10 +309,50 @@ const styles = StyleSheet.create({
     color: colors.onSurfaceVariant,
     fontSize: 11,
   },
-  exclusionCard: {
+  accordionList: {
+    gap: 12,
+  },
+  accordionContainer: {
+    backgroundColor: colors.surfaceContainer,
+    borderRadius: 14,
+    overflow: 'hidden',
+  },
+  accordionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    gap: 8,
+  },
+  accordionLabel: {
+    flex: 1,
+    color: colors.onSurface,
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  accordionBadge: {
+    backgroundColor: colors.surfaceContainerHighest,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  accordionBadgeText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  accordionChevron: {
+    color: colors.onSurfaceVariant,
+    fontSize: 12,
+    marginLeft: 4,
+  },
+  accordionBody: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    gap: 14,
+  },
+  exclusionItem: {
     flexDirection: 'row',
     gap: 10,
-    backgroundColor: colors.surfaceContainer,
   },
   exclusionIcon: {
     fontSize: 18,
@@ -214,6 +391,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
+  checkboxDisabled: {
+    opacity: 0.5,
+  },
   checkboxTick: {
     color: colors.onPrimary,
     fontSize: 12,
@@ -223,6 +403,12 @@ const styles = StyleSheet.create({
     color: colors.onSurfaceVariant,
     flex: 1,
     fontSize: 12,
+  },
+  gateMessageText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 12,
+    marginLeft: 30,
+    marginTop: -4,
   },
   continueButton: {
     flexDirection: 'row',
