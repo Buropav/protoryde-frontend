@@ -5,6 +5,7 @@ import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { policyService } from '../../src/services/policyService';
+import { claimsService } from '../../src/services/claimsService';
 
 export default function CoverageScreen() {
   const { phoneNumber } = useRider();
@@ -18,6 +19,27 @@ export default function CoverageScreen() {
     !!phoneNumber,
     [phoneNumber]
   );
+
+  const { 
+    data: claimsData, 
+    loading: loadingClaims, 
+    error: claimsError 
+  } = useApiCall(
+    () => claimsService.getRiderClaims(phoneNumber || ''),
+    !!phoneNumber,
+    [phoneNumber]
+  );
+
+  const claims = claimsData?.claims || [];
+  const currentWeekPaidClaims = claims.filter(c => {
+    if (!policy) return false;
+    const claimDate = new Date(c.created_at);
+    return claimDate >= new Date(policy.week_start_date) && 
+           claimDate <= new Date(policy.week_end_date);
+  });
+
+  const totalPayoutUsage = currentWeekPaidClaims.reduce((sum, c) => sum + (c.payout_amount || 0), 0);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -52,7 +74,10 @@ export default function CoverageScreen() {
           </View>
 
           <View style={styles.meterBlock}>
-            <View style={styles.row}><Text style={styles.rowLabel}>Protection Used This Week</Text><Text style={styles.rowValue}>₹0 / ₹2,300</Text></View>
+            <View style={styles.row}>
+              <Text style={styles.rowLabel}>Protection Used This Week</Text>
+              <Text style={styles.rowValue}>₹{totalPayoutUsage} / ₹{policy?.coverage_cap ?? '---'}</Text>
+            </View>
             <View style={styles.meterTrack}><View style={styles.meterFill} /></View>
           </View>
         </SectionCard>
