@@ -22,3 +22,16 @@ export interface TriggerSimulateResponse {
   claims_preview: any[];
   fixture_version: string;
 }
+
+export interface PolicyActivateResponse {
+  policy_id: string;
+  rider_id: string;
+  zone: string;
+  status: string;
+  base_premium: number;
+  final_premium: number;
+  premium_breakdown: PremiumAdjustment[];
+  premium_engine: string;
+  exclusions_version: string;
+  exclusions_acknowledged_at: string;
+}
