@@ -55,6 +55,13 @@ export default function PremiumReveal() {
                 <Text style={styles.price}>₹{finalPremium}</Text>
                 <View style={styles.discountBadge}>
                   <Text style={styles.strikePrice}>₹{basePremium} base</Text>
+                  {discountDelta !== 0 && (
+                    <Text style={styles.discount}>
+                      {discountDelta > 0 ? `-₹${discountDelta}` : `+₹${Math.abs(discountDelta)}`} zone adjustment
+                    </Text>
+                  )}
+                </View>
+              </View>
 
           <View style={styles.divider} />
 
