@@ -130,11 +130,11 @@ const styles = StyleSheet.create({
   alertSection: {
     marginTop: 30,
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 30,
   },
   iconContainer: {
     position: 'relative',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   iconGlow: {
     position: 'absolute',
@@ -170,7 +170,9 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: colors.surfaceContainerLowest,
     borderRadius: 20,
+    paddingLeft: 20,
     padding: 24,
+    marginTop: -45,
     marginBottom: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
@@ -207,6 +209,7 @@ const styles = StyleSheet.create({
   timeline: {
     position: 'relative',
     paddingLeft: 8,
+    marginBottom: -20,
   },
   timelineLineGreen: {
     position: 'absolute',
@@ -219,8 +222,8 @@ const styles = StyleSheet.create({
   timelineLineGrey: {
     position: 'absolute',
     left: 18,
-    bottom: 8,
-    height: 44,
+    bottom: 32,
+    height: 20,
     width: 2,
     backgroundColor: colors.surfaceContainerHighest,
   },
@@ -280,7 +283,7 @@ const styles = StyleSheet.create({
   },
   payoutSection: {
     marginTop: 24,
-    paddingTop: 24,
+    paddingTop:10,
     borderTopWidth: 1,
     borderTopColor: colors.surfaceContainer,
     alignItems: 'center',
@@ -295,7 +298,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginTop: 4,
+    marginTop: 8,
   },
   pulseDot: {
     width: 8,
