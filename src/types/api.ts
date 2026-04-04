@@ -110,3 +110,17 @@ export interface WeatherCurrentResponse {
   conditions: WeatherConditions;
   trigger_view: Record<string, WeatherTriggerStatus>;
 }
+
+export interface WeatherWarning {
+  id: string;
+  title: string;
+  severity: string;
+  message: string;
+  timestamp?: string;
+  [key: string]: any;
+}
+
+export interface WeatherWarningsResponse {
+  zone: string;
+  warnings: WeatherWarning[];
+}
