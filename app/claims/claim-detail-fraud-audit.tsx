@@ -45,9 +45,8 @@ export default function ClaimDetailFraudAuditScreen() {
         </View>
 
         <PrimaryButton
-          label="View Proof for Rainfall Data"
+          label="View Proof for Rainfall Data 🌧️"
           onPress={() => {}}
-          rightSlot={<Text style={styles.rain}>🌧️</Text>}
         />
       </AppPage>
     </View>
@@ -148,8 +147,5 @@ const styles = StyleSheet.create({
     color: colors.onSurfaceVariant,
     fontSize: 12,
     lineHeight: 18,
-  },
-  rain: {
-    fontSize: 18,
   },
 });
