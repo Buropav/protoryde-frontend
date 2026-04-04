@@ -28,7 +28,7 @@ export default function ClaimDetailFraudAuditScreen() {
       <AppPage contentContainerStyle={styles.content}>
         <SectionCard>
           <Text style={styles.referenceLabel}>Reference ID</Text>
-          <Text style={styles.reference}>Claim #BKS-2026-03-21</Text>
+          <Text style={styles.reference}>#{claim_id || '---'}</Text>
           <View style={styles.statusRow}>
             <View>
               <Text style={styles.statusLabel}>Payout Status</Text>
