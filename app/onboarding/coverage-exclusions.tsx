@@ -26,6 +26,19 @@ interface ExclusionAccordionGroupProps {
   hasBeenOpened: boolean;
 }
 
+const FALLBACK_EXCLUSION_ITEMS: string[] = [
+  'Health, injury, or accident of any kind',
+  'Vehicle damage, repair, or maintenance',
+  'Income loss due to personal decision not to work',
+  'Disruptions caused by war, armed conflict, or military operations',
+  'Pandemic or epidemic declared events',
+  'Nuclear events or radiation incidents',
+  'Disruptions caused by rider platform violations or account suspension',
+  'Pre-existing platform bans or rating-based deactivations',
+  'Income loss unrelated to an active parametric trigger',
+  'Civil unrest or protests the rider participated in',
+];
+
 const ExclusionAccordionGroup = ({ groupKey, label, items, isOpen, onToggle, hasBeenOpened }: ExclusionAccordionGroupProps) => {
   const rotation = useRef(new Animated.Value(isOpen ? 1 : 0)).current;
 
@@ -89,6 +102,8 @@ export default function CoverageExclusionsScreen() {
     execute();
   }, [execute]);
 
+  const exclusionItems = data?.items?.length ? data.items : FALLBACK_EXCLUSION_ITEMS;
+
   const groupedExclusions: { key: string; label: string; items: { text: string; originalIndex: number }[] }[] = [
     { key: 'bodily_vehicle', label: 'Bodily & Vehicle Harms', items: [] },
     { key: 'platform_account', label: 'Platform & Account Issues', items: [] },
@@ -96,21 +111,19 @@ export default function CoverageExclusionsScreen() {
     { key: 'scope_boundaries', label: 'Scope Boundaries', items: [] },
   ];
 
-  if (data?.items) {
-    data.items.forEach((text: string, i: number) => {
-      const lowerText = text.toLowerCase();
-      const itemProps = { text, originalIndex: i };
-      if (lowerText.includes('health') || lowerText.includes('vehicle damage')) {
-        groupedExclusions[0].items.push(itemProps);
-      } else if (lowerText.includes('platform') || lowerText.includes('bans')) {
-        groupedExclusions[1].items.push(itemProps);
-      } else if (lowerText.includes('pandemic') || lowerText.includes('nuclear') || lowerText.includes('civil unrest')) {
-        groupedExclusions[2].items.push(itemProps);
-      } else {
-        groupedExclusions[3].items.push(itemProps);
-      }
-    });
-  }
+  exclusionItems.forEach((text: string, i: number) => {
+    const lowerText = text.toLowerCase();
+    const itemProps = { text, originalIndex: i };
+    if (lowerText.includes('health') || lowerText.includes('vehicle damage')) {
+      groupedExclusions[0].items.push(itemProps);
+    } else if (lowerText.includes('platform') || lowerText.includes('bans')) {
+      groupedExclusions[1].items.push(itemProps);
+    } else if (lowerText.includes('pandemic') || lowerText.includes('nuclear') || lowerText.includes('civil unrest')) {
+      groupedExclusions[2].items.push(itemProps);
+    } else {
+      groupedExclusions[3].items.push(itemProps);
+    }
+  });
 
   const TOTAL_GROUPS = 4;
   const isGateMet = openedOnceGroups.size === TOTAL_GROUPS;
@@ -180,23 +193,22 @@ export default function CoverageExclusionsScreen() {
         </View>
 
         <Text style={styles.sectionTitle}>What's NOT Covered</Text>
-        {loading && !data ? (
-          <Text style={styles.subtitle}>Loading exclusions...</Text>
-        ) : (
-          <View style={styles.accordionList}>
-            {groupedExclusions.map((group) => (
-              <ExclusionAccordionGroup
-                key={group.key}
-                groupKey={group.key}
-                label={group.label}
-                items={group.items}
-                isOpen={openGroupKeys.has(group.key)}
-                onToggle={() => toggleGroup(group.key)}
-                hasBeenOpened={openedOnceGroups.has(group.key)}
-              />
-            ))}
-          </View>
-        )}
+        {loading && !data?.items?.length ? (
+          <Text style={styles.subtitle}>Syncing latest exclusions...</Text>
+        ) : null}
+        <View style={styles.accordionList}>
+          {groupedExclusions.map((group) => (
+            <ExclusionAccordionGroup
+              key={group.key}
+              groupKey={group.key}
+              label={group.label}
+              items={group.items}
+              isOpen={openGroupKeys.has(group.key)}
+              onToggle={() => toggleGroup(group.key)}
+              hasBeenOpened={openedOnceGroups.has(group.key)}
+            />
+          ))}
+        </View>
 
         <TouchableOpacity style={styles.checkRow} onPress={handleCheck} activeOpacity={0.8}>
           <View style={[styles.checkbox, accepted && styles.checkboxChecked, !isGateMet && styles.checkboxDisabled]}>
