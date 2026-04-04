@@ -3,9 +3,25 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { AppPage, PrimaryButton, SectionCard, StatusChip, TopBar } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 import { claimAuditSteps } from '../../src/data/prototype-data';
+import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { claimsService } from '../../src/services/claimsService';
 
 export default function ClaimDetailFraudAuditScreen() {
   const { claim_id } = useLocalSearchParams<{ claim_id: string }>();
+  const { phoneNumber } = useRider();
+
+  const { 
+    data: claimsData, 
+    loading, 
+    error 
+  } = useApiCall(
+    () => claimsService.getRiderClaims(phoneNumber || ''),
+    !!phoneNumber,
+    [phoneNumber]
+  );
+
+  const claim = claimsData?.claims.find(c => c.claim_id === claim_id);
   return (
     <View style={styles.container}>
       <TopBar title="Claim Details" onBack={() => router.back()} />
