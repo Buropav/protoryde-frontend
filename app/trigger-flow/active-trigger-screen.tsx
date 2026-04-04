@@ -43,19 +43,20 @@ export default function ActiveTriggerScreen() {
               <Text style={styles.claimSubtitle}>Zero action needed from you.</Text>
             </View>
             <View style={styles.securityIcon}>
-              <Text style={styles.iconSmall}>🔒</Text>
+              <Text style={styles.iconSmall}>🛡️</Text>
             </View>
           </View>
 
           <View style={styles.timeline}>
-            <View style={styles.timelineLine} />
+            <View style={styles.timelineLineGreen} />
+            <View style={styles.timelineLineGrey} />
             
             <View style={styles.timelineStep}>
               <View style={styles.stepIcon}>
                 <Text style={styles.checkIcon}>✓</Text>
               </View>
               <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>Rain threshold crossed</Text>
+                <Text style={styles.stepTitleDone}>Rain threshold crossed</Text>
                 <Text style={styles.stepTime}>10:22 AM</Text>
               </View>
             </View>
@@ -65,7 +66,7 @@ export default function ActiveTriggerScreen() {
                 <Text style={styles.checkIcon}>✓</Text>
               </View>
               <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>GPS confirmed</Text>
+                <Text style={styles.stepTitleDone}>GPS confirmed</Text>
                 <Text style={styles.stepTime}>10:22 AM</Text>
               </View>
             </View>
@@ -75,7 +76,7 @@ export default function ActiveTriggerScreen() {
                 <Text style={styles.checkIcon}>✓</Text>
               </View>
               <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>Orders cancelled</Text>
+                <Text style={styles.stepTitleDone}>Orders cancelled</Text>
                 <Text style={styles.stepTime}>10:23 AM</Text>
               </View>
             </View>
@@ -85,7 +86,7 @@ export default function ActiveTriggerScreen() {
                 <Text style={styles.checkIcon}>✓</Text>
               </View>
               <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>Fraud check PASSED</Text>
+                <Text style={styles.stepTitleDone}>Fraud check PASSED</Text>
                 <Text style={styles.stepTime}>10:23 AM</Text>
               </View>
             </View>
@@ -95,7 +96,7 @@ export default function ActiveTriggerScreen() {
                 <Text style={styles.spinnerIcon}>⟳</Text>
               </View>
               <View style={styles.stepContent}>
-                <Text style={styles.stepTitle}>Transferring ₹840 to UPI</Text>
+                <Text style={styles.stepTitleActive}>Transferring ₹840 to UPI</Text>
                 <Text style={styles.stepTime}>10:24 AM</Text>
               </View>
             </View>
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
   claimTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.primary,
+    color: '#FFFFFF',
   },
   claimSubtitle: {
     fontSize: 12,
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.primary + '10',
+    backgroundColor: 'rgba(34, 197, 94, 0.12)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -235,11 +236,19 @@ const styles = StyleSheet.create({
     position: 'relative',
     paddingLeft: 8,
   },
-  timelineLine: {
+  timelineLineGreen: {
     position: 'absolute',
     left: 18,
     top: 4,
-    bottom: 32,
+    bottom: 52,
+    width: 2,
+    backgroundColor: '#22C55E',
+  },
+  timelineLineGrey: {
+    position: 'absolute',
+    left: 18,
+    bottom: 8,
+    height: 44,
     width: 2,
     backgroundColor: colors.surfaceContainerHighest,
   },
@@ -253,7 +262,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.onPrimary,
+    backgroundColor: '#22C55E',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
@@ -262,14 +271,15 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.onPrimary,
+    backgroundColor: colors.surfaceContainerHighest,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
   },
   checkIcon: {
-    fontSize: 16,
-    color: '#22C55E',
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
   spinnerIcon: {
     fontSize: 16,
@@ -281,10 +291,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  stepTitle: {
+  stepTitleDone: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.primary,
+    color: '#FFFFFF',
+  },
+  stepTitleActive: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#22C55E',
   },
   stepTime: {
     fontSize: 10,
