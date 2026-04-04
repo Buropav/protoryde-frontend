@@ -21,7 +21,7 @@ export default function PayoutConfirmationScreen() {
         </View>
 
         <View style={styles.statusPill}>
-          <Text style={styles.statusText}>✅ PAYOUT COMPLETE</Text>
+          <Text style={styles.statusText}>PAYOUT COMPLETE</Text>
         </View>
       </View>
 
@@ -30,7 +30,7 @@ export default function PayoutConfirmationScreen() {
         <Text style={styles.transferInfo}>
           Transferred to <Text style={styles.email}>pranav@okicici</Text>
         </Text>
-        <Text style={styles.timestamp}>Today at 10:24 AM — 1 min 47 sec after trigger</Text>
+        <Text style={styles.timestamp}>Processed in 1m 47s (Today, 10:24 AM)</Text>
       </View>
 
       <View style={styles.detailsCard}>
@@ -71,15 +71,17 @@ export default function PayoutConfirmationScreen() {
             <Text style={styles.rowText}>80% avg</Text>
           </View>
 
-          <View style={styles.payoutSentBox}>
-            <View style={styles.payoutSentHeader}>
-              <Text style={styles.payoutSentLabel}>Payout Sent</Text>
-              <Text style={styles.transferTimeLabel}>Transfer Time</Text>
+          <View style={styles.transactionRow}>
+            <View style={styles.txLeft}>
+              <View style={styles.txIconWrap}>
+                <Text style={styles.txIcon}>🏦</Text>
+              </View>
+              <View style={styles.txInfo}>
+                <Text style={styles.txUpi}>pranav@okicici</Text>
+                <Text style={styles.txMeta}>10:24 AM  •  <Text style={styles.txSpeed}>⚡ 1m 47s</Text></Text>
+              </View>
             </View>
-            <View style={styles.payoutSentRow}>
-              <Text style={styles.payoutSentValue}>₹840 → pranav@okicici</Text>
-              <Text style={styles.transferTimeValue}>1 min 47 seconds</Text>
-            </View>
+            <Text style={styles.txAmount}>₹840</Text>
           </View>
         </View>
       </View>
@@ -141,7 +143,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceContainerLowest,
   },
   successHeader: {
-    height: 280,
+    height: 180,
     backgroundColor: '#0D2818',
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
@@ -167,8 +169,8 @@ const styles = StyleSheet.create({
   c5: { top: 48, right: 128, backgroundColor: colors.primaryContainer, transform: [{ rotate: '12deg' }] },
   
   successCircle: {
-    width: 120,
-    height: 120,
+    width: 95,
+    height: 95,
     borderRadius: 60,
     backgroundColor: colors.surfaceContainerLowest,
     alignItems: 'center',
@@ -178,22 +180,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 24,
     zIndex: 10,
+    marginTop: 20,
   },
   innerCircle: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     borderRadius: 50,
     backgroundColor: '#22C55E',
     alignItems: 'center',
     justifyContent: 'center',
   },
   checkIcon: {
-    fontSize: 48,
+    fontSize: 46,
     fontWeight: '700',
     color: colors.onPrimary,
   },
   statusPill: {
-    marginTop: 24,
+    marginTop: 10,
     backgroundColor: '#0D2818',
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -207,7 +210,7 @@ const styles = StyleSheet.create({
   },
   summarySection: {
     paddingHorizontal: 24,
-    marginTop: -20,
+    marginTop: 20,
     zIndex: 20,
     alignItems: 'center',
   },
@@ -302,41 +305,52 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#22C55E',
   },
-  payoutSentBox: {
+  transactionRow: {
     marginTop: 16,
     backgroundColor: colors.surfaceContainerLowest,
     borderRadius: 12,
-    padding: 16,
-  },
-  payoutSentHeader: {
+    padding: 14,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
   },
-  payoutSentLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#22C55E',
-    textTransform: 'uppercase',
+  txLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  transferTimeLabel: {
+  txIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.surfaceContainerHigh,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  txIcon: {
+    fontSize: 16,
+  },
+  txInfo: {
+    gap: 2,
+  },
+  txUpi: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  txMeta: {
     fontSize: 11,
     color: colors.onSurfaceVariant,
   },
-  payoutSentRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  payoutSentValue: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#4ADE80',
-  },
-  transferTimeValue: {
-    fontSize: 14,
-    fontWeight: '700',
+  txSpeed: {
     color: colors.secondary,
+    fontWeight: '600',
+  },
+  txAmount: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#22C55E',
+    letterSpacing: -0.5,
   },
   progressSection: {
     marginHorizontal: 24,
