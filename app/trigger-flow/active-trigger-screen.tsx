@@ -128,6 +128,7 @@ const styles = StyleSheet.create({
     paddingTop: 24,
   },
   alertSection: {
+    marginTop: 30,
     alignItems: 'center',
     marginBottom: 32,
   },
@@ -137,12 +138,12 @@ const styles = StyleSheet.create({
   },
   iconGlow: {
     position: 'absolute',
-    inset: -20,
+    inset: -12,
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 100,
   },
   weatherIcon: {
-    fontSize: 80,
+    fontSize: 56,
   },
   headline: {
     fontSize: 28,
