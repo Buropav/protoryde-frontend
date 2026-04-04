@@ -63,55 +63,51 @@ export default function PremiumReveal() {
                 </View>
               </View>
 
-          <View style={styles.divider} />
+              <View style={styles.divider} />
 
-          <View style={styles.featuresList}>
-            <View style={styles.featureRow}>
-              <Text style={styles.featureIcon}>🔒</Text>
-              <Text style={styles.featureText}>Coverage Cap: ₹2,300 / week</Text>
+              <View style={styles.featuresList}>
+                <View style={styles.featureRow}>
+                  <Text style={styles.featureIcon}>🔒</Text>
+                  <Text style={styles.featureText}>Coverage Cap: ₹2,300 / week</Text>
+                </View>
+                <View style={styles.featureRow}>
+                  <Text style={styles.featureIcon}>⚡</Text>
+                  <Text style={styles.featureText}>Payout Speed: &lt; 2 minutes</Text>
+                </View>
+                <View style={styles.featureRow}>
+                  <Text style={styles.featureIcon}>✨</Text>
+                  <Text style={styles.featureText}>Claim Type: Automatic • Zero Touch</Text>
+                </View>
+              </View>
             </View>
-            <View style={styles.featureRow}>
-              <Text style={styles.featureIcon}>⚡</Text>
-              <Text style={styles.featureText}>Payout Speed: &lt; 2 minutes</Text>
-            </View>
-            <View style={styles.featureRow}>
-              <Text style={styles.featureIcon}>✨</Text>
-              <Text style={styles.featureText}>Claim Type: Automatic • Zero Touch</Text>
-            </View>
-          </View>
-        </View>
 
-        <View style={styles.breakdownCard}>
-          <Text style={styles.breakdownTitle}>PREMIUM BREAKDOWN</Text>
-          
-          <View style={styles.breakdownRow}>
-            <Text style={styles.breakdownLabel}>Base zone rate</Text>
-            <Text style={styles.breakdownValue}>₹82</Text>
-          </View>
-          
-          <View style={styles.breakdownRow}>
-            <Text style={styles.breakdownLabel}>Low flood history discount</Text>
-            <Text style={[styles.breakdownValue, styles.discountValue]}>-₹22</Text>
-          </View>
-          
-          <View style={styles.breakdownRow}>
-            <Text style={styles.breakdownLabel}>Rain forecast this week</Text>
-            <Text style={[styles.breakdownValue, styles.addValue]}>+₹7</Text>
-          </View>
-          
-          <View style={styles.breakdownRowWithBorder}>
-            <View>
-              <Text style={styles.breakdownLabel}>No claims last 4 weeks</Text>
-              <Text style={styles.cashbackActive}>Cashback goal active</Text>
+            <View style={styles.breakdownCard}>
+              <Text style={styles.breakdownTitle}>PREMIUM BREAKDOWN</Text>
+              
+              <View style={styles.breakdownRow}>
+                <Text style={styles.breakdownLabel}>Base zone rate ({premium?.zone})</Text>
+                <Text style={styles.breakdownValue}>₹{basePremium}</Text>
+              </View>
+              
+              {premium?.adjustments.map((adj, index) => (
+                <View key={index} style={styles.breakdownRow}>
+                  <Text style={styles.breakdownLabel}>{adj.factor}</Text>
+                  <Text style={[
+                    styles.breakdownValue, 
+                    adj.amount < 0 ? styles.discountValue : styles.addValue
+                  ]}>
+                    {adj.amount < 0 ? `-₹${Math.abs(adj.amount)}` : `+₹${adj.amount}`}
+                  </Text>
+                </View>
+              ))}
+              
+              <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>Total Your premium</Text>
+                <Text style={styles.totalValue}>₹{finalPremium}</Text>
+              </View>
             </View>
-            <Text style={styles.breakdownValue}>₹0</Text>
-          </View>
-
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total Your premium</Text>
-            <Text style={styles.totalValue}>₹67</Text>
-          </View>
-        </View>
+          </>
+        )}
 
         <View style={styles.infoCard}>
           <Text style={styles.infoIcon}>✓</Text>
@@ -126,11 +122,12 @@ export default function PremiumReveal() {
 
       <View style={styles.footer}>
         <TouchableOpacity 
-          style={styles.activateButton}
+          style={[styles.activateButton, loadingPremium && styles.disabledButton]}
           onPress={() => router.replace('/(tabs)/home-screen')}
           activeOpacity={0.98}
+          disabled={loadingPremium}
         >
-            <Text style={styles.activateText}>Activate ProtoRyde (₹67)</Text>
+            <Text style={styles.activateText}>Activate ProtoRyde (₹{finalPremium})</Text>
           <View style={styles.upiBadge}>
             <Text style={styles.upiText}>UPI</Text>
           </View>
@@ -404,5 +401,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
     color: colors.onSurfaceVariant,
+  },
+  loadingContainer: {
+    paddingVertical: 40,
+    alignItems: 'center',
+    gap: 16,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: colors.onSurfaceVariant,
+    fontWeight: '600',
+  },
+  disabledButton: {
+    opacity: 0.6,
+    backgroundColor: colors.outline,
   },
 });
