@@ -13,7 +13,7 @@ export default function CoverageScreen() {
       <AppPage>
         <SectionCard style={styles.currentPlan}>
           <View style={styles.planHead}>
-            <StatusChip label="Active" tone="active" />
+            <StatusChip label="Active" tone="success" />
             <Text style={styles.planName}>ProtoRyde Basic</Text>
           </View>
           <View style={styles.planRows}>
