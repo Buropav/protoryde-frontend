@@ -3,9 +3,21 @@ import { router } from 'expo-router';
 import { AppPage, PrimaryButton, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { policyService } from '../../src/services/policyService';
 
 export default function HomeScreen() {
-  const { riderName } = useRider();
+  const { riderName, phoneNumber } = useRider();
+
+  const { 
+    data: policy, 
+    loading: loadingPolicy, 
+    error: policyError 
+  } = useApiCall(
+    () => policyService.getCurrentPolicy(phoneNumber || ''),
+    !!phoneNumber,
+    [phoneNumber]
+  );
 
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
