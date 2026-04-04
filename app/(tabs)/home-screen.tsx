@@ -7,6 +7,7 @@ import { useApiCall } from '../../src/hooks/useApiCall';
 import { policyService } from '../../src/services/policyService';
 import { weatherService } from '../../src/services/weatherService';
 import { mockDataService } from '../../src/services/mockDataService';
+import { claimsService } from '../../src/services/claimsService';
 
 export default function HomeScreen() {
   const { riderName, phoneNumber, zone } = useRider();
@@ -41,6 +42,16 @@ export default function HomeScreen() {
     [zone]
   );
 
+  const { 
+    data: claimsData, 
+    loading: loadingClaims, 
+    error: claimsError 
+  } = useApiCall(
+    () => claimsService.getRiderClaims(phoneNumber || ''),
+    !!phoneNumber,
+    [phoneNumber]
+  );
+
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     month: 'long',
@@ -55,6 +66,31 @@ export default function HomeScreen() {
     if (aqi <= 200) return 'Very Unhealthy';
     return 'Hazardous';
   };
+
+  const activityItems = [];
+  if (policy && policy.status === 'active') {
+    activityItems.push({
+      id: 'policy-active',
+      title: 'Coverage activated',
+      date: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(policy.week_start_date)),
+      amount: `₹${policy.final_premium} charged`,
+      icon: '✅',
+      route: '/account/weekly-ledger' as any
+    });
+  }
+
+  if (claimsData?.claims) {
+    claimsData.claims.slice(0, 2).forEach(claim => {
+      activityItems.push({
+        id: claim.claim_id,
+        title: `Claim ${claim.payout_status === 'validated' ? 'validated' : 'processing'}`,
+        date: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(claim.created_at)),
+        amount: claim.payout_amount > 0 ? `₹${claim.payout_amount} paid` : 'Processing',
+        icon: claim.payout_status === 'validated' ? '🛡️' : '⏳',
+        route: `/claims/claim-detail-fraud-audit` as any
+      });
+    });
+  }
 
   return (
     <View style={styles.container}>
@@ -186,23 +222,22 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.activityRow} onPress={() => router.push('/account/weekly-ledger')}>
-            <Text style={styles.activityIcon}>✅</Text>
-            <View style={styles.activityBody}>
-              <Text style={styles.activityTitle}>Coverage activated</Text>
-              <Text style={styles.activityDate}>Mon Mar 31</Text>
-            </View>
-            <Text style={styles.activityAmount}>₹67 charged</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.activityRow} onPress={() => router.push('/claims/claim-detail-fraud-audit')}>
-            <Text style={styles.activityIcon}>🛡️</Text>
-            <View style={styles.activityBody}>
-              <Text style={styles.activityTitle}>Claim validated</Text>
-              <Text style={styles.activityDate}>Fri Apr 03</Text>
-            </View>
-            <Text style={styles.activityAmount}>₹840 paid</Text>
-          </TouchableOpacity>
+          {activityItems.length > 0 ? activityItems.map(item => (
+            <TouchableOpacity 
+              key={item.id} 
+              style={styles.activityRow} 
+              onPress={() => router.push(item.route)}
+            >
+              <Text style={styles.activityIcon}>{item.icon}</Text>
+              <View style={styles.activityBody}>
+                <Text style={styles.activityTitle}>{item.title}</Text>
+                <Text style={styles.activityDate}>{item.date}</Text>
+              </View>
+              <Text style={styles.activityAmount}>{item.amount}</Text>
+            </TouchableOpacity>
+          )) : (
+            <Text style={styles.emptyActivityText}>No recent activity</Text>
+          )}
         </SectionCard>
       </AppPage>
     </View> 
@@ -446,5 +481,11 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: 12,
     fontWeight: '700',
+  },
+  emptyActivityText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 13,
+    textAlign: 'center',
+    marginVertical: 12,
   },
 });
