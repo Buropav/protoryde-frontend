@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { AppPage, PrimaryButton, SectionCard, StatusChip, TopBar } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 import { claimAuditSteps } from '../../src/data/prototype-data';
 
 export default function ClaimDetailFraudAuditScreen() {
+  const { claim_id } = useLocalSearchParams<{ claim_id: string }>();
   return (
     <View style={styles.container}>
       <TopBar title="Claim Details" onBack={() => router.back()} />
