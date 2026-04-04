@@ -1,8 +1,19 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, type DimensionValue } from 'react-native';
 import { router } from 'expo-router';
+import { useMemo } from 'react';
 import { colors } from '../../src/constants/colors';
 
+function getCoverageColor(days: number): string {
+  if (days >= 5) return '#22C55E';
+  if (days >= 3) return '#F59E0B';
+  return '#EF4444';
+}
+
 export default function PayoutConfirmationScreen() {
+  const daysRemaining = 3;
+  const coverageColor = useMemo(() => getCoverageColor(daysRemaining), [daysRemaining]);
+  const fillWidth = `${Math.round((daysRemaining / 7) * 100)}%` as DimensionValue;
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -86,10 +97,10 @@ export default function PayoutConfirmationScreen() {
       <View style={styles.progressSection}>
         <View style={styles.progressHeader}>
           <Text style={styles.progressLabel}>CURRENT COVERAGE VALIDITY</Text>
-          <Text style={styles.protectedAmount}>₹840 protected</Text>
+          <Text style={[styles.protectedAmount, { color: coverageColor }]}>{daysRemaining} days remaining</Text>
         </View>
         <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: '65%' }]} />
+          <View style={[styles.progressFill, { width: fillWidth, backgroundColor: coverageColor }]} />
         </View>
       </View>
 
@@ -353,17 +364,15 @@ const styles = StyleSheet.create({
   protectedAmount: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#22C55E',
   },
   progressBar: {
     height: 8,
-    backgroundColor: colors.surfaceContainer,
+    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 4,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#22C55E',
     borderRadius: 4,
   },
   actions: {
