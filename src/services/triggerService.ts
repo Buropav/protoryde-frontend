@@ -14,6 +14,6 @@ export const triggerService = {
     return apiPost<TriggerSimulateResponse>('/triggers/simulate', params);
   },
   getExclusions: async (): Promise<ExclusionsResponse> => {
-    return apiGet<ExclusionsResponse>('/triggers/exclusions');
+    return apiGet<ExclusionsResponse>('/exclusions');
   }
 };

@@ -70,16 +70,25 @@ async function handleResponse<T>(response: Response): Promise<T> {
       const errorData = await response.json();
       
       // Extract error code if available
+      // Backend sends: HTTPException(detail={"error": "CODE", "message": "..."})
+      // FastAPI wraps this as: {"detail": {"error": "CODE", "message": "..."}}
       if (errorData.code) {
         errorCode = errorData.code;
+      } else if (errorData.detail && typeof errorData.detail === 'object' && errorData.detail.error) {
+        errorCode = errorData.detail.error;
+      } else if (errorData.error) {
+        errorCode = errorData.error;
       }
       
       // Extract error message
       if (errorData.detail) {
-        // Backend returns `detail` string or array
-        errorMessage = typeof errorData.detail === 'string' 
-          ? errorData.detail 
-          : JSON.stringify(errorData.detail);
+        if (typeof errorData.detail === 'string') {
+          errorMessage = errorData.detail;
+        } else if (typeof errorData.detail === 'object' && errorData.detail.message) {
+          errorMessage = errorData.detail.message;
+        } else {
+          errorMessage = JSON.stringify(errorData.detail);
+        }
       } else if (errorData.message) {
         errorMessage = errorData.message;
       }
