@@ -6,13 +6,14 @@ import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { premiumService } from '../../src/services/premiumService';
+import { weatherService } from '../../src/services/weatherService';
 
 export default function ZoneSelectionScreen() {
-  const { zone: contextZone } = useRider();
+  const { zone: contextZone, setRiderInfo } = useRider();
   const [selectedZone, setSelectedZone] = useState(contextZone || 'HSR Layout');
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Fetch supported zones from model status
+  // Fetch supported zones and defaults from model status
   const { 
     data: modelStatus, 
     loading: loadingZones 
@@ -21,6 +22,33 @@ export default function ZoneSelectionScreen() {
   const availableZones = modelStatus?.zone_defaults 
     ? Object.keys(modelStatus.zone_defaults) 
     : ['HSR Layout'];
+
+  // Fetch live premium for the selected zone
+  const { 
+    data: premiumData, 
+    loading: loadingPremium 
+  } = useApiCall(
+    () => premiumService.predictPremium({ zone: selectedZone }),
+    true,
+    [selectedZone]
+  );
+
+  // Fetch current weather for insights
+  const { 
+    data: weatherData, 
+    loading: loadingWeather 
+  } = useApiCall(
+    () => weatherService.getCurrentWeather(selectedZone, true),
+    true,
+    [selectedZone]
+  );
+
+  const zoneRisk = modelStatus?.zone_defaults?.[selectedZone]?.risk_score || 'Medium';
+
+  const handleContinue = () => {
+    setRiderInfo({ zone: selectedZone });
+    router.push('/(auth)/premium-reveal');
+  };
 
   return (
     <View style={styles.container}>
@@ -122,8 +150,14 @@ export default function ZoneSelectionScreen() {
         <SectionCard style={styles.premiumCard}>
           <Text style={styles.premiumCaption}>Base Premium Preview</Text>
           <View style={styles.premiumRow}>
-            <Text style={styles.premiumAmount}>₹82</Text>
-            <Text style={styles.premiumUnit}>/week</Text>
+            {loadingPremium ? (
+              <ActivityIndicator size="large" color={colors.onPrimary} style={{ marginRight: 10 }} />
+            ) : (
+              <>
+                <Text style={styles.premiumAmount}>₹{premiumData?.base_premium || '--'}</Text>
+                <Text style={styles.premiumUnit}>/week</Text>
+              </>
+            )}
           </View>
           <Text style={styles.premiumText}>
             Premium is adjusted based on real-time meteorological data and your selected primary operation zone.
@@ -133,10 +167,10 @@ export default function ZoneSelectionScreen() {
         <TouchableOpacity
           style={styles.continueButton}
           activeOpacity={0.9}
-          onPress={() => router.push('/(auth)/premium-reveal')}
+          onPress={handleContinue}
         >
           <Text style={styles.continueText}>Continue to Premium Calculation</Text>
-          <Text style={styles.arrowIcon}>→</Text>
+          <Text style={styles.arrowIcon}>{'\u2192'}</Text>
         </TouchableOpacity>
       </AppPage>
     </View>
