@@ -76,7 +76,7 @@ export default function HomeScreen() {
 
         <SectionCard>
           <View style={styles.sectionHeadRow}>
-            <Text style={styles.sectionTitle}>Recent Activity</Text>
+            <Text style={styles.sectionTitle}>Notifications</Text>
             <TouchableOpacity onPress={() => router.push('/account/notifications-center')}>
               <Text style={styles.link}>See all</Text>
             </TouchableOpacity>
