@@ -1,9 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
-import { AppPage, PrimaryButton, SectionCard, StatusChip } from '../../src/components/ui';
+import { AppPage, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
+import { useRider } from '../../src/hooks/useRider';
 
 export default function ZoneSelectionScreen() {
+  const { zone } = useRider();
+
   return (
     <View style={styles.container}>
       <AppPage contentContainerStyle={styles.content}>
@@ -25,7 +28,7 @@ export default function ZoneSelectionScreen() {
         <View style={styles.selectorWrap}>
           <Text style={styles.label}>Risk Assessment Zone</Text>
           <TouchableOpacity style={styles.zoneSelector} activeOpacity={0.85}>
-            <Text style={styles.zoneText}>HSR Layout</Text>
+            <Text style={styles.zoneText}>{zone || 'HSR Layout'}</Text>
             <Text style={styles.zoneIcon}>⌄</Text>
           </TouchableOpacity>
         </View>
