@@ -13,7 +13,6 @@ const menuItems: Array<{
   { id: 'personal', icon: '👤', title: 'Personal Information', subtitle: 'Name, phone, DOB', route: '/(auth)/personal-details' },
   { id: 'zone', icon: '📍', title: 'Delivery Zone', subtitle: 'HSR Layout, Bangalore', route: '/onboarding/zone-selection' },
   { id: 'payments', icon: '💳', title: 'Payment Methods', subtitle: 'UPI and bank account', route: '/account/weekly-ledger' },
-  { id: 'notifications', icon: '🔔', title: 'Notifications', subtitle: 'Alerts, triggers, reminders', route: '/account/notifications-center' },
   { id: 'policy', icon: '🛡️', title: 'Insurance Policy', subtitle: 'Terms and coverage details', route: '/account/policy-document' },
   { id: 'claims', icon: '🧾', title: 'Recent Claim Detail', subtitle: 'Fraud audit and evidence', route: '/claims/claim-detail-fraud-audit' },
 ];
@@ -69,7 +68,7 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingTop: 28,
-    paddingBottom: 12,
+    paddingBottom: 20,
   },
   title: {
     color: colors.primary,
@@ -172,5 +171,6 @@ const styles = StyleSheet.create({
     color: colors.onSurfaceVariant,
     fontSize: 11,
     textAlign: 'center',
+    marginBottom: -30,
   },
 });
