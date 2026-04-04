@@ -78,7 +78,14 @@ export default function CoverageScreen() {
               <Text style={styles.rowLabel}>Protection Used This Week</Text>
               <Text style={styles.rowValue}>₹{totalPayoutUsage} / ₹{policy?.coverage_cap ?? '---'}</Text>
             </View>
-            <View style={styles.meterTrack}><View style={styles.meterFill} /></View>
+            <View style={styles.meterTrack}>
+              <View 
+                style={[
+                  styles.meterFill, 
+                  { width: `${Math.min((totalPayoutUsage / (policy?.coverage_cap || 1)) * 100, 100)}%` }
+                ]} 
+              />
+            </View>
           </View>
         </SectionCard>
 
@@ -177,7 +184,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   meterFill: {
-    width: '0%',
     height: '100%',
     backgroundColor: '#1DD460',
   },
