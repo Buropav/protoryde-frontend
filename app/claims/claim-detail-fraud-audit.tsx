@@ -34,7 +34,10 @@ export default function ClaimDetailFraudAuditScreen() {
               <Text style={styles.statusLabel}>Payout Status</Text>
               <View style={styles.payoutRow}>
                 <Text style={styles.payout}>₹{claim?.payout_amount ?? '---'}</Text>
-                <StatusChip label="Paid" tone="success" />
+                <StatusChip 
+                  label={claim?.payout_status || 'Processing'} 
+                  tone={claim?.payout_status === 'validated' ? 'success' : claim?.payout_status === 'rejected' ? 'error' : 'warning'} 
+                />
               </View>
             </View>
           </View>
