@@ -63,13 +63,13 @@ interface PrimaryButtonProps {
 export function PrimaryButton({ label, subLabel, onPress, rightSlot }: PrimaryButtonProps) {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.95}>
-      <LinearGradient colors={[colors.primary, colors.primaryContainer]} style={styles.primaryButton}>
+      <View style={styles.primaryButton}>
         <View>
           <Text style={styles.primaryLabel}>{label}</Text>
           {subLabel ? <Text style={styles.primarySubLabel}>{subLabel}</Text> : null}
         </View>
         {rightSlot}
-      </LinearGradient>
+      </View>
     </TouchableOpacity>
   );
 }
@@ -179,7 +179,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
   },
   primaryLabel: {
     color: colors.onPrimary,
