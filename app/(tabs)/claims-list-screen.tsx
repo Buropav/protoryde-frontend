@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
@@ -28,29 +28,38 @@ export default function ClaimsListScreen() {
       </View>
 
       <AppPage>
-        {claims.map((claim) => (
-          <TouchableOpacity
-            key={claim.claim_id}
-            onPress={() => router.push('/claims/claim-detail-fraud-audit')}
-            activeOpacity={0.85}
-          >
-            <SectionCard>
-              <View style={styles.claimHead}>
-                <Text style={styles.claimTitle}>
-                  {claim.trigger_type.replace(/_/g, ' ')} - {zone}
-                </Text>
-                <Text style={styles.status}>{claim.payout_status}</Text>
-              </View>
-              <View style={styles.claimMeta}>
-                <Text style={styles.claimDate}>
-                  {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(claim.created_at))}
-                </Text>
-                <Text style={styles.claimPayout}>₹{claim.payout_amount}</Text>
-              </View>
-              <Text style={styles.openLink}>Open claim details and fraud audit →</Text>
-            </SectionCard>
-          </TouchableOpacity>
-        ))}
+        {loadingClaims ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.loadingText}>Fetching your claims...</Text>
+          </View>
+        ) : (
+          <>
+            {claims.map((claim) => (
+              <TouchableOpacity
+                key={claim.claim_id}
+                onPress={() => router.push('/claims/claim-detail-fraud-audit')}
+                activeOpacity={0.85}
+              >
+                <SectionCard>
+                  <View style={styles.claimHead}>
+                    <Text style={styles.claimTitle}>
+                      {claim.trigger_type.replace(/_/g, ' ')} - {zone}
+                    </Text>
+                    <Text style={styles.status}>{claim.payout_status}</Text>
+                  </View>
+                  <View style={styles.claimMeta}>
+                    <Text style={styles.claimDate}>
+                      {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(claim.created_at))}
+                    </Text>
+                    <Text style={styles.claimPayout}>₹{claim.payout_amount}</Text>
+                  </View>
+                  <Text style={styles.openLink}>Open claim details and fraud audit →</Text>
+                </SectionCard>
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
 
         <SectionCard style={styles.infoCard}>
           <Text style={styles.infoTitle}>How Claims Work</Text>
@@ -101,6 +110,18 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingVertical: 4,
     paddingHorizontal: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    padding: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  loadingText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 14,
+    fontWeight: '600',
   },
   claimMeta: {
     flexDirection: 'row',
