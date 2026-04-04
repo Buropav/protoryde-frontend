@@ -37,6 +37,14 @@ export default function HomeScreen() {
     year: 'numeric',
   }).format(new Date());
 
+  const getAqiLabel = (aqi: number) => {
+    if (aqi <= 50) return 'Good';
+    if (aqi <= 100) return 'Moderate';
+    if (aqi <= 150) return 'Unhealthy';
+    if (aqi <= 200) return 'Very Unhealthy';
+    return 'Hazardous';
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -127,7 +135,13 @@ export default function HomeScreen() {
               </Text>
               <Text style={styles.metricState}>No trigger</Text>
             </View>
-            <View style={styles.metricCard}><Text style={styles.metricLabel}>AQI</Text><Text style={styles.metricValue}>Moderate 142</Text><Text style={styles.metricState}>No trigger</Text></View>
+            <View style={styles.metricCard}>
+              <Text style={styles.metricLabel}>AQI</Text>
+              <Text style={styles.metricValue}>
+                {weather?.conditions ? `${getAqiLabel(weather.conditions.aqi)} ${weather.conditions.aqi}` : '--'}
+              </Text>
+              <Text style={styles.metricState}>No trigger</Text>
+            </View>
             <View style={styles.metricCard}><Text style={styles.metricLabel}>Banks</Text><Text style={styles.metricValue}>Normal</Text><Text style={styles.metricState}>No trigger</Text></View>
           </View>
         </SectionCard>
