@@ -39,8 +39,10 @@ export default function NotificationsCenterScreen() {
 
         {items.map((item) => (
           <SectionCard key={item.id} style={styles.noticeCard}>
-            {item.unread ? <View style={styles.unreadDot} /> : null}
-            <View style={styles.noticeIcon}><Text style={styles.iconText}>{item.icon}</Text></View>
+            <View style={styles.noticeIcon}>
+              {item.unread ? <View style={styles.unreadDot} /> : null}
+              <Text style={styles.iconText}>{item.icon}</Text>
+            </View>
             <View style={styles.noticeBody}>
               <View style={styles.noticeHeader}>
                 <Text style={styles.noticeTitle}>{item.title}</Text>
@@ -89,16 +91,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     alignItems: 'flex-start',
-    position: 'relative',
-  },
-  unreadDot: {
-    position: 'absolute',
-    right: 16,
-    top: 14,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.secondary,
   },
   noticeIcon: {
     width: 44,
@@ -107,6 +99,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceContainerHigh,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
+  },
+  unreadDot: {
+    position: 'absolute',
+    top: -3,
+    left: -3,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.secondary,
+    zIndex: 2,
+    borderWidth: 2,
+    borderColor: colors.surfaceContainerLowest,
   },
   iconText: {
     fontSize: 20,
