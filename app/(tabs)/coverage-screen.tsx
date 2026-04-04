@@ -26,7 +26,6 @@ export default function CoverageScreen() {
           <View style={styles.meterBlock}>
             <View style={styles.row}><Text style={styles.rowLabel}>Protection Used This Week</Text><Text style={styles.rowValue}>₹0 / ₹2,300</Text></View>
             <View style={styles.meterTrack}><View style={styles.meterFill} /></View>
-            <Text style={styles.meterNote}>Full protection available</Text>
           </View>
         </SectionCard>
 
@@ -76,7 +75,7 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 20,
     paddingTop: 28,
-    paddingBottom: 12,
+    paddingBottom: 20,
   },
   title: {
     color: colors.primary,
@@ -130,10 +129,6 @@ const styles = StyleSheet.create({
     width: '0%',
     height: '100%',
     backgroundColor: '#1DD460',
-  },
-  meterNote: {
-    color: colors.onPrimaryContainer,
-    fontSize: 11,
   },
   sectionTitle: {
     color: colors.onSurface,
