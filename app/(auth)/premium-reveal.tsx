@@ -53,6 +53,8 @@ export default function PremiumReveal() {
               <Text style={styles.premiumLabel}>YOUR WEEKLY PREMIUM</Text>
               <View style={styles.priceContainer}>
                 <Text style={styles.price}>₹{finalPremium}</Text>
+                <View style={styles.discountBadge}>
+                  <Text style={styles.strikePrice}>₹{basePremium} base</Text>
 
           <View style={styles.divider} />
 
