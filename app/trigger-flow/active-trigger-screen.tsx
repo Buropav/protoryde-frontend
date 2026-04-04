@@ -94,7 +94,7 @@ export default function ActiveTriggerScreen() {
           <Text style={styles.timestamp}>10:22 AM, Friday Mar 21, 2026</Text>
         </View>
 
-        {error ? <ErrorBanner message={error} onRetry={refetch} /> : null}
+        {error && <ErrorBanner message={error.userMessage} onRetry={refetch} />}
 
         <View style={styles.claimCard}>
           <View style={styles.claimHeader}>

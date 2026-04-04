@@ -7,6 +7,7 @@ import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { premiumService } from '../../src/services/premiumService';
 import { weatherService } from '../../src/services/weatherService';
+import { ErrorBanner } from '../../src/components/ErrorBanner';
 
 export default function ZoneSelectionScreen() {
   const { zone: contextZone, setRiderInfo } = useRider();
@@ -16,7 +17,9 @@ export default function ZoneSelectionScreen() {
   // Fetch supported zones and defaults from model status
   const { 
     data: modelStatus, 
-    loading: loadingZones 
+    loading: loadingZones,
+    error: modelStatusError,
+    refetch: refetchModelStatus
   } = useApiCall(premiumService.getModelStatus);
 
   const availableZones = modelStatus?.zone_defaults 
@@ -26,7 +29,9 @@ export default function ZoneSelectionScreen() {
   // Fetch live premium for the selected zone
   const { 
     data: premiumData, 
-    loading: loadingPremium 
+    loading: loadingPremium,
+    error: premiumError,
+    refetch: refetchPremium
   } = useApiCall(
     () => premiumService.predictPremium({ zone: selectedZone }),
     true,
@@ -36,7 +41,9 @@ export default function ZoneSelectionScreen() {
   // Fetch current weather for insights
   const { 
     data: weatherData, 
-    loading: loadingWeather 
+    loading: loadingWeather,
+    error: weatherError,
+    refetch: refetchWeather
   } = useApiCall(
     () => weatherService.getCurrentWeather(selectedZone, true),
     true,
@@ -67,6 +74,27 @@ export default function ZoneSelectionScreen() {
             <Text style={styles.title}>Confirm Your Zone</Text>
           </View>
         </View>
+
+        {modelStatusError && (
+          <ErrorBanner 
+            message={modelStatusError.userMessage}
+            onRetry={refetchModelStatus}
+          />
+        )}
+
+        {premiumError && (
+          <ErrorBanner 
+            message={premiumError.userMessage}
+            onRetry={refetchPremium}
+          />
+        )}
+
+        {weatherError && (
+          <ErrorBanner 
+            message={weatherError.userMessage}
+            onRetry={refetchWeather}
+          />
+        )}
 
         <View style={styles.selectorWrap}>
           <Text style={styles.label}>Risk Assessment Zone</Text>

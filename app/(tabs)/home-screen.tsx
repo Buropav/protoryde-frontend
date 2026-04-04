@@ -8,6 +8,7 @@ import { policyService } from '../../src/services/policyService';
 import { weatherService } from '../../src/services/weatherService';
 import { mockDataService } from '../../src/services/mockDataService';
 import { claimsService } from '../../src/services/claimsService';
+import { ErrorBanner } from '../../src/components/ErrorBanner';
 
 export default function HomeScreen() {
   const { riderName, phoneNumber, zone } = useRider();
@@ -15,7 +16,8 @@ export default function HomeScreen() {
   const { 
     data: policy, 
     loading: loadingPolicy, 
-    error: policyError 
+    error: policyError,
+    refetch: refetchPolicy
   } = useApiCall(
     () => policyService.getCurrentPolicy(phoneNumber || ''),
     !!phoneNumber,
@@ -25,7 +27,8 @@ export default function HomeScreen() {
   const { 
     data: weather, 
     loading: loadingWeather, 
-    error: weatherError 
+    error: weatherError,
+    refetch: refetchWeather
   } = useApiCall(
     () => weatherService.getCurrentWeather(zone || 'HSR Layout', false),
     !!zone,
@@ -35,7 +38,8 @@ export default function HomeScreen() {
   const { 
     data: branchMetrics, 
     loading: loadingBranches, 
-    error: branchError 
+    error: branchError,
+    refetch: refetchBranches
   } = useApiCall(
     () => mockDataService.getBranchMetrics(zone || 'HSR Layout'),
     !!zone,
@@ -45,7 +49,8 @@ export default function HomeScreen() {
   const { 
     data: claimsData, 
     loading: loadingClaims, 
-    error: claimsError 
+    error: claimsError,
+    refetch: refetchClaims
   } = useApiCall(
     () => claimsService.getRiderClaims(phoneNumber || ''),
     !!phoneNumber,
@@ -107,6 +112,34 @@ export default function HomeScreen() {
       </View>
 
       <AppPage contentContainerStyle={styles.content}>
+        {policyError && (
+          <ErrorBanner 
+            message={policyError.userMessage}
+            onRetry={refetchPolicy}
+          />
+        )}
+
+        {weatherError && (
+          <ErrorBanner 
+            message={weatherError.userMessage}
+            onRetry={refetchWeather}
+          />
+        )}
+
+        {branchError && (
+          <ErrorBanner 
+            message={branchError.userMessage}
+            onRetry={refetchBranches}
+          />
+        )}
+
+        {claimsError && (
+          <ErrorBanner 
+            message={claimsError.userMessage}
+            onRetry={refetchClaims}
+          />
+        )}
+
         <View style={styles.coverageCard}>
           <View style={styles.coverageHead}>
             <View style={[

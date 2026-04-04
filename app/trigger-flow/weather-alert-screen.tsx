@@ -68,7 +68,20 @@ export default function WeatherAlertScreen() {
     refetchSimulation();
   };
 
-  const hasError = weatherError || policyError || simulationError;
+  const getErrorMessage = () => {
+    if (weatherError) {
+      return weatherError.userMessage;
+    }
+    if (policyError) {
+      return policyError.userMessage;
+    }
+    if (simulationError) {
+      return simulationError.userMessage;
+    }
+    return null;
+  };
+
+  const hasError = !!getErrorMessage();
   const isLoading = loadingWeather || loadingPolicy || loadingSimulation;
 
   return (
@@ -82,7 +95,7 @@ export default function WeatherAlertScreen() {
       </View>
 
       <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
-        {hasError ? <ErrorBanner message={hasError} onRetry={handleRetry} /> : null}
+        {hasError && <ErrorBanner message={getErrorMessage() || ''} onRetry={handleRetry} />}
         {isLoading ? (
           <View style={styles.loadingWrap}>
             <ActivityIndicator size="large" color={colors.primary} />

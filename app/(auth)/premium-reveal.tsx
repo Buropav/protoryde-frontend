@@ -7,16 +7,19 @@ import { useApiCall } from '../../src/hooks/useApiCall';
 import { premiumService } from '../../src/services/premiumService';
 import { demoService } from '../../src/services/demoService';
 import { LoadingOverlay } from '../../src/components/LoadingOverlay';
+import { ErrorBanner } from '../../src/components/ErrorBanner';
 
 export default function PremiumReveal() {
   const { riderName, zone, upiId, phoneNumber, setPolicyId, setBootstrapped, setRiderInfo } = useRider();
   const [isActivating, setIsActivating] = useState(false);
+  const [activationError, setActivationError] = useState<string | null>(null);
 
   // Fetch final premium calculation
   const { 
     data: premium, 
     loading: loadingPremium, 
-    error: premiumError 
+    error: premiumError,
+    refetch: refetchPremium
   } = useApiCall(
     () => premiumService.predictPremium({ zone, prefer_ml: true }),
     true,
@@ -30,6 +33,7 @@ export default function PremiumReveal() {
   const handleActivate = async () => {
     try {
       setIsActivating(true);
+      setActivationError(null);
       
       const response = await demoService.bootstrapDemo({
         rider_id: phoneNumber, // Using phone as unique ID
@@ -47,10 +51,8 @@ export default function PremiumReveal() {
       router.replace('/(tabs)/home-screen');
     } catch (error: any) {
       console.error('Activation failed:', error);
-      Alert.alert(
-        'Activation Failed',
-        error.message || 'We could not activate your policy at this time. Please try again.'
-      );
+      const errorMessage = error?.userMessage || error?.message || 'We could not activate your policy at this time. Please try again.';
+      setActivationError(errorMessage);
     } finally {
       setIsActivating(false);
     }
@@ -72,6 +74,20 @@ export default function PremiumReveal() {
             <Text style={styles.sectionTitle}>Your ProtoRyde Plan</Text>
           </View>
         </View>
+
+        {premiumError && (
+          <ErrorBanner 
+            message={premiumError.userMessage}
+            onRetry={refetchPremium}
+          />
+        )}
+
+        {activationError && (
+          <ErrorBanner 
+            message={activationError}
+            onRetry={handleActivate}
+          />
+        )}
 
         {loadingPremium ? (
           <View style={styles.loadingContainer}>

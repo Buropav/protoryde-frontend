@@ -5,6 +5,7 @@ import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { claimsService } from '../../src/services/claimsService';
+import { ErrorBanner } from '../../src/components/ErrorBanner';
 
 export default function ClaimsListScreen() {
   const { phoneNumber, zone } = useRider();
@@ -12,7 +13,8 @@ export default function ClaimsListScreen() {
   const { 
     data: claimsData, 
     loading: loadingClaims, 
-    error: claimsError 
+    error: claimsError,
+    refetch: refetchClaims
   } = useApiCall(
     () => claimsService.getRiderClaims(phoneNumber || ''),
     !!phoneNumber,
@@ -28,6 +30,13 @@ export default function ClaimsListScreen() {
       </View>
 
       <AppPage>
+        {claimsError && (
+          <ErrorBanner 
+            message={claimsError.userMessage}
+            onRetry={refetchClaims}
+          />
+        )}
+
         {loadingClaims ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.primary} />

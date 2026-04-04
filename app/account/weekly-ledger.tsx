@@ -84,7 +84,18 @@ export default function WeeklyLedgerScreen() {
 
   const lifetimeProtected = ledgerRows.reduce((sum, row) => sum + row.netPaid, 0);
   const isLoading = loadingHistory || loadingClaims;
-  const errorMessage = historyError || claimsError;
+  
+  const getErrorMessage = () => {
+    if (historyError) {
+      return historyError.userMessage;
+    }
+    if (claimsError) {
+      return claimsError.userMessage;
+    }
+    return null;
+  };
+
+  const errorMessage = getErrorMessage();
 
   const handleRetry = () => {
     refetchHistory();

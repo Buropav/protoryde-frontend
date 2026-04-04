@@ -5,6 +5,7 @@ import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { premiumService } from '../../src/services/premiumService';
+import { ErrorBanner } from '../../src/components/ErrorBanner';
 
 export default function PartnerDetails() {
   const { zone: contextZone, upiId: contextUpiId, setRiderInfo } = useRider();
@@ -13,7 +14,9 @@ export default function PartnerDetails() {
 
   const { 
     data: premiumData, 
-    loading: premiumLoading 
+    loading: premiumLoading,
+    error: premiumError,
+    refetch: refetchPremium
   } = useApiCall(
     () => premiumService.predictPremium({ zone }),
     true,
@@ -120,6 +123,13 @@ export default function PartnerDetails() {
               />
             </View>
           </View>
+
+          {premiumError && (
+            <ErrorBanner 
+              message={premiumError.userMessage}
+              onRetry={refetchPremium}
+            />
+          )}
 
           <View style={styles.infoCard}>
             <Text style={styles.infoIcon}>⚡</Text>
