@@ -87,3 +87,26 @@ export interface FraudLayer {
   reason: string;
   evidence: Record<string, any>;
 }
+
+export interface WeatherConditions {
+  temp_c: number;
+  rain_24h_mm: number;
+  wind_kph: number;
+  aqi: number;
+  description: string;
+}
+
+export interface WeatherTriggerStatus {
+  threshold: number;
+  breached: boolean;
+}
+
+export interface WeatherCurrentResponse {
+  zone: string;
+  timestamp: string;
+  source: string;
+  is_simulated: boolean;
+  fixture_version?: string;
+  conditions: WeatherConditions;
+  trigger_view: Record<string, WeatherTriggerStatus>;
+}
