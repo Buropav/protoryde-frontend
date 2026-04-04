@@ -5,9 +5,10 @@ import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { policyService } from '../../src/services/policyService';
+import { weatherService } from '../../src/services/weatherService';
 
 export default function HomeScreen() {
-  const { riderName, phoneNumber } = useRider();
+  const { riderName, phoneNumber, zone } = useRider();
 
   const { 
     data: policy, 
@@ -17,6 +18,16 @@ export default function HomeScreen() {
     () => policyService.getCurrentPolicy(phoneNumber || ''),
     !!phoneNumber,
     [phoneNumber]
+  );
+
+  const { 
+    data: weather, 
+    loading: loadingWeather, 
+    error: weatherError 
+  } = useApiCall(
+    () => weatherService.getCurrentWeather(zone || 'HSR Layout', false),
+    !!zone,
+    [zone]
   );
 
   const formattedDate = new Intl.DateTimeFormat('en-US', {
