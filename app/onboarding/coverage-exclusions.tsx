@@ -1,12 +1,21 @@
 import { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
-import { AppPage, PrimaryButton, SectionCard } from '../../src/components/ui';
+import { AppPage, SectionCard } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
-import { coverageItems, exclusionItems } from '../../src/data/prototype-data';
+import { coverageItems } from '../../src/data/prototype-data';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { exclusionsService } from '../../src/services/exclusionsService';
 
 export default function CoverageExclusionsScreen() {
   const [accepted, setAccepted] = useState(false);
+
+  const { 
+    data: exclusionsData, 
+    loading: loadingExclusions 
+  } = useApiCall(exclusionsService.getExclusions);
+
+  const exclusionItems = exclusionsData?.items || [];
 
   return (
     <View style={styles.container}>
@@ -41,15 +50,19 @@ export default function CoverageExclusionsScreen() {
         </View>
 
         <Text style={styles.sectionTitle}>What's NOT Covered</Text>
-        {exclusionItems.map((item) => (
-          <SectionCard key={item.id} style={styles.exclusionCard}>
-            <Text style={styles.exclusionIcon}>⛔</Text>
-            <View style={styles.exclusionTextContainer}>
-              <Text style={styles.exclusionTitle}>{item.title}</Text>
-              <Text style={styles.exclusionText}>{item.detail}</Text>
-            </View>
-          </SectionCard>
-        ))}
+        
+        {loadingExclusions ? (
+          <ActivityIndicator size="large" color={colors.primary} style={{ marginVertical: 20 }} />
+        ) : (
+          exclusionItems.map((item, index) => (
+            <SectionCard key={index} style={styles.exclusionCard}>
+              <Text style={styles.exclusionIcon}>⛔</Text>
+              <View style={styles.exclusionTextContainer}>
+                <Text style={styles.exclusionTitle}>{item}</Text>
+              </View>
+            </SectionCard>
+          ))
+        )}
 
         <TouchableOpacity style={styles.checkRow} onPress={() => setAccepted((value) => !value)} activeOpacity={0.8}>
           <View style={[styles.checkbox, accepted && styles.checkboxChecked]}>
