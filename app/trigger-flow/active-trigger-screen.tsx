@@ -1,17 +1,84 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { router, useLocalSearchParams } from 'expo-router';
 import { colors } from '../../src/constants/colors';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { triggerService } from '../../src/services/triggerService';
+import { ErrorBanner } from '../../src/components/ErrorBanner';
+
+const getLayerTitle = (layer: string) => {
+  switch (layer) {
+    case 'L1_WEATHER_THRESHOLD':
+      return 'Rain threshold crossed';
+    case 'L2_ZONE_PRESENCE':
+      return 'GPS confirmed';
+    case 'L3_DELHIVERY_CROSS_REF':
+      return 'Orders cancelled';
+    case 'L4_BRANCH_CLOSURE_CHECK':
+      return 'Branch closure verified';
+    default:
+      return layer.replace(/_/g, ' ');
+  }
+};
+
+const formatTriggerLabel = (triggerType: string) =>
+  triggerType
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
 export default function ActiveTriggerScreen() {
-  const [step, setStep] = useState(4);
+  const { zone: paramZone, trigger_type } = useLocalSearchParams<{ zone?: string; trigger_type?: string }>();
+  const { zone, phoneNumber, riderId, upiId } = useRider();
+  const riderIdentifier = phoneNumber || riderId || '';
+  const activeZone = paramZone || zone || 'HSR Layout';
+  const activeTriggerType = trigger_type || 'HEAVY_RAIN';
+
+  const {
+    data: simulation,
+    loading,
+    error,
+    refetch,
+  } = useApiCall(
+    () =>
+      triggerService.simulateTrigger({
+        zone: activeZone,
+        trigger_type: activeTriggerType,
+        rider_id: riderIdentifier || undefined,
+        is_simulated: true,
+      }),
+    true,
+    [activeZone, activeTriggerType, riderIdentifier]
+  );
+
+  const preview = simulation?.claims_preview?.[0];
+  const fraudLayers = preview?.fraud_layers || [];
+  const delhiveryEvidence = fraudLayers.find((layer: any) => layer.layer === 'L3_DELHIVERY_CROSS_REF')?.evidence;
+  const triggerValue = Number(simulation?.trigger_event?.value || 0);
+  const recommendedPayout = Number(preview?.recommended_payout || 0);
+  const fraudCheckPassed = Boolean(preview?.fraud_check_passed);
 
   useEffect(() => {
+    if (!preview) return;
     const timer = setTimeout(() => {
-      router.replace('/trigger-flow/payout-confirmation-screen');
-    }, 4000);
+      router.replace({
+        pathname: '/trigger-flow/payout-confirmation-screen',
+        params: {
+          claim_id: String(preview.claim_id || ''),
+          recommended_payout: String(recommendedPayout),
+          trigger_type: String(simulation?.trigger_type || activeTriggerType),
+          trigger_value: String(triggerValue),
+          fraud_check_passed: String(fraudCheckPassed),
+          cancelled_orders: String(delhiveryEvidence?.cancelled_orders || 0),
+          total_banking_orders: String(delhiveryEvidence?.total_banking_orders || 0),
+          upi_id: upiId || '',
+          zone: activeZone,
+        },
+      });
+    }, 2500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [activeTriggerType, activeZone, delhiveryEvidence?.cancelled_orders, delhiveryEvidence?.total_banking_orders, fraudCheckPassed, preview, recommendedPayout, simulation?.trigger_type, triggerValue, upiId]);
 
   return (
     <View style={styles.container}>
@@ -22,10 +89,12 @@ export default function ActiveTriggerScreen() {
             <Text style={styles.weatherIcon}>🌧️</Text>
           </View>
 
-          <Text style={styles.headline}>Heavy Rain Detected</Text>
-          <Text style={styles.subheadline}>HSR Layout Zone • 44mm rainfall recorded</Text>
+          <Text style={styles.headline}>{formatTriggerLabel(activeTriggerType)} Detected</Text>
+          <Text style={styles.subheadline}>{activeZone} Zone • {Math.round(triggerValue)} recorded</Text>
           <Text style={styles.timestamp}>10:22 AM, Friday Mar 21, 2026</Text>
         </View>
+
+        {error ? <ErrorBanner message={error} onRetry={refetch} /> : null}
 
         <View style={styles.claimCard}>
           <View style={styles.claimHeader}>
@@ -35,68 +104,49 @@ export default function ActiveTriggerScreen() {
             </View>
           </View>
 
-          <View style={styles.timeline}>
-            <View style={styles.timelineLineGreen} />
-            <View style={styles.timelineLineGrey} />
-            
-            <View style={styles.timelineStep}>
-              <View style={styles.stepIcon}>
-                <Text style={styles.checkIcon}>✓</Text>
-              </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitleDone}>Rain threshold crossed</Text>
-                <Text style={styles.stepTime}>10:22 AM</Text>
-              </View>
+          {loading ? (
+            <View style={styles.loadingWrap}>
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text style={styles.loadingText}>Running fraud checks...</Text>
             </View>
+          ) : (
+            <>
+              <View style={styles.timeline}>
+                <View style={styles.timelineLineGreen} />
+                <View style={styles.timelineLineGrey} />
 
-            <View style={styles.timelineStep}>
-              <View style={styles.stepIcon}>
-                <Text style={styles.checkIcon}>✓</Text>
-              </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitleDone}>GPS confirmed</Text>
-                <Text style={styles.stepTime}>10:22 AM</Text>
-              </View>
-            </View>
+                {fraudLayers.map((layer: any) => (
+                  <View style={styles.timelineStep} key={layer.layer}>
+                    <View style={layer.passed ? styles.stepIcon : styles.stepIconFail}>
+                      <Text style={styles.checkIcon}>{layer.passed ? '✓' : '!'}</Text>
+                    </View>
+                    <View style={styles.stepContent}>
+                      <Text style={styles.stepTitleDone}>{getLayerTitle(layer.layer)}</Text>
+                      <Text style={styles.stepTime}>{layer.passed ? 'Passed' : 'Failed'}</Text>
+                    </View>
+                  </View>
+                ))}
 
-            <View style={styles.timelineStep}>
-              <View style={styles.stepIcon}>
-                <Text style={styles.checkIcon}>✓</Text>
+                <View style={styles.timelineStep}>
+                  <View style={styles.stepIconActive}>
+                    <Text style={styles.spinnerIcon}>⟳</Text>
+                  </View>
+                  <View style={styles.stepContent}>
+                    <Text style={styles.stepTitleActive}>Transferring ₹{Math.round(recommendedPayout)} to UPI</Text>
+                    <Text style={styles.stepTime}>In progress</Text>
+                  </View>
+                </View>
               </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitleDone}>Orders cancelled</Text>
-                <Text style={styles.stepTime}>10:23 AM</Text>
-              </View>
-            </View>
 
-            <View style={styles.timelineStep}>
-              <View style={styles.stepIcon}>
-                <Text style={styles.checkIcon}>✓</Text>
+              <View style={styles.payoutSection}>
+                <Text style={styles.payoutAmount}>₹{Math.round(recommendedPayout)}</Text>
+                <View style={styles.arrivalRow}>
+                  <View style={styles.pulseDot} />
+                  <Text style={styles.arrivalText}>Estimated arrival: &lt; 60 seconds</Text>
+                </View>
               </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitleDone}>Fraud check PASSED</Text>
-                <Text style={styles.stepTime}>10:23 AM</Text>
-              </View>
-            </View>
-
-            <View style={styles.timelineStep}>
-              <View style={styles.stepIconActive}>
-                <Text style={styles.spinnerIcon}>⟳</Text>
-              </View>
-              <View style={styles.stepContent}>
-                <Text style={styles.stepTitleActive}>Transferring ₹840 to UPI</Text>
-                <Text style={styles.stepTime}>10:24 AM</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.payoutSection}>
-            <Text style={styles.payoutAmount}>₹840</Text>
-            <View style={styles.arrivalRow}>
-              <View style={styles.pulseDot} />
-              <Text style={styles.arrivalText}>Estimated arrival: &lt; 60 seconds</Text>
-            </View>
-          </View>
+            </>
+          )}
         </View>
 
         <TouchableOpacity style={styles.detailsButton}>
@@ -182,6 +232,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 24,
   },
+  loadingWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 24,
+    gap: 10,
+  },
+  loadingText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 13,
+    fontWeight: '600',
+  },
   claimTitle: {
     fontSize: 16,
     fontWeight: '700',
@@ -224,6 +285,15 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     backgroundColor: '#22C55E',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  stepIconFail: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.error,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,

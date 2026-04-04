@@ -1,7 +1,12 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, type DimensionValue } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo } from 'react';
+import { Linking } from 'react-native';
 import { colors } from '../../src/constants/colors';
+import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { policyService } from '../../src/services/policyService';
+import { API_BASE_URL } from '../../src/config/api';
 
 function getCoverageColor(days: number): string {
   if (days >= 5) return '#22C55E';
@@ -10,9 +15,57 @@ function getCoverageColor(days: number): string {
 }
 
 export default function PayoutConfirmationScreen() {
-  const daysRemaining = 3;
+  const {
+    claim_id,
+    recommended_payout,
+    trigger_type,
+    trigger_value,
+    fraud_check_passed,
+    cancelled_orders,
+    total_banking_orders,
+    upi_id,
+  } = useLocalSearchParams<{
+    claim_id?: string;
+    recommended_payout?: string;
+    trigger_type?: string;
+    trigger_value?: string;
+    fraud_check_passed?: string;
+    cancelled_orders?: string;
+    total_banking_orders?: string;
+    upi_id?: string;
+  }>();
+
+  const { upiId, phoneNumber, riderId } = useRider();
+  const riderIdentifier = phoneNumber || riderId || '';
+
+  const { data: policy } = useApiCall(
+    () => policyService.getCurrentPolicy(riderIdentifier),
+    !!riderIdentifier,
+    [riderIdentifier]
+  );
+
+  const payoutAmount = Number(recommended_payout || 0);
+  const triggerLabel = (trigger_type || 'HEAVY_RAIN').toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  const triggerValueText = `${Math.round(Number(trigger_value || 0))}mm`;
+  const cancelled = Number(cancelled_orders || 0);
+  const totalOrders = Number(total_banking_orders || 0);
+  const fraudPassed = fraud_check_passed === 'true';
+  const resolvedUpi = upi_id || upiId || 'upi-not-available';
+
+  const daysRemaining = useMemo(() => {
+    if (!policy?.week_end_date) return 0;
+    const diffMs = new Date(policy.week_end_date).getTime() - Date.now();
+    return Math.max(0, Math.ceil(diffMs / (24 * 60 * 60 * 1000)));
+  }, [policy?.week_end_date]);
+
   const coverageColor = useMemo(() => getCoverageColor(daysRemaining), [daysRemaining]);
   const fillWidth = `${Math.round((daysRemaining / 7) * 100)}%` as DimensionValue;
+
+  const handleDownloadReceipt = async () => {
+    if (!riderIdentifier) return;
+    const pdfUrl = `${API_BASE_URL}/policies/${riderIdentifier}/current/document`;
+    await Linking.openURL(pdfUrl);
+  };
 
   return (
     <View style={styles.container}>
@@ -38,13 +91,13 @@ export default function PayoutConfirmationScreen() {
       </View>
 
       <View style={styles.summarySection}>
-        <Text style={styles.amount}>₹840 Credited!</Text>
+        <Text style={styles.amount}>₹{Math.round(payoutAmount)} Credited!</Text>
       </View>
 
       <View style={styles.detailsCard}>
         <View style={styles.receiptHeader}>
           <Text style={styles.receiptLabel}>Claim Receipt</Text>
-          <Text style={styles.receiptId}>#PTR-2026-03-21-PRN</Text>
+          <Text style={styles.receiptId}>#{claim_id || 'N/A'}</Text>
         </View>
 
         <View style={styles.receiptRows}>
@@ -52,25 +105,25 @@ export default function PayoutConfirmationScreen() {
             <Text style={styles.rowLabel}>Trigger</Text>
             <View style={styles.rowValue}>
               <Text style={styles.rowIcon}>🌧️</Text>
-              <Text style={styles.rowText}>Heavy Rain</Text>
+              <Text style={styles.rowText}>{triggerLabel}</Text>
             </View>
           </View>
 
           <View style={styles.receiptRow}>
             <Text style={styles.rowLabel}>Rain Intensity</Text>
-            <Text style={styles.rowText}>44mm</Text>
+            <Text style={styles.rowText}>{triggerValueText}</Text>
           </View>
 
           <View style={styles.receiptRow}>
             <Text style={styles.rowLabel}>Affected Orders</Text>
-            <Text style={styles.rowText}>14/18 cancelled</Text>
+            <Text style={styles.rowText}>{cancelled}/{totalOrders} cancelled</Text>
           </View>
 
           <View style={styles.receiptRow}>
             <Text style={styles.rowLabel}>Fraud Check</Text>
             <View style={styles.fraudPass}>
-              <Text style={styles.passText}>PASSED</Text>
-              <Text style={styles.verifiedIcon}>✓</Text>
+              <Text style={[styles.passText, !fraudPassed && styles.failText]}>{fraudPassed ? 'PASSED' : 'FAILED'}</Text>
+              <Text style={[styles.verifiedIcon, !fraudPassed && styles.failText]}>{fraudPassed ? '✓' : '!'}</Text>
             </View>
           </View>
 
@@ -85,11 +138,11 @@ export default function PayoutConfirmationScreen() {
                 <Text style={styles.txIcon}>🏦</Text>
               </View>
               <View style={styles.txInfo}>
-                <Text style={styles.txUpi}>pranav@okicici</Text>
+                <Text style={styles.txUpi}>{resolvedUpi}</Text>
                 <Text style={styles.txMeta}>10:24 AM  •  <Text style={styles.txSpeed}>⚡ 1m 47s</Text></Text>
               </View>
             </View>
-            <Text style={styles.txAmount}>₹840</Text>
+            <Text style={styles.txAmount}>₹{Math.round(payoutAmount)}</Text>
           </View>
         </View>
       </View>
@@ -113,7 +166,7 @@ export default function PayoutConfirmationScreen() {
           <Text style={styles.shareButtonText}>Tell a Friend</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.downloadButton}>
+        <TouchableOpacity style={styles.downloadButton} onPress={handleDownloadReceipt}>
           <Text style={styles.downloadIcon}>📥</Text>
           <Text style={styles.downloadText}>Download Receipt (PDF)</Text>
         </TouchableOpacity>
@@ -294,6 +347,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '800',
     color: '#22C55E',
+  },
+  failText: {
+    color: colors.error,
   },
   verifiedIcon: {
     fontSize: 14,

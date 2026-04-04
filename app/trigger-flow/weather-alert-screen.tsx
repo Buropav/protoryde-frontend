@@ -1,8 +1,76 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
+import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { weatherService } from '../../src/services/weatherService';
+import { policyService } from '../../src/services/policyService';
+import { triggerService } from '../../src/services/triggerService';
+import { ErrorBanner } from '../../src/components/ErrorBanner';
 
 export default function WeatherAlertScreen() {
+  const { zone, phoneNumber, riderId } = useRider();
+  const riderIdentifier = phoneNumber || riderId || '';
+
+  const {
+    data: weatherData,
+    loading: loadingWeather,
+    error: weatherError,
+    refetch: refetchWeather,
+  } = useApiCall(
+    () => weatherService.getCurrentWeather(zone || 'HSR Layout', true),
+    !!zone,
+    [zone]
+  );
+
+  const {
+    data: policy,
+    loading: loadingPolicy,
+    error: policyError,
+    refetch: refetchPolicy,
+  } = useApiCall(
+    () => policyService.getCurrentPolicy(riderIdentifier),
+    !!riderIdentifier,
+    [riderIdentifier]
+  );
+
+  const {
+    data: simulation,
+    loading: loadingSimulation,
+    error: simulationError,
+    refetch: refetchSimulation,
+  } = useApiCall(
+    () =>
+      triggerService.simulateTrigger({
+        zone: zone || 'HSR Layout',
+        trigger_type: 'HEAVY_RAIN',
+        rider_id: riderIdentifier || undefined,
+        is_simulated: true,
+      }),
+    !!zone,
+    [zone, riderIdentifier]
+  );
+
+  const heavyRain = weatherData?.trigger_view?.heavy_rain;
+  const predictedRain = Number(weatherData?.conditions?.rain_24h_mm || 0);
+  const threshold = Number(heavyRain?.threshold || 30);
+  const breached = Boolean(heavyRain?.breached);
+  const coverageCap = policy?.coverage_cap || 2300;
+  const previewPayout = Number(simulation?.claims_preview?.[0]?.recommended_payout);
+  const fallbackPayout = Math.min(coverageCap, 1050 * (9 / 9) * 0.8);
+  const projectedPayout = Number.isFinite(previewPayout) ? previewPayout : fallbackPayout;
+
+  const safeFillPct = predictedRain > 0 ? Math.min((threshold / predictedRain) * 100, 100) : 0;
+
+  const handleRetry = () => {
+    refetchWeather();
+    refetchPolicy();
+    refetchSimulation();
+  };
+
+  const hasError = weatherError || policyError || simulationError;
+  const isLoading = loadingWeather || loadingPolicy || loadingSimulation;
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -14,15 +82,23 @@ export default function WeatherAlertScreen() {
       </View>
 
       <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        {hasError ? <ErrorBanner message={hasError} onRetry={handleRetry} /> : null}
+        {isLoading ? (
+          <View style={styles.loadingWrap}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.loadingText}>Preparing trigger outlook...</Text>
+          </View>
+        ) : null}
+
         <View style={styles.alertCard}>
           <View style={styles.cardContent}>
             <View style={styles.riskBadge}>
               <Text style={styles.riskIcon}>⚠️</Text>
-              <Text style={styles.riskText}>HIGH RISK  •  FRI, MAR 21</Text>
+              <Text style={styles.riskText}>{breached ? 'HIGH RISK' : 'WATCH'} • SIMULATED</Text>
             </View>
 
             <Text style={styles.headline}>
-              Heavy Rain Predicted in HSR Layout
+              Heavy Rain Predicted in {zone || 'HSR Layout'}
             </Text>
 
             <View style={styles.impactChip}>
@@ -34,13 +110,13 @@ export default function WeatherAlertScreen() {
               <Text style={styles.progressTitle}>Rainfall Forecast:</Text>
               <View style={styles.progressBarWrapper}>
                 <View style={styles.progressBarTrack}>
-                  <View style={styles.progressBarFillSafe} />
+                  <View style={[styles.progressBarFillSafe, { width: `${safeFillPct}%` }]} />
                   <View style={styles.progressBarFillDanger} />
                 </View>
                 {/* Trigger divider line + label, outside track so it can overflow */}
-                <View style={styles.triggerMarker} />
-                <Text style={styles.endLabel}>74mm</Text>
-                <Text style={styles.triggerMarkerLabel}>Trigger (30mm)</Text>
+                <View style={[styles.triggerMarker, { left: `${safeFillPct}%` }]} />
+                <Text style={styles.endLabel}>{Math.round(predictedRain)}mm</Text>
+                <Text style={styles.triggerMarkerLabel}>Trigger ({Math.round(threshold)}mm)</Text>
               </View>
             </View>
 
@@ -49,15 +125,15 @@ export default function WeatherAlertScreen() {
             <View style={styles.statsRow}>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>Trigger</Text>
-                <Text style={styles.statValue}>30mm</Text>
+                <Text style={styles.statValue}>{Math.round(threshold)}mm</Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>Predicted</Text>
-                <Text style={[styles.statValue, styles.dangerValue]}>74mm</Text>
+                <Text style={[styles.statValue, styles.dangerValue]}>{Math.round(predictedRain)}mm</Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>Coverage</Text>
-                <Text style={styles.statValue}>₹2,300</Text>
+                <Text style={styles.statValue}>₹{Math.round(coverageCap)}</Text>
               </View>
             </View>
 
@@ -65,13 +141,18 @@ export default function WeatherAlertScreen() {
 
             <View style={styles.payoutProjection}>
               <Text style={styles.projectionLabel}>If trigger fires tomorrow, you receive:</Text>
-              <Text style={styles.projectionAmount}>₹840</Text>
+              <Text style={styles.projectionAmount}>₹{Math.round(projectedPayout)}</Text>
             </View>
 
             <View style={styles.actionButtons}>
               <TouchableOpacity 
                 style={styles.upgradeButton}
-                onPress={() => router.push('/trigger-flow/active-trigger-screen')}
+                onPress={() =>
+                  router.push({
+                    pathname: '/trigger-flow/active-trigger-screen',
+                    params: { zone: zone || 'HSR Layout', trigger_type: 'HEAVY_RAIN' },
+                  })
+                }
                 activeOpacity={0.95}
               >
                 <Text style={styles.upgradeText}>Upgrade to Enhanced Cover (+₹25)</Text>
@@ -127,6 +208,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingTop: 60,
     paddingBottom: 24,
+  },
+  loadingWrap: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 28,
+    gap: 10,
+  },
+  loadingText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 13,
+    fontWeight: '600',
   },
   alertCard: {
     backgroundColor: colors.surfaceContainerLowest,
@@ -204,7 +296,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   progressBarFillSafe: {
-    width: '40.5%', // 30/74 ≈ 40.5%
     backgroundColor: colors.primary,
   },
   progressBarFillDanger: {
@@ -213,7 +304,6 @@ const styles = StyleSheet.create({
   },
   triggerMarker: {
     position: 'absolute',
-    left: '40.5%',
     top: -4,
     bottom: 16,
     width: 2,
