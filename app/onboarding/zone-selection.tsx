@@ -127,7 +127,7 @@ export default function ZoneSelectionScreen() {
           <View style={styles.fakeMap}>
             <Text style={styles.mapBadge}>Bangalore Grid</Text>
             <View style={styles.pin} />
-            <StatusChip label="Medium Risk" tone="warning" style={styles.riskChip} />
+            <StatusChip label={`${zoneRisk} Risk`} tone={zoneRisk === 'High' ? 'error' : 'warning'} style={styles.riskChip} />
           </View>
         </SectionCard>
 
@@ -137,12 +137,14 @@ export default function ZoneSelectionScreen() {
             <SectionCard style={styles.insightCard}>
               <Text style={styles.insightIcon}>💧</Text>
               <Text style={styles.insightLabel}>Historical Flood</Text>
-              <Text style={styles.insightValue}>Low Risk</Text>
+              <Text style={styles.insightValue}>{zoneRisk} Risk</Text>
             </SectionCard>
             <SectionCard style={[styles.insightCard, styles.alertCard]}>
               <Text style={styles.insightIcon}>⛈️</Text>
               <Text style={styles.insightLabel}>Predicted Rain</Text>
-              <Text style={styles.insightValue}>High Intensity</Text>
+              <Text style={styles.insightValue}>
+                {loadingWeather ? '...' : `${weatherData?.conditions?.rain_24h_mm || 0}mm/24h`}
+              </Text>
             </SectionCard>
           </View>
         </View>
