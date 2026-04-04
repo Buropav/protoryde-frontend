@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Modal, FlatList } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, Modal, FlatList, Dimensions, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
@@ -104,25 +104,28 @@ export default function ZoneSelectionScreen() {
             onPress={() => setShowDropdown(true)}
           >
             <Text style={styles.zoneText}>{selectedZone}</Text>
-            {loadingZones ? (
-              <ActivityIndicator size="small" color={colors.primary} />
-            ) : (
-              <Text style={styles.zoneIcon}>⌄</Text>
-            )}
-          </TouchableOpacity>
+              {loadingZones ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : (
+                <View style={styles.dropdownIconContainer}>
+                  <Text style={styles.zoneIcon}>▼</Text>
+                </View>
+              )}
+            </TouchableOpacity>
         </View>
 
         <Modal
           visible={showDropdown}
           transparent={true}
-          animationType="fade"
+          animationType="slide"
           onRequestClose={() => setShowDropdown(false)}
         >
-          <TouchableOpacity 
-            style={styles.modalOverlay} 
-            activeOpacity={1} 
-            onPress={() => setShowDropdown(false)}
-          >
+          <View style={styles.modalOverlay}>
+            <TouchableOpacity 
+              style={StyleSheet.absoluteFill} 
+              activeOpacity={1} 
+              onPress={() => setShowDropdown(false)}
+            />
             <View style={styles.dropdownMenu}>
               <Text style={styles.dropdownTitle}>Select Your Zone</Text>
               <FlatList
@@ -148,7 +151,7 @@ export default function ZoneSelectionScreen() {
                 )}
               />
             </View>
-          </TouchableOpacity>
+          </View>
         </Modal>
 
         <SectionCard style={styles.mapCard}>
@@ -276,9 +279,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '800',
   },
+  dropdownIconContainer: {
+    backgroundColor: colors.surfaceContainerHigh,
+    padding: 6,
+    borderRadius: 8,
+  },
   zoneIcon: {
     color: colors.primary,
-    fontSize: 18,
+    fontSize: 12,
   },
   mapCard: {
     padding: 0,
@@ -400,11 +408,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   dropdownMenu: {
-    backgroundColor: colors.surface,
+    backgroundColor: '#0F1A24',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
     maxHeight: '70%',
+    width: '100%',
+    maxWidth: Platform.OS === 'web' ? 480 : '100%',
+    alignSelf: 'center',
+    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
   },
   dropdownTitle: {
     fontSize: 20,
