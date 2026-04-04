@@ -7,7 +7,7 @@ import { useApiCall } from '../../src/hooks/useApiCall';
 import { claimsService } from '../../src/services/claimsService';
 
 export default function ClaimsListScreen() {
-  const { phoneNumber } = useRider();
+  const { phoneNumber, zone } = useRider();
   
   const { 
     data: claimsData, 
@@ -36,12 +36,16 @@ export default function ClaimsListScreen() {
           >
             <SectionCard>
               <View style={styles.claimHead}>
-                <Text style={styles.claimTitle}>{claim.title}</Text>
-                <Text style={styles.status}>{claim.status}</Text>
+                <Text style={styles.claimTitle}>
+                  {claim.trigger_type.replace(/_/g, ' ')} - {zone}
+                </Text>
+                <Text style={styles.status}>{claim.payout_status}</Text>
               </View>
               <View style={styles.claimMeta}>
-                <Text style={styles.claimDate}>{claim.date}</Text>
-                <Text style={styles.claimPayout}>{claim.payout}</Text>
+                <Text style={styles.claimDate}>
+                  {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(claim.created_at))}
+                </Text>
+                <Text style={styles.claimPayout}>₹{claim.payout_amount}</Text>
               </View>
               <Text style={styles.openLink}>Open claim details and fraud audit →</Text>
             </SectionCard>
