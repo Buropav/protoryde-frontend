@@ -22,6 +22,22 @@ export default function ClaimDetailFraudAuditScreen() {
   );
 
   const claim = claimsData?.claims.find(c => c.claim_id === claim_id);
+
+  const getAuditStepInfo = (layerKey: string) => {
+    switch (layerKey) {
+      case 'L1_WEATHER_THRESHOLD':
+        return { title: 'Weather Threshold Check', icon: '🌧️' };
+      case 'L2_ZONE_PRESENCE':
+        return { title: 'Zone Presence Verification', icon: '📍' };
+      case 'L3_DELHIVERY_CROSS_REF':
+        return { title: 'Delhivery Cross-Reference', icon: '🔁' };
+      case 'L4_BRANCH_CLOSURE_CHECK':
+        return { title: 'Branch Closure Check', icon: '🏦' };
+      default:
+        return { title: layerKey.replace(/_/g, ' '), icon: '🛡️' };
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TopBar title="Claim Details" onBack={() => router.back()} />
@@ -48,20 +64,23 @@ export default function ClaimDetailFraudAuditScreen() {
             <Text style={styles.auditTitle}>Fraud Audit Trail</Text>
             <Text style={styles.auditMeta}>System Validated</Text>
           </View>
-          {claimAuditSteps.map((step) => (
-            <SectionCard key={step.id} style={styles.auditStep}>
-              <View style={styles.auditIconWrap}>
-                <Text style={styles.auditIcon}>{step.icon}</Text>
-              </View>
-              <View style={styles.auditBody}>
-                <View style={styles.auditBodyTop}>
-                  <Text style={styles.auditStepTitle}>{step.title}</Text>
-                  <StatusChip label={step.passed ? 'Passed' : 'Failed'} tone={step.passed ? 'success' : 'error'} />
+          {claim?.fraud_layers.map((layer, index) => {
+            const info = getAuditStepInfo(layer.layer);
+            return (
+              <SectionCard key={index} style={styles.auditStep}>
+                <View style={styles.auditIconWrap}>
+                  <Text style={styles.auditIcon}>{info.icon}</Text>
                 </View>
-                <Text style={styles.auditText}>{step.detail}</Text>
-              </View>
-            </SectionCard>
-          ))}
+                <View style={styles.auditBody}>
+                  <View style={styles.auditBodyTop}>
+                    <Text style={styles.auditStepTitle}>{info.title}</Text>
+                    <StatusChip label={layer.passed ? 'Passed' : 'Failed'} tone={layer.passed ? 'success' : 'error'} />
+                  </View>
+                  <Text style={styles.auditText}>{layer.reason}</Text>
+                </View>
+              </SectionCard>
+            );
+          })}
         </View>
 
         <PrimaryButton
