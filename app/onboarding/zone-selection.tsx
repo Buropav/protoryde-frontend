@@ -1,12 +1,11 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
-import { AppPage, PrimaryButton, SectionCard, StatusChip, TopBar } from '../../src/components/ui';
+import { AppPage, PrimaryButton, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 
 export default function ZoneSelectionScreen() {
   return (
     <View style={styles.container}>
-      <TopBar title="Step 5 of 5" onBack={() => router.back()} />
       <AppPage contentContainerStyle={styles.content}>
         <View style={styles.selectorWrap}>
           <Text style={styles.label}>Risk Assessment Zone</Text>
