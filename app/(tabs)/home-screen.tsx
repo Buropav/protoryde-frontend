@@ -144,21 +144,36 @@ export default function HomeScreen() {
               <Text style={styles.metricValue}>
                 {weather?.conditions ? `${weather.conditions.description} ${weather.conditions.temp_c}°C` : '--'}
               </Text>
-              <Text style={styles.metricState}>No trigger</Text>
+              <Text style={[
+                styles.metricState,
+                weather?.trigger_view?.rain_24h_mm?.breached && styles.metricStateActive
+              ]}>
+                {weather?.trigger_view?.rain_24h_mm?.breached ? '⚠️ Active' : 'No trigger'}
+              </Text>
             </View>
             <View style={styles.metricCard}>
               <Text style={styles.metricLabel}>AQI</Text>
               <Text style={styles.metricValue}>
                 {weather?.conditions ? `${getAqiLabel(weather.conditions.aqi)} ${weather.conditions.aqi}` : '--'}
               </Text>
-              <Text style={styles.metricState}>No trigger</Text>
+              <Text style={[
+                styles.metricState,
+                weather?.trigger_view?.aqi?.breached && styles.metricStateActive
+              ]}>
+                {weather?.trigger_view?.aqi?.breached ? '⚠️ Active' : 'No trigger'}
+              </Text>
             </View>
             <View style={styles.metricCard}>
               <Text style={styles.metricLabel}>Banks</Text>
               <Text style={styles.metricValue}>
                 {branchMetrics ? (branchMetrics.closure_rate_pct > 0 ? `${branchMetrics.closure_rate_pct}% Closed` : 'Normal') : '--'}
               </Text>
-              <Text style={styles.metricState}>No trigger</Text>
+              <Text style={[
+                styles.metricState,
+                branchMetrics?.trigger_breached && styles.metricStateActive
+              ]}>
+                {branchMetrics?.trigger_breached ? '⚠️ Active' : 'No trigger'}
+              </Text>
             </View>
           </View>
         </SectionCard>
@@ -389,6 +404,10 @@ const styles = StyleSheet.create({
     color: colors.secondary,
     fontSize: 10,
     marginTop: 2,
+  },
+  metricStateActive: {
+    color: '#EF4444',
+    fontWeight: '700',
   },
   sectionHeadRow: {
     flexDirection: 'row',
