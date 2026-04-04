@@ -39,7 +39,10 @@ export default function ClaimsListScreen() {
               claims.map((claim) => (
                 <TouchableOpacity
                   key={claim.claim_id}
-                  onPress={() => router.push('/claims/claim-detail-fraud-audit')}
+                  onPress={() => router.push({
+                    pathname: '/claims/claim-detail-fraud-audit',
+                    params: { claim_id: claim.claim_id }
+                  })}
                   activeOpacity={0.85}
                 >
                   <SectionCard>
