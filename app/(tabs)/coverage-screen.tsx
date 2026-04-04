@@ -2,8 +2,22 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
+import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { policyService } from '../../src/services/policyService';
 
 export default function CoverageScreen() {
+  const { phoneNumber } = useRider();
+  
+  const { 
+    data: policy, 
+    loading: loadingPolicy, 
+    error: policyError 
+  } = useApiCall(
+    () => policyService.getCurrentPolicy(phoneNumber || ''),
+    !!phoneNumber,
+    [phoneNumber]
+  );
   return (
     <View style={styles.container}>
       <View style={styles.header}>
