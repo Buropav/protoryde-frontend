@@ -1,8 +1,29 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
+import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { premiumService } from '../../src/services/premiumService';
 
 export default function PremiumReveal() {
+  const { zone } = useRider();
+
+  // Fetch final premium calculation
+  const { 
+    data: premium, 
+    loading: loadingPremium, 
+    error: premiumError 
+  } = useApiCall(
+    () => premiumService.predictPremium({ zone, prefer_ml: true }),
+    true,
+    [zone]
+  );
+
+  const finalPremium = premium?.final_premium || 0;
+  const basePremium = premium?.base_premium || 0;
+  const discountDelta = basePremium - finalPremium;
+
   return (
     <View style={styles.container}>
 
