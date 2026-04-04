@@ -17,22 +17,35 @@ export default function HomeScreen() {
       </View>
 
       <AppPage contentContainerStyle={styles.content}>
-        <SectionCard style={styles.coverageCard}>
+        <View style={styles.coverageCard}>
           <View style={styles.coverageHead}>
-            <StatusChip label="Coverage Active" tone="active" />
+            <View style={styles.activeBadge}>
+              <View style={styles.activeDot} />
+              <Text style={styles.activeBadgeText}>COVERAGE ACTIVE</Text>
+            </View>
             <TouchableOpacity onPress={() => router.push('/account/notifications-center')}>
               <Text style={styles.bell}>🔔</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.coverageTitle}>Valid till Sunday, Apr 5</Text>
-          <Text style={styles.coverageSub}>This week premium: ₹67 paid</Text>
-          <PrimaryButton
-            label="View Trigger Readiness"
-            subLabel="Weather + AQI + Branch checks"
+
+          <View style={styles.coverageBody}>
+            <Text style={styles.coverageLabel}>Valid till</Text>
+            <Text style={styles.coverageTitle}>Sunday, Apr 5</Text>
+            <Text style={styles.coverageSub}>This week premium: <Text style={styles.coverageHighlight}>₹67 paid</Text></Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.triggerButton}
+            activeOpacity={0.85}
             onPress={() => router.push('/trigger-flow/weather-alert-screen')}
-            rightSlot={<Text style={styles.arrow}>→</Text>}
-          />
-        </SectionCard>
+          >
+            <View>
+              <Text style={styles.triggerButtonLabel}>View Trigger Readiness</Text>
+              <Text style={styles.triggerButtonSub}>Weather + AQI + Branch checks</Text>
+            </View>
+            <Text style={styles.triggerArrow}>→</Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.quickRow}>
           <TouchableOpacity style={styles.quickCard} onPress={() => router.push('/account/weekly-ledger')}>
@@ -132,30 +145,94 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   coverageCard: {
-    backgroundColor: colors.primaryContainer,
-    gap: 10,
+    backgroundColor: '#0D1B2A',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#1E3A5F',
+    padding: 18,
+    gap: 16,
   },
   coverageHead: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  activeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(52, 211, 153, 0.1)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+  },
+  activeDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#34D399',
+    shadowColor: '#34D399',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+  },
+  activeBadgeText: {
+    color: '#34D399',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1.2,
+  },
   bell: {
     fontSize: 18,
   },
+  coverageBody: {
+    gap: 2,
+  },
+  coverageLabel: {
+    color: '#6B7F99',
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
   coverageTitle: {
-    color: colors.onPrimary,
-    fontSize: 20,
+    color: '#FFFFFF',
+    fontSize: 22,
     fontWeight: '800',
+    letterSpacing: 0.3,
   },
   coverageSub: {
-    color: colors.onPrimaryContainer,
+    color: '#6B7F99',
     fontSize: 13,
-    marginBottom: 4,
+    marginTop: 4,
   },
-  arrow: {
-    color: colors.onPrimary,
-    fontSize: 18,
+  coverageHighlight: {
+    color: '#4A9EFF',
+    fontWeight: '700',
+  },
+  triggerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(74, 158, 255, 0.12)',
+    borderWidth: 1,
+    borderColor: 'rgba(74, 158, 255, 0.25)',
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+  },
+  triggerButtonLabel: {
+    color: '#4A9EFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  triggerButtonSub: {
+    color: '#5A7A9C',
+    fontSize: 11,
+    marginTop: 2,
+  },
+  triggerArrow: {
+    color: '#4A9EFF',
+    fontSize: 20,
     fontWeight: '800',
   },
   quickRow: {
