@@ -77,8 +77,8 @@ const ExclusionAccordionGroup = ({ groupKey, label, items, isOpen, onToggle, has
 
 export default function CoverageExclusionsScreen() {
   const [accepted, setAccepted] = useState(false);
-  const [openGroupKeys, setOpenGroupKeys] = useState(new Set());
-  const [openedOnceGroups, setOpenedOnceGroups] = useState(new Set());
+  const [openGroupKeys, setOpenGroupKeys] = useState<Set<string>>(new Set());
+  const [openedOnceGroups, setOpenedOnceGroups] = useState<Set<string>>(new Set());
   const [showGateMessage, setShowGateMessage] = useState(false);
 
   const { data, loading, error, execute, refetch } = useApiCall(
@@ -89,7 +89,7 @@ export default function CoverageExclusionsScreen() {
     execute();
   }, [execute]);
 
-  const groupedExclusions = [
+  const groupedExclusions: { key: string; label: string; items: { text: string; originalIndex: number }[] }[] = [
     { key: 'bodily_vehicle', label: 'Bodily & Vehicle Harms', items: [] },
     { key: 'platform_account', label: 'Platform & Account Issues', items: [] },
     { key: 'extraordinary', label: 'Extraordinary Events', items: [] },
@@ -97,7 +97,7 @@ export default function CoverageExclusionsScreen() {
   ];
 
   if (data?.items) {
-    data.items.forEach((text, i) => {
+    data.items.forEach((text: string, i: number) => {
       const lowerText = text.toLowerCase();
       const itemProps = { text, originalIndex: i };
       if (lowerText.includes('health') || lowerText.includes('vehicle damage')) {
@@ -115,7 +115,7 @@ export default function CoverageExclusionsScreen() {
   const TOTAL_GROUPS = 4;
   const isGateMet = openedOnceGroups.size === TOTAL_GROUPS;
 
-  const toggleGroup = (key) => {
+  const toggleGroup = (key: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     
     const newOpenKeys = new Set(openGroupKeys);
