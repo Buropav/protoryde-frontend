@@ -35,3 +35,9 @@ export interface PolicyActivateResponse {
   exclusions_version: string;
   exclusions_acknowledged_at: string;
 }
+
+export interface DemoBootstrapResponse {
+  status: string;
+  rider: Record<string, any>;
+  policy: PolicyActivateResponse;
+}
