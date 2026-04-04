@@ -2,12 +2,23 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
+import { useRider } from '../../src/hooks/useRider';
 
 export default function PersonalDetails() {
+  const { setRiderInfo } = useRider();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [aadhaar, setAadhaar] = useState('');
   const [dob, setDob] = useState('');
+
+  const handleContinue = () => {
+    // Save to context before navigating
+    setRiderInfo({ 
+      riderName: name, 
+      phoneNumber: phone 
+    });
+    router.push('/partner-details');
+  };
 
   return (
     <KeyboardAvoidingView 
@@ -104,7 +115,7 @@ export default function PersonalDetails() {
       <View style={styles.footer}>
         <TouchableOpacity 
           style={styles.continueButton}
-          onPress={() => router.push('/partner-details')}
+          onPress={handleContinue}
           activeOpacity={0.98}
         >
           <Text style={styles.continueText}>Continue</Text>

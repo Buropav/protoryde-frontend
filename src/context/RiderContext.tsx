@@ -4,11 +4,12 @@ import React, { createContext, useState, ReactNode } from 'react';
 export interface RiderContextState {
   riderId: string | null;
   riderName: string;
+  phoneNumber: string;
   zone: string;
   upiId: string;
   policyId: string | null;
   isBootstrapped: boolean;
-  setRiderInfo: (info: { riderId?: string | null; riderName?: string; zone?: string; upiId?: string }) => void;
+  setRiderInfo: (info: { riderId?: string | null; riderName?: string; phoneNumber?: string; zone?: string; upiId?: string }) => void;
   setPolicyId: (id: string | null) => void;
   setBootstrapped: (val: boolean) => void;
 }
@@ -16,6 +17,7 @@ export interface RiderContextState {
 const defaultState: RiderContextState = {
   riderId: null,
   riderName: '',
+  phoneNumber: '',
   zone: 'HSR Layout',
   upiId: '',
   policyId: null,
@@ -30,14 +32,16 @@ export const RiderContext = createContext<RiderContextState | undefined>(undefin
 export const RiderProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [riderId, setRiderId] = useState<string | null>(null);
   const [riderName, setRiderName] = useState<string>('');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [zone, setZone] = useState<string>('HSR Layout');
   const [upiId, setUpiId] = useState<string>('');
   const [policyId, setPolicyId] = useState<string | null>(null);
   const [isBootstrapped, setIsBootstrapped] = useState<boolean>(false);
 
-  const setRiderInfo = (info: { riderId?: string | null; riderName?: string; zone?: string; upiId?: string }) => {
+  const setRiderInfo = (info: { riderId?: string | null; riderName?: string; phoneNumber?: string; zone?: string; upiId?: string }) => {
     if (info.riderId !== undefined) setRiderId(info.riderId);
     if (info.riderName !== undefined) setRiderName(info.riderName);
+    if (info.phoneNumber !== undefined) setPhoneNumber(info.phoneNumber);
     if (info.zone !== undefined) setZone(info.zone);
     if (info.upiId !== undefined) setUpiId(info.upiId);
   };
@@ -47,6 +51,7 @@ export const RiderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       value={{
         riderId,
         riderName,
+        phoneNumber,
         zone,
         upiId,
         policyId,
