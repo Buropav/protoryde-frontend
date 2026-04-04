@@ -1,13 +1,24 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { premiumService } from '../../src/services/premiumService';
 
 export default function PartnerDetails() {
   const { zone: contextZone, upiId: contextUpiId, setRiderInfo } = useRider();
   const [zone, setZone] = useState(contextZone || 'HSR Layout');
   const [upiId, setUpiId] = useState(contextUpiId || 'pranav@okicici');
+
+  const { 
+    data: premiumData, 
+    loading: premiumLoading 
+  } = useApiCall(
+    () => premiumService.predictPremium({ zone }),
+    true,
+    [zone]
+  );
 
   const handleContinue = () => {
     setRiderInfo({ 
@@ -112,9 +123,18 @@ export default function PartnerDetails() {
 
           <View style={styles.infoCard}>
             <Text style={styles.infoIcon}>⚡</Text>
-            <Text style={styles.infoText}>
-              Your zone determines your weekly premium. <Text style={styles.bold}>HSR Layout</Text> is a medium-risk zone with a typical premium <Text style={styles.boldPrimary}>₹82/week</Text>.
-            </Text>
+            <View style={styles.infoTextContainer}>
+              <Text style={styles.infoText}>
+                Your zone determines your weekly premium. <Text style={styles.bold}>{zone}</Text> is an active coverage zone with a typical premium:
+              </Text>
+              <View style={styles.premiumDisplay}>
+                {premiumLoading ? (
+                  <ActivityIndicator size="small" color={colors.primary} />
+                ) : (
+                  <Text style={styles.boldPrimary}>₹{premiumData?.base_premium || '--'}/week</Text>
+                )}
+              </View>
+            </View>
           </View>
         </View>
       </ScrollView>
@@ -376,11 +396,19 @@ const styles = StyleSheet.create({
     color: colors.secondaryContainer,
   },
   infoText: {
-    flex: 1,
     fontSize: 12,
     color: colors.onSurfaceVariant,
     fontWeight: '500',
     lineHeight: 18,
+  },
+  infoTextContainer: {
+    flex: 1,
+    gap: 4,
+  },
+  premiumDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 24,
   },
   bold: {
     fontWeight: '700',
