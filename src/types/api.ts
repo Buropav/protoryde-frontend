@@ -61,3 +61,9 @@ export interface PolicyHistoryResponse {
   count: number;
   policies: CurrentPolicyResponse[];
 }
+
+export interface RiderClaimsResponse {
+  rider_id: string;
+  count: number;
+  claims: any[];
+}
