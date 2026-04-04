@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
 
@@ -21,13 +22,18 @@ export default function WeatherAlertScreen() {
               style={styles.alertImage}
               resizeMode="cover"
             />
+            <LinearGradient
+              colors={['rgba(0,0,0,0.6)', 'transparent']}
+              style={styles.imageOverlay}
+            />
+          </View>
+
+          <View style={styles.cardContent}>
             <View style={styles.riskBadge}>
               <Text style={styles.riskIcon}>⚠️</Text>
               <Text style={styles.riskText}>HIGH RISK TOMORROW</Text>
             </View>
-          </View>
 
-          <View style={styles.cardContent}>
             <Text style={styles.headline}>
               Heavy Rain Predicted in HSR Layout
             </Text>
@@ -63,18 +69,15 @@ export default function WeatherAlertScreen() {
               <TouchableOpacity 
                 style={styles.upgradeButton}
                 onPress={() => router.push('/trigger-flow/active-trigger-screen')}
-                activeOpacity={0.98}
+                activeOpacity={0.95}
               >
-                <Text style={styles.upgradeText}>Upgrade to Enhanced Cover</Text>
-                <View style={styles.priceTag}>
-                  <Text style={styles.priceTagText}>+₹25</Text>
-                </View>
+                <Text style={styles.upgradeText}>Upgrade to Enhanced Cover  •  +₹25</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
                 style={styles.stayButton}
                 onPress={() => router.push('/trigger-flow/active-trigger-screen')}
-                activeOpacity={0.98}
+                activeOpacity={0.95}
               >
                 <Text style={styles.stayText}>I'm Good — Stay on ₹67 Plan</Text>
               </TouchableOpacity>
@@ -102,7 +105,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 16,
-    backgroundColor: 'rgba(255,255,255,0.4)',
     position: 'absolute',
     top: 0,
     left: 0,
@@ -114,12 +116,12 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: colors.primary,
+    color: '#FFFFFF',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.primary,
+    color: '#FFFFFF',
   },
   spacer: {
     width: 40,
@@ -135,9 +137,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     marginBottom: 16,
-    shadowColor: '#191C1E',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.15,
     shadowRadius: 24,
   },
   imageSection: {
@@ -148,14 +150,19 @@ const styles = StyleSheet.create({
   alertImage: {
     width: '100%',
     height: '100%',
-    opacity: 0.6,
+    opacity: 0.7,
+  },
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 80,
   },
   riskBadge: {
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'flex-start',
     gap: 6,
     backgroundColor: colors.secondaryContainer,
     paddingHorizontal: 12,
@@ -178,7 +185,7 @@ const styles = StyleSheet.create({
   headline: {
     fontSize: 22,
     fontWeight: '800',
-    color: colors.primary,
+    color: '#FFFFFF',
     lineHeight: 28,
   },
   description: {
@@ -197,12 +204,11 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
-    gap: 8,
     paddingVertical: 8,
   },
   statItem: {
     flex: 1,
-    gap: 4,
+    gap: 6,
   },
   statLabel: {
     fontSize: 10,
@@ -220,7 +226,9 @@ const styles = StyleSheet.create({
     color: colors.error,
   },
   payoutProjection: {
-    backgroundColor: colors.surfaceContainerLow + '50',
+    backgroundColor: 'rgba(34, 197, 94, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(34, 197, 94, 0.2)',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
@@ -234,7 +242,7 @@ const styles = StyleSheet.create({
   projectionAmount: {
     fontSize: 32,
     fontWeight: '800',
-    color: colors.tertiaryContainer,
+    color: '#22C55E',
     letterSpacing: -1,
   },
   actionButtons: {
@@ -242,10 +250,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   upgradeButton: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
     backgroundColor: colors.secondary,
     paddingVertical: 16,
     borderRadius: 12,
@@ -253,29 +259,17 @@ const styles = StyleSheet.create({
   upgradeText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.onSecondary,
-  },
-  priceTag: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  priceTagText: {
-    fontSize: 12,
-    color: colors.onSecondary,
+    color: '#111827',
   },
   stayButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: colors.outlineVariant + '30',
+    backgroundColor: '#1F2937',
     paddingVertical: 16,
     borderRadius: 12,
   },
   stayText: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.onSurfaceVariant,
+    color: '#D1D5DB',
     textAlign: 'center',
   },
   disclaimer: {
