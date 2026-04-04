@@ -24,7 +24,7 @@ export default function HomeScreen() {
               <Text style={styles.bell}>🔔</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.coverageTitle}>Protected until Sunday, Apr 5</Text>
+          <Text style={styles.coverageTitle}>Valid till Sunday, Apr 5</Text>
           <Text style={styles.coverageSub}>This week premium: ₹67 paid</Text>
           <PrimaryButton
             label="View Trigger Readiness"
