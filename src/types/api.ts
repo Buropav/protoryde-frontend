@@ -12,3 +12,13 @@ export interface PremiumPredictResponse {
   currency: string;
   model_status: string;
 }
+
+export interface TriggerSimulateResponse {
+  simulation_id: string;
+  zone: string;
+  trigger_type: string;
+  trigger_event: Record<string, any>;
+  riders_evaluated: number;
+  claims_preview: any[];
+  fixture_version: string;
+}
