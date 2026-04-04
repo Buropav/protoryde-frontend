@@ -1,8 +1,14 @@
+import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { colors } from '../../src/constants/colors';
 
 export default function PersonalDetails() {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [aadhaar, setAadhaar] = useState('');
+  const [dob, setDob] = useState('');
+
   return (
     <KeyboardAvoidingView 
       style={styles.container}
@@ -33,6 +39,8 @@ export default function PersonalDetails() {
               style={styles.input}
               placeholder="Pranav"
               placeholderTextColor={colors.onSurfaceVariant + '66'}
+              value={name}
+              onChangeText={setName}
             />
           </View>
 
@@ -48,6 +56,8 @@ export default function PersonalDetails() {
                 placeholder="98765 43210"
                 placeholderTextColor={colors.onSurfaceVariant + '66'}
                 keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
               />
             </View>
           </View>
@@ -60,7 +70,9 @@ export default function PersonalDetails() {
                 placeholder="XXXX XXXX 7821"
                 placeholderTextColor={colors.onSurfaceVariant + '66'}
                 keyboardType="numeric"
-                maxLength={12}
+                maxLength={4}
+                value={aadhaar}
+                onChangeText={setAadhaar}
               />
               <Text style={styles.lockIcon}>🔒</Text>
             </View>
@@ -73,6 +85,8 @@ export default function PersonalDetails() {
                 style={styles.input}
                 placeholder="DD / MM / YYYY"
                 placeholderTextColor={colors.onSurfaceVariant + '66'}
+                value={dob}
+                onChangeText={setDob}
               />
               <Text style={styles.calendarIcon}>📅</Text>
             </View>
