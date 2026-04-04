@@ -65,8 +65,14 @@ export default function HomeScreen() {
 
           <View style={styles.coverageBody}>
             <Text style={styles.coverageLabel}>Valid till</Text>
-            <Text style={styles.coverageTitle}>Sunday, Apr 5</Text>
-            <Text style={styles.coverageSub}>This week premium: <Text style={styles.coverageHighlight}>₹67 paid</Text></Text>
+            <Text style={styles.coverageTitle}>
+              {policy?.week_end_date 
+                ? new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'short', day: 'numeric' }).format(new Date(policy.week_end_date))
+                : '--'}
+            </Text>
+            <Text style={styles.coverageSub}>
+              This week premium: <Text style={styles.coverageHighlight}>₹{policy?.final_premium ?? '--'} paid</Text>
+            </Text>
           </View>
 
           <TouchableOpacity
