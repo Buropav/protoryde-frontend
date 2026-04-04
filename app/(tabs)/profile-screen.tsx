@@ -20,7 +20,7 @@ const menuItems: Array<{
 ];
 
 export default function ProfileScreen() {
-  const { riderName } = useRider();
+  const { riderName, upiId } = useRider();
 
   return (
     <View style={styles.container}>
@@ -32,7 +32,7 @@ export default function ProfileScreen() {
         <SectionCard style={styles.profileCard}>
           <View style={styles.avatarLarge}><Text style={styles.avatarText}>PN</Text></View>
           <Text style={styles.name}>{riderName || 'Pranav'}</Text>
-          <Text style={styles.email}>pranav@okicici</Text>
+          <Text style={styles.email}>{upiId || 'pranav@okicici'}</Text>
           <View style={styles.partnerBadge}><Text style={styles.badgeText}>DEL-BLR-284719</Text></View>
         </SectionCard>
 
