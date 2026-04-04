@@ -6,23 +6,6 @@ import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { claimsService } from '../../src/services/claimsService';
 
-const mockClaims = [
-  {
-    id: 'c1',
-    title: 'Rainfall Trigger - HSR Layout',
-    date: 'Apr 03, 2026',
-    payout: '₹840',
-    status: 'PAID',
-  },
-  {
-    id: 'c2',
-    title: 'Platform Advisory Trigger',
-    date: 'Mar 22, 2026',
-    payout: '₹590',
-    status: 'PAID',
-  },
-];
-
 export default function ClaimsListScreen() {
   const { phoneNumber } = useRider();
   
@@ -35,6 +18,9 @@ export default function ClaimsListScreen() {
     !!phoneNumber,
     [phoneNumber]
   );
+
+  const claims = claimsData?.claims || [];
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -42,9 +28,9 @@ export default function ClaimsListScreen() {
       </View>
 
       <AppPage>
-        {mockClaims.map((claim) => (
+        {claims.map((claim) => (
           <TouchableOpacity
-            key={claim.id}
+            key={claim.claim_id}
             onPress={() => router.push('/claims/claim-detail-fraud-audit')}
             activeOpacity={0.85}
           >
