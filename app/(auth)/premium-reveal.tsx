@@ -41,16 +41,18 @@ export default function PremiumReveal() {
           </View>
         </View>
 
-        <View style={styles.premiumCard}>
-          <View style={styles.cardGrain} />
-          <Text style={styles.premiumLabel}>YOUR WEEKLY PREMIUM</Text>
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>₹67</Text>
-            <View style={styles.discountBadge}>
-              <Text style={styles.strikePrice}>₹82 base</Text>
-              <Text style={styles.discount}>-₹15 zone discount</Text>
-            </View>
+        {loadingPremium ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.loadingText}>Calculating hyper-local risk...</Text>
           </View>
+        ) : (
+          <>
+            <View style={styles.premiumCard}>
+              <View style={styles.cardGrain} />
+              <Text style={styles.premiumLabel}>YOUR WEEKLY PREMIUM</Text>
+              <View style={styles.priceContainer}>
+                <Text style={styles.price}>₹{finalPremium}</Text>
 
           <View style={styles.divider} />
 
