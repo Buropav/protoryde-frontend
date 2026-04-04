@@ -9,7 +9,7 @@ export default function WeatherAlertScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Weather Alert</Text>
+        <Text style={styles.headerTitle}>Weather Update</Text>
         <View style={styles.spacer} />
       </View>
 
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 20,
     paddingBottom: 16,
     position: 'absolute',
     top: 0,
@@ -103,20 +103,20 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: '#FFFFFF',
+    color: colors.primary,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: colors.primary,
   },
   spacer: {
-    width: 40,
+    width: 120,
   },
   mainContent: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 100,
+    paddingHorizontal: 5,
+    paddingTop: 60,
     paddingBottom: 24,
   },
   alertCard: {
