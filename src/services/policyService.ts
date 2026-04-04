@@ -1,5 +1,5 @@
-import { apiPost } from './apiClient';
-import { PolicyActivateResponse } from '../types/api';
+import { apiPost, apiGet } from './apiClient';
+import { PolicyActivateResponse, CurrentPolicyResponse } from '../types/api';
 
 export interface PolicyActivateParams {
   rider_id: string;
@@ -14,5 +14,8 @@ export interface PolicyActivateParams {
 export const policyService = {
   activatePolicy: async (params: PolicyActivateParams): Promise<PolicyActivateResponse> => {
     return apiPost<PolicyActivateResponse>('/policies/activate', params);
+  },
+  getCurrentPolicy: async (riderId: string): Promise<CurrentPolicyResponse> => {
+    return apiGet<CurrentPolicyResponse>(`/policies/${riderId}/current`);
   }
 };
