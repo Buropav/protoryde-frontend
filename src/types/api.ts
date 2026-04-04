@@ -129,3 +129,10 @@ export interface ExclusionsResponse {
   version: string;
   items: string[];
 }
+
+export interface ModelStatusResponse {
+  ready: boolean;
+  model_path?: string;
+  error?: string;
+  zone_defaults: Record<string, any>;
+}
