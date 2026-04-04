@@ -7,6 +7,21 @@ export default function ZoneSelectionScreen() {
   return (
     <View style={styles.container}>
       <AppPage contentContainerStyle={styles.content}>
+        <View style={styles.progressSection}>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: '66%' }]} />
+          </View>
+        </View>
+
+        <View style={styles.heroBlock}>
+          <View style={styles.titleRow}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <Text style={styles.backIcon}>←</Text>
+            </TouchableOpacity>
+            <Text style={styles.title}>Confirm Your Zone</Text>
+          </View>
+        </View>
+
         <View style={styles.selectorWrap}>
           <Text style={styles.label}>Risk Assessment Zone</Text>
           <TouchableOpacity style={styles.zoneSelector} activeOpacity={0.85}>
@@ -68,8 +83,45 @@ const styles = StyleSheet.create({
   content: {
     paddingTop: 8,
   },
+  heroBlock: {
+    marginBottom: 16,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  backButton: {
+    paddingRight: 5,
+  },
+  backIcon: {
+    fontSize: 24,
+    color: colors.primary,
+  },
+  progressSection: {
+    paddingTop: 25,
+    marginBottom: 8,
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: colors.surfaceContainerHighest,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: colors.primary,
+    borderRadius: 3,
+  },
+  title: {
+    color: colors.primary,
+    fontSize: 24,
+    fontWeight: '800',
+    flex: 1,
+  },
   selectorWrap: {
     gap: 8,
+    marginTop: -10,
   },
   label: {
     color: colors.onSurfaceVariant,
