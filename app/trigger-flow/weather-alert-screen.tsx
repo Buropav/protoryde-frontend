@@ -18,15 +18,31 @@ export default function WeatherAlertScreen() {
           <View style={styles.cardContent}>
             <View style={styles.riskBadge}>
               <Text style={styles.riskIcon}>⚠️</Text>
-              <Text style={styles.riskText}>HIGH RISK TOMORROW</Text>
+              <Text style={styles.riskText}>HIGH RISK  •  FRI, MAR 21</Text>
             </View>
 
             <Text style={styles.headline}>
               Heavy Rain Predicted in HSR Layout
             </Text>
-            <Text style={styles.description}>
-              Our radar indicates <Text style={styles.bold}>68–82mm</Text> rain expected Friday, Mar 21. Your earnings might be affected.
-            </Text>
+
+            <View style={styles.impactChip}>
+              <Text style={styles.impactChipText}>📉  High Impact on Earnings</Text>
+            </View>
+
+            {/* Rainfall Threshold Progress Bar */}
+            <View style={styles.progressSection}>
+              <Text style={styles.progressTitle}>Rainfall Forecast vs. Trigger</Text>
+              <View style={styles.progressBarTrack}>
+                <View style={[styles.progressBarFillSafe, { width: '30%' }]} />
+                <View style={[styles.progressBarFillDanger, { left: '30%', width: '44%' }]} />
+                <View style={styles.triggerMarker} />
+                <Text style={styles.triggerMarkerLabel}>30mm</Text>
+              </View>
+              <View style={styles.progressLabels}>
+                <Text style={styles.progressLabelLeft}>0mm</Text>
+                <Text style={styles.progressLabelRight}>74mm predicted</Text>
+              </View>
+            </View>
 
             <View style={styles.divider} />
 
@@ -58,7 +74,7 @@ export default function WeatherAlertScreen() {
                 onPress={() => router.push('/trigger-flow/active-trigger-screen')}
                 activeOpacity={0.95}
               >
-                <Text style={styles.upgradeText}>Upgrade to Enhanced Cover  •  +₹25</Text>
+                <Text style={styles.upgradeText}>Upgrade to Enhanced Cover (+₹25)</Text>
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -66,14 +82,14 @@ export default function WeatherAlertScreen() {
                 onPress={() => router.push('/trigger-flow/active-trigger-screen')}
                 activeOpacity={0.95}
               >
-                <Text style={styles.stayText}>I'm Good — Stay on ₹67 Plan</Text>
+                <Text style={styles.stayText}>Stay on ₹67 Plan</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
 
         <Text style={styles.disclaimer}>
-          You'll be automatically notified if conditions change. Payouts are credited instantly to your ProtoRyde wallet upon trigger verification.
+          You'll be automatically notified if weather conditions change. Payouts are credited instantly to your linked UPI account upon trigger verification.
         </Text>
       </ScrollView>
     </View>
@@ -91,7 +107,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 20,
-    paddingBottom: 16,
+    paddingBottom: 10,
     backgroundColor: colors.surface,
     position: 'absolute',
     top: 0,
@@ -159,15 +175,86 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     lineHeight: 28,
   },
-  description: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.onSurfaceVariant,
-    lineHeight: 22,
+  impactChip: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.25)',
   },
-  bold: {
+  impactChipText: {
+    color: '#FCA5A5',
+    fontSize: 12,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+  },
+  progressSection: {
+    gap: 8,
+  },
+  progressTitle: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.onSurfaceVariant,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  progressBarTrack: {
+    height: 14,
+    backgroundColor: colors.surfaceContainerHigh,
+    borderRadius: 7,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  progressBarFillSafe: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    backgroundColor: colors.primary,
+    borderTopLeftRadius: 7,
+    borderBottomLeftRadius: 7,
+  },
+  progressBarFillDanger: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    backgroundColor: '#EF4444',
+    borderTopRightRadius: 7,
+    borderBottomRightRadius: 7,
+  },
+  triggerMarker: {
+    position: 'absolute',
+    left: '30%',
+    top: -3,
+    bottom: -3,
+    width: 2,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 1,
+    zIndex: 2,
+  },
+  triggerMarkerLabel: {
+    position: 'absolute',
+    left: '30%',
+    top: -18,
+    fontSize: 9,
     fontWeight: '700',
-    color: colors.primary,
+    color: '#FFFFFF',
+    marginLeft: -10,
+  },
+  progressLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  progressLabelLeft: {
+    fontSize: 10,
+    color: colors.onSurfaceVariant,
+  },
+  progressLabelRight: {
+    fontSize: 10,
+    color: '#EF4444',
+    fontWeight: '600',
   },
   divider: {
     height: 1,
@@ -180,6 +267,7 @@ const styles = StyleSheet.create({
   statItem: {
     flex: 1,
     gap: 6,
+    alignItems: 'center',
   },
   statLabel: {
     fontSize: 10,
@@ -248,6 +336,7 @@ const styles = StyleSheet.create({
     color: colors.onSurfaceVariant,
     textAlign: 'center',
     lineHeight: 20,
+    marginTop: -20,
     paddingHorizontal: 16,
     opacity: 0.6,
   },
