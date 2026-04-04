@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, FlatList } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, FlatList, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
@@ -9,10 +9,131 @@ import { premiumService } from '../../src/services/premiumService';
 import { weatherService } from '../../src/services/weatherService';
 import { ErrorBanner } from '../../src/components/ErrorBanner';
 
+type LatLng = {
+  latitude: number;
+  longitude: number;
+};
+
+type Region = {
+  latitude: number;
+  longitude: number;
+  latitudeDelta: number;
+  longitudeDelta: number;
+};
+
+type NativeMapsModule = {
+  default: React.ComponentType<Record<string, unknown>>;
+  Polygon: React.ComponentType<Record<string, unknown>>;
+  PROVIDER_GOOGLE: unknown;
+};
+
+const loadNativeMapsModule = (): NativeMapsModule | null => {
+  if (Platform.OS === 'web') {
+    return null;
+  }
+
+  // Lazy-require avoids evaluating native map code on web builds.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  return require('react-native-maps') as NativeMapsModule;
+};
+
+const BANGALORE_OVERVIEW_REGION: Region = {
+  latitude: 12.9716,
+  longitude: 77.5946,
+  latitudeDelta: 0.22,
+  longitudeDelta: 0.22,
+};
+
+const DARK_MAP_STYLE = [
+  { elementType: 'geometry', stylers: [{ color: '#0f1419' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#0f1419' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#5b6675' }] },
+  { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#263344' }] },
+  { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#1a2332' }] },
+  { featureType: 'poi', elementType: 'labels.text.fill', stylers: [{ color: '#7e8a99' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1f2a39' }] },
+  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#18202d' }] },
+  { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#8f9dad' }] },
+  { featureType: 'transit', elementType: 'geometry', stylers: [{ color: '#202c3d' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0a1a2b' }] },
+  { featureType: 'water', elementType: 'labels.text.fill', stylers: [{ color: '#415164' }] },
+];
+
+const toRgba = (hexColor: string, alpha: number) => {
+  const clean = hexColor.replace('#', '');
+  const normalized = clean.length === 3
+    ? clean.split('').map((value) => value + value).join('')
+    : clean;
+  const int = Number.parseInt(normalized, 16);
+  const r = (int >> 16) & 255;
+  const g = (int >> 8) & 255;
+  const b = int & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+const parsePoint = (value: unknown): LatLng | null => {
+  if (!value) return null;
+
+  if (Array.isArray(value) && value.length >= 2) {
+    const first = Number(value[0]);
+    const second = Number(value[1]);
+    if (Number.isFinite(first) && Number.isFinite(second)) {
+      const isLngLat = Math.abs(first) > 90;
+      return {
+        latitude: isLngLat ? second : first,
+        longitude: isLngLat ? first : second,
+      };
+    }
+  }
+
+  if (typeof value === 'object') {
+    const point = value as Record<string, unknown>;
+    const latitude = Number(point.latitude ?? point.lat);
+    const longitude = Number(point.longitude ?? point.lng ?? point.lon);
+    if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+      return { latitude, longitude };
+    }
+  }
+
+  return null;
+};
+
+const parsePolygon = (value: unknown): LatLng[] => {
+  if (!Array.isArray(value)) return [];
+
+  const first = value[0];
+  if (Array.isArray(first) && first.length > 0 && Array.isArray(first[0])) {
+    return (first as unknown[]).map(parsePoint).filter((point): point is LatLng => point !== null);
+  }
+
+  return value.map(parsePoint).filter((point): point is LatLng => point !== null);
+};
+
+const getPolygonCenter = (polygon: LatLng[]): LatLng | null => {
+  if (polygon.length === 0) return null;
+  const totals = polygon.reduce(
+    (acc, point) => ({
+      latitude: acc.latitude + point.latitude,
+      longitude: acc.longitude + point.longitude,
+    }),
+    { latitude: 0, longitude: 0 }
+  );
+  return {
+    latitude: totals.latitude / polygon.length,
+    longitude: totals.longitude / polygon.length,
+  };
+};
+
 export default function ZoneSelectionScreen() {
   const { zone: contextZone, setRiderInfo } = useRider();
   const [selectedZone, setSelectedZone] = useState(contextZone || 'HSR Layout');
   const [showDropdown, setShowDropdown] = useState(false);
+  const mapRef = useRef<{ animateToRegion?: (region: Region, duration?: number) => void } | null>(null);
+  const hasAnimatedRef = useRef(false);
+  const nativeMaps = useMemo(loadNativeMapsModule, []);
+  const MapViewComponent = nativeMaps?.default;
+  const PolygonComponent = nativeMaps?.Polygon;
+  const googleProvider = nativeMaps?.PROVIDER_GOOGLE;
 
   // Fetch supported zones and defaults from model status
   const { 
@@ -51,6 +172,93 @@ export default function ZoneSelectionScreen() {
   );
 
   const zoneRisk = modelStatus?.zone_defaults?.[selectedZone]?.risk_score || 'Medium';
+  const zoneMeta = modelStatus?.zone_defaults?.[selectedZone] as Record<string, unknown> | undefined;
+
+  const selectedPolygon = useMemo(() => {
+    if (!zoneMeta) return [];
+
+    const explicitCandidates = [
+      zoneMeta.polygon,
+      zoneMeta.boundary,
+      zoneMeta.boundaries,
+      zoneMeta.coverage_area,
+      zoneMeta.coverage_polygon,
+      zoneMeta.coordinates,
+      zoneMeta.geojson,
+    ];
+
+    for (const candidate of explicitCandidates) {
+      const parsed = parsePolygon(candidate);
+      if (parsed.length >= 3) {
+        return parsed;
+      }
+    }
+
+    for (const value of Object.values(zoneMeta)) {
+      const parsed = parsePolygon(value);
+      if (parsed.length >= 3) {
+        return parsed;
+      }
+    }
+
+    return [];
+  }, [zoneMeta]);
+
+  const selectedCenter = useMemo(() => {
+    if (!zoneMeta) {
+      return getPolygonCenter(selectedPolygon);
+    }
+
+    const centerCandidates = [
+      zoneMeta.center,
+      zoneMeta.centroid,
+      zoneMeta.location,
+      zoneMeta.position,
+    ];
+
+    for (const candidate of centerCandidates) {
+      const parsed = parsePoint(candidate);
+      if (parsed) {
+        return parsed;
+      }
+    }
+
+    for (const value of Object.values(zoneMeta)) {
+      const parsed = parsePoint(value);
+      if (parsed) {
+        return parsed;
+      }
+    }
+
+    return getPolygonCenter(selectedPolygon);
+  }, [selectedPolygon, zoneMeta]);
+
+  const selectedRegion = useMemo<Region>(() => {
+    if (!selectedCenter) {
+      return BANGALORE_OVERVIEW_REGION;
+    }
+
+    return {
+      latitude: selectedCenter.latitude,
+      longitude: selectedCenter.longitude,
+      latitudeDelta: 0.025,
+      longitudeDelta: 0.025,
+    };
+  }, [selectedCenter]);
+
+  const normalizedRisk = String(zoneRisk).toLowerCase();
+  const activeRiskColor = normalizedRisk.includes('high') ? colors.error : colors.secondary;
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    if (!hasAnimatedRef.current) {
+      hasAnimatedRef.current = true;
+      return;
+    }
+
+    mapRef.current?.animateToRegion?.(selectedRegion, 700);
+  }, [selectedRegion, selectedZone]);
 
   const handleContinue = () => {
     setRiderInfo({ zone: selectedZone });
@@ -115,9 +323,34 @@ export default function ZoneSelectionScreen() {
         </View>
 
         <SectionCard style={styles.mapCard}>
-          <View style={styles.fakeMap}>
-            <Text style={styles.mapBadge}>Bangalore Grid</Text>
-            <View style={styles.pin} />
+          <View style={styles.mapContainer}>
+            {!MapViewComponent || !PolygonComponent ? (
+              <View style={styles.webMapFallback}>
+                <Text style={styles.fallbackText}>Map preview is available on native builds.</Text>
+              </View>
+            ) : (
+              <MapViewComponent
+                ref={mapRef}
+                style={styles.mapView}
+                provider={googleProvider}
+                initialRegion={BANGALORE_OVERVIEW_REGION}
+                customMapStyle={DARK_MAP_STYLE}
+                showsCompass={false}
+                showsTraffic={false}
+                showsIndoors={false}
+                toolbarEnabled={false}
+                pitchEnabled={false}
+              >
+                {selectedPolygon.length >= 3 && (
+                  <PolygonComponent
+                    coordinates={selectedPolygon}
+                    strokeColor={activeRiskColor}
+                    fillColor={toRgba(activeRiskColor, 0.2)}
+                    strokeWidth={2}
+                  />
+                )}
+              </MapViewComponent>
+            )}
             <StatusChip label={`${zoneRisk} Risk`} tone={zoneRisk === 'High' ? 'error' : 'warning'} style={styles.riskChip} />
           </View>
         </SectionCard>
@@ -295,26 +528,24 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: colors.surfaceContainer,
   },
-  fakeMap: {
+  mapContainer: {
     height: 210,
-    backgroundColor: '#192A3B',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: colors.surfaceContainerLow,
     position: 'relative',
   },
-  mapBadge: {
-    color: '#8CB8FF',
-    fontSize: 12,
-    letterSpacing: 0.6,
+  mapView: {
+    ...StyleSheet.absoluteFillObject,
   },
-  pin: {
-    marginTop: 12,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: colors.secondaryContainer,
-    borderWidth: 2,
-    borderColor: colors.onPrimary,
+  webMapFallback: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    backgroundColor: '#192A3B',
+  },
+  fallbackText: {
+    color: colors.onSurfaceVariant,
+    fontSize: 12,
   },
   riskChip: {
     position: 'absolute',
