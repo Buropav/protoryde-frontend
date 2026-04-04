@@ -2,6 +2,9 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
+import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { claimsService } from '../../src/services/claimsService';
 
 const mockClaims = [
   {
@@ -21,6 +24,17 @@ const mockClaims = [
 ];
 
 export default function ClaimsListScreen() {
+  const { phoneNumber } = useRider();
+  
+  const { 
+    data: claimsData, 
+    loading: loadingClaims, 
+    error: claimsError 
+  } = useApiCall(
+    () => claimsService.getRiderClaims(phoneNumber || ''),
+    !!phoneNumber,
+    [phoneNumber]
+  );
   return (
     <View style={styles.container}>
       <View style={styles.header}>
