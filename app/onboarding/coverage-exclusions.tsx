@@ -13,7 +13,7 @@ export default function CoverageExclusionsScreen() {
       <AppPage contentContainerStyle={styles.content}>
         <View style={styles.progressSection}>
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: '80%' }]} />
+            <View style={[styles.progressFill, { width: '66%' }]} />
           </View>
         </View>
 
@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   progressSection: {
+    paddingTop: 25,
     marginBottom: 8,
   },
   progressBar: {
@@ -136,11 +137,12 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    justifyContent: 'space-between',
   },
   smallCard: {
-    width: '48.5%',
+    width: '48%',
     gap: 6,
+    marginBottom: 12,
   },
   cardIcon: {
     fontSize: 20,
