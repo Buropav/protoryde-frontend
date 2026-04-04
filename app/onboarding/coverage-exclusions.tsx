@@ -11,8 +11,19 @@ export default function CoverageExclusionsScreen() {
   return (
     <View style={styles.container}>
       <AppPage contentContainerStyle={styles.content}>
+        <View style={styles.progressSection}>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: '80%' }]} />
+          </View>
+        </View>
+
         <View style={styles.heroBlock}>
-          <Text style={styles.title}>What ProtoRyde Covers (and Doesn't)</Text>
+          <View style={styles.titleRow}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <Text style={styles.backIcon}>←</Text>
+            </TouchableOpacity>
+            <Text style={styles.title}>What ProtoRyde Covers (and Doesn't)</Text>
+          </View>
           <Text style={styles.subtitle}>
             Review our structural protections. Understanding these limits ensures you're prepared for any shift scenario.
           </Text>
@@ -75,11 +86,40 @@ const styles = StyleSheet.create({
   heroBlock: {
     marginBottom: 6,
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    marginBottom: 4,
+  },
+  backButton: {
+    paddingTop: 4,
+    paddingRight: 8,
+  },
+  backIcon: {
+    fontSize: 24,
+    color: colors.primary,
+  },
+  progressSection: {
+    marginBottom: 8,
+  },
+  progressBar: {
+    height: 6,
+    backgroundColor: colors.surfaceContainerHighest,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: colors.primary,
+    borderRadius: 3,
+  },
   title: {
     color: colors.primary,
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '800',
     lineHeight: 32,
+    flex: 1,
   },
   subtitle: {
     marginTop: 8,
