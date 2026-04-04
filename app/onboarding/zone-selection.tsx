@@ -65,11 +65,14 @@ export default function ZoneSelectionScreen() {
           </Text>
         </SectionCard>
 
-        <PrimaryButton
-          label="Continue to Premium Calculation"
+        <TouchableOpacity
+          style={styles.continueButton}
+          activeOpacity={0.9}
           onPress={() => router.push('/(auth)/premium-reveal')}
-          rightSlot={<Text style={styles.arrow}>→</Text>}
-        />
+        >
+          <Text style={styles.continueText}>Continue to Premium Calculation</Text>
+          <Text style={styles.arrowIcon}>→</Text>
+        </TouchableOpacity>
       </AppPage>
     </View>
   );
@@ -241,7 +244,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
   },
-  arrow: {
+  continueButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: colors.primary,
+    paddingVertical: 16,
+    borderRadius: 14,
+    marginTop: 10,
+    marginBottom: -15,
+  },
+  continueText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.onPrimary,
+  },
+  arrowIcon: {
     color: colors.onPrimary,
     fontSize: 18,
     fontWeight: '800',
