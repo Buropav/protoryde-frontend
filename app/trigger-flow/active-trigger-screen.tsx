@@ -15,15 +15,6 @@ export default function ActiveTriggerScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.statusBar}>
-        <Text style={styles.time}>10:24</Text>
-        <View style={styles.icons}>
-          <Text style={styles.icon}>📶</Text>
-          <Text style={styles.icon}>wifi</Text>
-          <Text style={styles.icon}>🔋</Text>
-        </View>
-      </View>
-
       <View style={styles.content}>
         <View style={styles.alertSection}>
           <View style={styles.iconContainer}>
@@ -129,26 +120,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.primaryContainer,
-  },
-  statusBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 48,
-    paddingBottom: 12,
-  },
-  time: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.onPrimary,
-  },
-  icons: {
-    flexDirection: 'row',
-    gap: 6,
-  },
-  icon: {
-    fontSize: 14,
   },
   content: {
     flex: 1,
