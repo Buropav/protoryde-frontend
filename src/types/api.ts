@@ -65,5 +65,18 @@ export interface PolicyHistoryResponse {
 export interface RiderClaimsResponse {
   rider_id: string;
   count: number;
-  claims: any[];
+  claims: ClaimItem[];
+}
+
+export interface ClaimItem {
+  claim_id: string;
+  trigger_type: string;
+  trigger_value: number;
+  trigger_threshold: number;
+  fraud_check_passed: boolean;
+  fraud_layers: any[];
+  payout_amount: number;
+  payout_status: string;
+  created_at: string;
+  is_simulated: boolean;
 }
