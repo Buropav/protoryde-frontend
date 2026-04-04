@@ -4,8 +4,9 @@ import { colors } from '../../src/constants/colors';
 
 export default function PayoutConfirmationScreen() {
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.successHeader}>
+    <View style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.successHeader}>
         <View style={styles.confettiContainer}>
           <View style={[styles.confetti, styles.c1]} />
           <View style={[styles.confetti, styles.c2]} />
@@ -106,6 +107,7 @@ export default function PayoutConfirmationScreen() {
           <Text style={styles.downloadText}>Download Receipt (PDF)</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
 
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem}>
@@ -129,7 +131,7 @@ export default function PayoutConfirmationScreen() {
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -410,7 +412,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    paddingBottom: 32,
+    paddingBottom: 12,
     backgroundColor: colors.surfaceContainerLowest,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
