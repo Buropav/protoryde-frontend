@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
-import { AppPage, PrimaryButton, SectionCard, TopBar } from '../../src/components/ui';
+import { AppPage, PrimaryButton, SectionCard } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 import { coverageItems, exclusionItems } from '../../src/data/prototype-data';
 
@@ -10,7 +10,6 @@ export default function CoverageExclusionsScreen() {
 
   return (
     <View style={styles.container}>
-      <TopBar title="Step 4 of 5" onBack={() => router.back()} />
       <AppPage contentContainerStyle={styles.content}>
         <View style={styles.heroBlock}>
           <Text style={styles.title}>What ProtoRyde Covers (and Doesn't)</Text>
