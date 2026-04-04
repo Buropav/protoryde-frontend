@@ -124,3 +124,8 @@ export interface WeatherWarningsResponse {
   zone: string;
   warnings: WeatherWarning[];
 }
+
+export interface ExclusionsResponse {
+  version: string;
+  items: string[];
+}
