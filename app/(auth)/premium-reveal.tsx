@@ -5,7 +5,7 @@ import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { premiumService } from '../../src/services/premiumService';
-import { demoService } from '../../src/services/demoService';
+import { policyService } from '../../src/services/policyService';
 import { LoadingOverlay } from '../../src/components/LoadingOverlay';
 import { ErrorBanner } from '../../src/components/ErrorBanner';
 
@@ -35,16 +35,15 @@ export default function PremiumReveal() {
       setIsActivating(true);
       setActivationError(null);
       
-      const response = await demoService.bootstrapDemo({
-        rider_id: phoneNumber, // Using phone as unique ID
-        rider_name: riderName,
+      const response = await policyService.activatePolicy({
+        rider_id: phoneNumber || `rider_${Date.now()}`,
         zone: zone,
-        upi_id: upiId,
-        exclusions_accepted: true
+        exclusions_accepted: true,
+        prefer_ml: true
       });
 
-      setRiderInfo({ riderId: response.rider?.rider_id || response.rider?.id || 'DEL-BLR-284719' });
-      setPolicyId(response.policy.policy_id);
+      setRiderInfo({ riderId: response.rider_id });
+      setPolicyId(response.policy_id);
       setBootstrapped(true);
 
       // Navigate to home
