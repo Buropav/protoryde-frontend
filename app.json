@@ -8,9 +8,9 @@
     "userInterfaceStyle": "light",
     "scheme": "protoryde",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/protoryde-logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#1A3C6E"
+      "backgroundColor": "#0A1628"
     },
     "ios": {
       "supportsTablet": true,
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#1A3C6E",
+        "backgroundColor": "#0A1628",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
