@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "scheme": "protoryde",
     "splash": {
-      "image": "./assets/protoryde-logo.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#0A1628"
     },
