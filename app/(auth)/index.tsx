@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Image, Easing, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import ProtoRydeLogo from '../../src/components/ProtoRydeLogo';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -176,12 +177,8 @@ export default function SplashScreen() {
                 },
               ]}
             />
-            {/* Logo image */}
-            <Image
-              source={require('../../assets/protoryde-logo.png')}
-              style={styles.logo}
-              resizeMode="contain"
-            />
+            {/* Logo component */}
+            <ProtoRydeLogo width={LOGO_SIZE} height={LOGO_SIZE} />
           </View>
 
           {/* Tagline */}
