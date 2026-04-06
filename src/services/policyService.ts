@@ -17,6 +17,21 @@ export const policyService = {
     return apiPost<PolicyActivateResponse>('/policies/activate', params);
   },
   getCurrentPolicy: async (riderId: string): Promise<CurrentPolicyResponse> => {
+    if (riderId.startsWith('demo_rider_')) {
+      return {
+        policy_id: `mock_pol_${Date.now()}`,
+        rider_id: riderId,
+        week_start_date: new Date().toISOString(),
+        week_end_date: new Date(Date.now() + 7 * 86400000).toISOString(),
+        base_premium: 30.54,
+        final_premium: 30.54,
+        premium_breakdown: [],
+        coverage_cap: 2300,
+        status: 'active',
+        exclusions_version: 'v1.0',
+        exclusions_acknowledged_at: new Date().toISOString()
+      };
+    }
     return apiGet<CurrentPolicyResponse>(`/policies/${riderId}/current`);
   },
   getPolicyHistory: async (riderId: string): Promise<PolicyHistoryResponse> => {
