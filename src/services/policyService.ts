@@ -35,9 +35,19 @@ export const policyService = {
     return apiGet<CurrentPolicyResponse>(`/policies/${riderId}/current`);
   },
   getPolicyHistory: async (riderId: string): Promise<PolicyHistoryResponse> => {
+    if (riderId.startsWith('demo_rider_')) {
+      return {
+        rider_id: riderId,
+        count: 0,
+        policies: [] // No prior entries for the mock rider
+      };
+    }
     return apiGet<PolicyHistoryResponse>(`/policies/${riderId}/history`);
   },
   downloadPolicyPdf: async (riderId: string): Promise<Blob> => {
+    if (riderId.startsWith('demo_rider_')) {
+      return new Blob(["Mock PDF Content"], { type: "application/pdf" });
+    }
     const response = await fetch(`${API_BASE_URL}/policies/${riderId}/current/document`);
     if (!response.ok) {
       throw new Error(`Failed to download policy PDF: ${response.status}`);
