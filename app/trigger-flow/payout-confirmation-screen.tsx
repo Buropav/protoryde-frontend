@@ -63,6 +63,10 @@ export default function PayoutConfirmationScreen() {
 
   const handleDownloadReceipt = async () => {
     if (!riderIdentifier) return;
+    if (riderIdentifier.startsWith('demo_rider_')) {
+      alert("PDF generation is disabled in offline demo mode.");
+      return;
+    }
     const pdfUrl = `${API_BASE_URL}/policies/${riderIdentifier}/current/document`;
     await Linking.openURL(pdfUrl);
   };

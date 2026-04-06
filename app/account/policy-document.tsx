@@ -50,6 +50,10 @@ export default function PolicyDocumentScreen() {
     if (!phoneNumber) return;
     setIsDownloading(true);
     try {
+      if (phoneNumber.startsWith('demo_rider_')) {
+        alert("PDF downloads are currently disabled in mock demo mode.");
+        return;
+      }
       // Opens PDF in the device's default browser/PDF viewer
       const pdfUrl = `${API_BASE_URL}/policies/${phoneNumber}/current/document`;
       await Linking.openURL(pdfUrl);
