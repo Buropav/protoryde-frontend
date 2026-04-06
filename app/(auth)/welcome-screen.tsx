@@ -47,7 +47,7 @@ export default function WelcomeScreen() {
           </TouchableOpacity>
           <Text style={styles.ctaSubtext}>₹67–₹115/week. Cancel anytime.</Text>
 
-          <TouchableOpacity style={styles.loginLink}>
+          <TouchableOpacity style={styles.loginLink} onPress={() => router.push('/personal-details')}>
             <Text style={styles.loginText}>Already have an account? Log in</Text>
           </TouchableOpacity>
         </View>

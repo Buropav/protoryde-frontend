@@ -54,7 +54,7 @@ export default function ProfileScreen() {
           ))}
         </SectionCard>
 
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity style={styles.logoutButton} onPress={() => router.replace('/(auth)/welcome-screen')}>
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 

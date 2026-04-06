@@ -149,7 +149,27 @@ export default function ActiveTriggerScreen() {
           )}
         </View>
 
-        <TouchableOpacity style={styles.detailsButton}>
+        <TouchableOpacity 
+          style={styles.detailsButton}
+          onPress={() => {
+            if (preview) {
+              router.replace({
+                pathname: '/trigger-flow/payout-confirmation-screen',
+                params: {
+                  claim_id: String(preview.claim_id || ''),
+                  recommended_payout: String(recommendedPayout),
+                  trigger_type: String(simulation?.trigger_type || activeTriggerType),
+                  trigger_value: String(triggerValue),
+                  fraud_check_passed: String(fraudCheckPassed),
+                  cancelled_orders: String(delhiveryEvidence?.cancelled_orders || 0),
+                  total_banking_orders: String(delhiveryEvidence?.total_banking_orders || 0),
+                  upi_id: upiId || '',
+                  zone: activeZone,
+                },
+              });
+            }
+          }}
+        >
           <Text style={styles.detailsButtonText}>View Claim Details</Text>
         </TouchableOpacity>
 

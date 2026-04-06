@@ -174,23 +174,19 @@ export default function PayoutConfirmationScreen() {
       </ScrollView>
 
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.replace('/(tabs)/home-screen')}>
           <Text style={styles.navIcon}>🏠</Text>
           <Text style={styles.navLabel}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navIcon}>📅</Text>
-          <Text style={styles.navLabel}>Calendar</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.navItem, styles.navItemActive]}>
+        <TouchableOpacity style={[styles.navItem, styles.navItemActive]} onPress={() => router.replace('/(tabs)/claims-list-screen')}>
           <Text style={styles.navIconActive}>📋</Text>
           <Text style={styles.navLabelActive}>Claims</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.replace('/(tabs)/coverage-screen')}>
           <Text style={styles.navIcon}>🛡️</Text>
           <Text style={styles.navLabel}>Coverage</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => router.replace('/(tabs)/profile-screen')}>
           <Text style={styles.navIcon}>👤</Text>
           <Text style={styles.navLabel}>Profile</Text>
         </TouchableOpacity>
