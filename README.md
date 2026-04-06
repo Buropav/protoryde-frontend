@@ -13,7 +13,7 @@ This repository contains the Expo frontend only. Backend code is in protoryde-ba
 **Team:** Buropav\
 **Location:** Coimbatore, Tamil Nadu  
  
-🔗 **Live Prototype:** [https://buropav.github.io/buropav/](https://buropav.github.io/buropav/)    
+🔗 **Live Prototype:** [https://protoryde-frontend.vercel.app/](https://protoryde-frontend.vercel.app/)    
 
 ---
 
