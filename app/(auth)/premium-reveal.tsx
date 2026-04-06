@@ -35,8 +35,12 @@ export default function PremiumReveal() {
       setIsActivating(true);
       setActivationError(null);
       
+      // We generate demo_rider_ prefix so our services instantly intercept it and
+      // skip hitting the broken backend. If phoneNumber is present, they will act like real users.
+      const generatedRiderId = phoneNumber || `demo_rider_${Date.now()}`;
+      
       const response = await policyService.activatePolicy({
-        rider_id: phoneNumber || `rider_${Date.now()}`,
+        rider_id: generatedRiderId,
         zone: zone,
         exclusions_accepted: true,
         prefer_ml: true
@@ -49,14 +53,11 @@ export default function PremiumReveal() {
       // Navigate to home
       router.replace('/(tabs)/home-screen');
     } catch (error: any) {
-      console.warn('Backend activation failed (DB down?), falling back to mock mode:', error);
-      
-      // Fallback: Proceed with mock data so the app doesn't freeze in 500 exceptions
+      console.warn('Backend activation failed', error);
+      // Fallback just in case
       setRiderInfo({ riderId: phoneNumber || `demo_rider_${Date.now()}` });
       setPolicyId(`mock_pol_${Date.now()}`);
       setBootstrapped(true);
-
-      // Navigate to home
       router.replace('/(tabs)/home-screen');
     } finally {
       setIsActivating(false);

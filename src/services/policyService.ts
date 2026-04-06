@@ -14,6 +14,24 @@ export interface PolicyActivateParams {
 
 export const policyService = {
   activatePolicy: async (params: PolicyActivateParams): Promise<PolicyActivateResponse> => {
+    if (params.rider_id && params.rider_id.startsWith('demo_rider_')) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            policy_id: `mock_pol_${Date.now()}`,
+            rider_id: params.rider_id,
+            zone: params.zone,
+            status: 'active',
+            base_premium: 30.54,
+            final_premium: 30.54,
+            premium_breakdown: [],
+            premium_engine: 'mock',
+            exclusions_version: 'v1.0',
+            exclusions_acknowledged_at: new Date().toISOString()
+          });
+        }, 600); // Simulate network delay for UX
+      });
+    }
     return apiPost<PolicyActivateResponse>('/policies/activate', params);
   },
   getCurrentPolicy: async (riderId: string): Promise<CurrentPolicyResponse> => {
