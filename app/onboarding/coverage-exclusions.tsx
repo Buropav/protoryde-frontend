@@ -18,12 +18,10 @@ interface ExclusionItemProps {
 }
 
 interface ExclusionAccordionGroupProps {
-  groupKey: string;
   label: string;
   items: ExclusionItemProps[];
   isOpen: boolean;
   onToggle: () => void;
-  hasBeenOpened: boolean;
 }
 
 const FALLBACK_EXCLUSION_ITEMS: string[] = [
@@ -39,7 +37,7 @@ const FALLBACK_EXCLUSION_ITEMS: string[] = [
   'Civil unrest or protests the rider participated in',
 ];
 
-const ExclusionAccordionGroup = ({ groupKey, label, items, isOpen, onToggle, hasBeenOpened }: ExclusionAccordionGroupProps) => {
+const ExclusionAccordionGroup = ({ label, items, isOpen, onToggle }: ExclusionAccordionGroupProps) => {
   const rotation = useRef(new Animated.Value(isOpen ? 1 : 0)).current;
 
   useEffect(() => {
@@ -92,7 +90,7 @@ export default function CoverageExclusionsScreen() {
   const [accepted, setAccepted] = useState(false);
   const [openGroupKeys, setOpenGroupKeys] = useState<Set<string>>(new Set());
   const [openedOnceGroups, setOpenedOnceGroups] = useState<Set<string>>(new Set());
-  const [showGateMessage, setShowGateMessage] = useState(false);
+  const [showReviewHint, setShowReviewHint] = useState(false);
 
   const { data, loading, error, execute, refetch } = useApiCall(
     exclusionsService.getExclusions
@@ -125,12 +123,19 @@ export default function CoverageExclusionsScreen() {
     }
   });
 
-  const TOTAL_GROUPS = 4;
-  const isGateMet = openedOnceGroups.size === TOTAL_GROUPS;
+  const totalGroups = groupedExclusions.length;
+  const reviewedAllGroups = openedOnceGroups.size === totalGroups;
+
+  useEffect(() => {
+    if (reviewedAllGroups) {
+      setShowReviewHint(false);
+    }
+  }, [reviewedAllGroups]);
 
   const toggleGroup = (key: string) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    
+    if (Platform.OS !== 'web') {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    }
     const newOpenKeys = new Set(openGroupKeys);
     if (newOpenKeys.has(key)) {
       newOpenKeys.delete(key);
@@ -138,23 +143,20 @@ export default function CoverageExclusionsScreen() {
       newOpenKeys.add(key);
     }
     setOpenGroupKeys(newOpenKeys);
-    
+
     if (!openedOnceGroups.has(key)) {
-      const newOpenedOnce = new Set(openedOnceGroups).add(key);
-      setOpenedOnceGroups(newOpenedOnce);
-      
-      if (showGateMessage && newOpenedOnce.size === TOTAL_GROUPS) {
-        setShowGateMessage(false);
-      }
+      setOpenedOnceGroups((prev) => {
+        const updated = new Set(prev);
+        updated.add(key);
+        return updated;
+      });
     }
   };
 
   const handleCheck = () => {
-    if (!isGateMet) {
-      setShowGateMessage(true);
-      return;
+    if (!reviewedAllGroups) {
+      setShowReviewHint(true);
     }
-    setShowGateMessage(false);
     setAccepted((value) => !value);
   };
 
@@ -200,26 +202,23 @@ export default function CoverageExclusionsScreen() {
           {groupedExclusions.map((group) => (
             <ExclusionAccordionGroup
               key={group.key}
-              groupKey={group.key}
               label={group.label}
               items={group.items}
               isOpen={openGroupKeys.has(group.key)}
               onToggle={() => toggleGroup(group.key)}
-              hasBeenOpened={openedOnceGroups.has(group.key)}
             />
           ))}
         </View>
 
         <TouchableOpacity style={styles.checkRow} onPress={handleCheck} activeOpacity={0.8}>
-          <View style={[styles.checkbox, accepted && styles.checkboxChecked, !isGateMet && styles.checkboxDisabled]}>
+          <View style={[styles.checkbox, accepted && styles.checkboxChecked]}>
             {accepted ? <Text style={styles.checkboxTick}>✓</Text> : null}
           </View>
           <Text style={styles.checkText}>I acknowledge these coverage terms and exclusions.</Text>
         </TouchableOpacity>
-
-        {showGateMessage && (
-          <Text style={styles.gateMessageText}>
-            Please review all exclusion groups above before acknowledging.
+        {(showReviewHint || !reviewedAllGroups) && (
+          <Text style={styles.reviewHintText}>
+            Please review each exclusion group before continuing.
           </Text>
         )}
 
@@ -403,9 +402,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
-  checkboxDisabled: {
-    opacity: 0.5,
-  },
   checkboxTick: {
     color: colors.onPrimary,
     fontSize: 12,
@@ -416,7 +412,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
   },
-  gateMessageText: {
+  reviewHintText: {
     color: colors.onSurfaceVariant,
     fontSize: 12,
     marginLeft: 30,
