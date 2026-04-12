@@ -99,7 +99,10 @@ export default function PartnerDetails() {
                 </View>
                 <TouchableOpacity 
                    style={styles.editButton}
-                   onPress={() => router.push('/onboarding/zone-selection')}
+                   onPress={() => router.push({
+                     pathname: '/onboarding/zone-selection',
+                     params: { return_to: 'coverage-exclusions' },
+                   })}
                 >
                   <Text style={styles.editText}>Edit Zone</Text>
                 </TouchableOpacity>

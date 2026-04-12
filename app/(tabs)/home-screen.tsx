@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { router } from 'expo-router';
+import { Href, router } from 'expo-router';
 import { AppPage, PrimaryButton, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
@@ -72,7 +72,17 @@ export default function HomeScreen() {
     return 'Hazardous';
   };
 
-  const activityItems = [];
+  type ActivityItem = {
+    id: string;
+    title: string;
+    date: string;
+    amount: string;
+    icon: string;
+    route: Href;
+  };
+
+  const latestClaimId = claimsData?.claims?.[0]?.claim_id;
+  const activityItems: ActivityItem[] = [];
   if (policy && policy.status === 'active') {
     activityItems.push({
       id: 'policy-active',
@@ -80,7 +90,7 @@ export default function HomeScreen() {
       date: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(policy.week_start_date)),
       amount: `₹${policy.final_premium} charged`,
       icon: '✅',
-      route: '/account/weekly-ledger' as any
+      route: '/account/weekly-ledger'
     });
   }
 
@@ -92,7 +102,10 @@ export default function HomeScreen() {
         date: new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(claim.created_at)),
         amount: claim.payout_amount > 0 ? `₹${claim.payout_amount} paid` : 'Processing',
         icon: claim.payout_status === 'validated' ? '🛡️' : '⏳',
-        route: `/claims/claim-detail-fraud-audit` as any
+        route: {
+          pathname: '/claims/claim-detail-fraud-audit',
+          params: { claim_id: claim.claim_id }
+        }
       });
     });
   }
@@ -198,7 +211,19 @@ export default function HomeScreen() {
             <Text style={styles.quickTitle}>Policy</Text>
             <Text style={styles.quickCaption}>Rules & exclusions</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.quickCard} onPress={() => router.push('/claims/claim-detail-fraud-audit')}>
+          <TouchableOpacity
+            style={styles.quickCard}
+            onPress={() => {
+              if (latestClaimId) {
+                router.push({
+                  pathname: '/claims/claim-detail-fraud-audit',
+                  params: { claim_id: latestClaimId },
+                });
+                return;
+              }
+              router.push('/(tabs)/claims-list-screen');
+            }}
+          >
             <Text style={styles.quickIcon}>🧾</Text>
             <Text style={styles.quickTitle}>Claim</Text>
             <Text style={styles.quickCaption}>Fraud audit</Text>

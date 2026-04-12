@@ -4,23 +4,78 @@ import { AppPage, SectionCard } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 
 import { useRider } from '../../src/hooks/useRider';
+import { useApiCall } from '../../src/hooks/useApiCall';
+import { claimsService } from '../../src/services/claimsService';
 
 export default function ProfileScreen() {
-  const { riderName, upiId, riderId, zone } = useRider();
+  const {
+    riderName,
+    upiId,
+    riderId,
+    phoneNumber,
+    zone,
+    setRiderInfo,
+    setPolicyId,
+    setBootstrapped,
+  } = useRider();
+
+  const claimsRiderId = riderId || phoneNumber;
+  const { data: claimsData } = useApiCall(
+    () => claimsService.getRiderClaims(claimsRiderId || ''),
+    !!claimsRiderId,
+    [claimsRiderId]
+  );
+
+  const latestClaimId = claimsData?.claims?.[0]?.claim_id;
 
   const menuItems: Array<{
     id: string;
     icon: string;
     title: string;
     subtitle: string;
-    route: Href;
+    route?: Href;
+    onPress?: () => void;
   }> = [
-    { id: 'personal', icon: '👤', title: 'Personal Information', subtitle: 'Name, phone, DOB', route: '/(auth)/personal-details' },
+    {
+      id: 'personal',
+      icon: '👤',
+      title: 'Personal Information',
+      subtitle: 'Name, phone, DOB',
+      onPress: () => router.push('/account/personal-information' as Href),
+    },
     { id: 'zone', icon: '📍', title: 'Delivery Zone', subtitle: zone || 'HSR Layout, Bangalore', route: '/onboarding/zone-selection' },
     { id: 'payments', icon: '💳', title: 'Payment Methods', subtitle: 'UPI and bank account', route: '/account/weekly-ledger' },
     { id: 'policy', icon: '🛡️', title: 'Insurance Policy', subtitle: 'Terms and coverage details', route: '/account/policy-document' },
-    { id: 'claims', icon: '🧾', title: 'Recent Claim Detail', subtitle: 'Fraud audit and evidence', route: '/claims/claim-detail-fraud-audit' },
+    {
+      id: 'claims',
+      icon: '🧾',
+      title: 'Recent Claim Detail',
+      subtitle: latestClaimId ? 'Fraud audit and evidence' : 'No claims yet. Open claims list',
+      onPress: () => {
+        if (latestClaimId) {
+          router.push({
+            pathname: '/claims/claim-detail-fraud-audit',
+            params: { claim_id: latestClaimId },
+          });
+          return;
+        }
+        router.push('/(tabs)/claims-list-screen');
+      },
+    },
   ];
+
+  const handleLogout = () => {
+    setRiderInfo({
+      riderId: null,
+      riderName: '',
+      phoneNumber: '',
+      zone: 'HSR Layout',
+      upiId: '',
+    });
+    setPolicyId(null);
+    setBootstrapped(false);
+    router.replace('/(auth)/welcome-screen');
+  };
 
   return (
     <View style={styles.container}>
@@ -41,7 +96,15 @@ export default function ProfileScreen() {
             <TouchableOpacity
               key={item.id}
               style={[styles.menuItem, index > 0 && styles.menuDivider]}
-              onPress={() => router.push(item.route)}
+              onPress={() => {
+                if (item.onPress) {
+                  item.onPress();
+                  return;
+                }
+                if (item.route) {
+                  router.push(item.route);
+                }
+              }}
               activeOpacity={0.85}
             >
               <View style={styles.menuIcon}><Text style={styles.iconText}>{item.icon}</Text></View>
@@ -54,7 +117,7 @@ export default function ProfileScreen() {
           ))}
         </SectionCard>
 
-        <TouchableOpacity style={styles.logoutButton} onPress={() => router.replace('/(auth)/welcome-screen')}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutText}>Log Out</Text>
         </TouchableOpacity>
 

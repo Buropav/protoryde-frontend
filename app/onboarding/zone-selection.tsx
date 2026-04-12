@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator, FlatList, Platform } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { AppPage, SectionCard, StatusChip } from '../../src/components/ui';
 import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
@@ -125,6 +125,7 @@ const getPolygonCenter = (polygon: LatLng[]): LatLng | null => {
 };
 
 export default function ZoneSelectionScreen() {
+  const { return_to } = useLocalSearchParams<{ return_to?: string }>();
   const { zone: contextZone, setRiderInfo } = useRider();
   const [selectedZone, setSelectedZone] = useState(contextZone || 'HSR Layout');
   const [showDropdown, setShowDropdown] = useState(false);
@@ -262,6 +263,10 @@ export default function ZoneSelectionScreen() {
 
   const handleContinue = () => {
     setRiderInfo({ zone: selectedZone });
+    if (return_to === 'coverage-exclusions') {
+      router.push('/onboarding/coverage-exclusions');
+      return;
+    }
     router.push('/(auth)/premium-reveal');
   };
 
