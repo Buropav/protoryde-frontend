@@ -14,25 +14,26 @@ export const triggerService = {
     if (params.rider_id && params.rider_id.startsWith('demo_rider_')) {
       return {
         simulation_id: `sim_${Date.now()}`,
+        zone: params.zone,
+        trigger_type: params.trigger_type,
         trigger_event: {
-          event_id: `evt_${Date.now()}`,
-          trigger_type: params.trigger_type,
-          zone: params.zone,
           value: params.trigger_value ?? 65.5,
-          timestamp: new Date().toISOString(),
-          source: 'MockWeatherAPI'
+          threshold: 30.0,
+          breached: true,
         },
+        riders_evaluated: 1,
         claims_preview: [
           {
             rider_id: params.rider_id,
             claim_id: `clm_${Date.now()}`,
-            base_payout: 400.0,
-            recommended_payout: 350.0,
+            recommended_payout: 840.0,
+            currency: 'INR',
             fraud_check_passed: true,
             fraud_layers: [
-              { layer: 'L1_WEATHER_THRESHOLD', passed: true, score: 0 },
-              { layer: 'L2_ZONE_PRESENCE', passed: true, score: 0, evidence: { distance_km: 1.2 } },
-              { layer: 'L3_DELHIVERY_CROSS_REF', passed: true, score: 0, evidence: { total_banking_orders: 5, cancelled_orders: 3 } }
+              { layer: 'L1_WEATHER_THRESHOLD', passed: true, reason: 'Mock threshold check', evidence: { value: params.trigger_value ?? 65.5, threshold: 30.0 } },
+              { layer: 'L2_ZONE_PRESENCE', passed: true, reason: 'Simulated mode', evidence: { mode: 'simulated' } },
+              { layer: 'L3_DELHIVERY_CROSS_REF', passed: true, reason: 'Mock delhivery check', evidence: { total_banking_orders: 5, cancelled_orders: 4, cancellation_rate_pct: 80.0 } },
+              { layer: 'L4_BRANCH_CLOSURE_CHECK', passed: true, reason: 'Mock branch check', evidence: { total_branches: 5, closed_branches: 4, closure_rate_pct: 80.0 } }
             ]
           }
         ]

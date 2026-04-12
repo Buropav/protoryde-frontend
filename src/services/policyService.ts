@@ -26,7 +26,7 @@ export const policyService = {
             final_premium: 30.54,
             premium_breakdown: [],
             premium_engine: 'mock',
-            exclusions_version: 'v1.0',
+            exclusions_version: 'v1.0.0',
             exclusions_acknowledged_at: new Date().toISOString()
           });
         }, 600); // Simulate network delay for UX
@@ -46,7 +46,7 @@ export const policyService = {
         premium_breakdown: [],
         coverage_cap: 2300,
         status: 'active',
-        exclusions_version: 'v1.0',
+        exclusions_version: 'v1.0.0',
         exclusions_acknowledged_at: new Date().toISOString()
       };
     }
