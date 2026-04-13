@@ -240,9 +240,9 @@ export default function HomeScreen() {
               </Text>
               <Text style={[
                 styles.metricState,
-                weather?.trigger_view?.rain_24h_mm?.breached && styles.metricStateActive
+                (weather?.trigger_view?.rain_24h_mm?.breached || weather?.trigger_view?.heavy_rain?.breached) && styles.metricStateActive
               ]}>
-                {weather?.trigger_view?.rain_24h_mm?.breached ? '⚠️ Active' : 'No trigger'}
+                {(weather?.trigger_view?.rain_24h_mm?.breached || weather?.trigger_view?.heavy_rain?.breached) ? '⚠️ Active' : 'No trigger'}
               </Text>
             </View>
             <View style={styles.metricCard}>

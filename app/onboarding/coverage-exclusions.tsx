@@ -165,7 +165,7 @@ export default function CoverageExclusionsScreen() {
       <AppPage contentContainerStyle={styles.content}>
         <View style={styles.progressSection}>
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: '66%' }]} />
+            <View style={[styles.progressFill, { width: '80%' }]} />
           </View>
         </View>
 

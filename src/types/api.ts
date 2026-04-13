@@ -8,7 +8,7 @@ export interface PremiumPredictResponse {
   engine: string;
   base_premium: number;
   final_premium: number;
-  adjustments: PremiumAdjustment[];
+  adjustments: PremiumAdjustment[] | Record<string, number>;
   currency: string;
   model_status: string;
 }
@@ -30,7 +30,7 @@ export interface PolicyActivateResponse {
   status: string;
   base_premium: number;
   final_premium: number;
-  premium_breakdown: PremiumAdjustment[];
+  premium_breakdown: PremiumAdjustment[] | Record<string, number>;
   premium_engine: string;
   exclusions_version: string;
   exclusions_acknowledged_at: string;

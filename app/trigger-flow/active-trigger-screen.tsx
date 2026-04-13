@@ -91,7 +91,7 @@ export default function ActiveTriggerScreen() {
 
           <Text style={styles.headline}>{formatTriggerLabel(activeTriggerType)} Detected</Text>
           <Text style={styles.subheadline}>{activeZone} Zone • {Math.round(triggerValue)} recorded</Text>
-          <Text style={styles.timestamp}>10:22 AM, Friday Mar 21, 2026</Text>
+          <Text style={styles.timestamp}>{new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' }).format(new Date())}</Text>
         </View>
 
         {error && <ErrorBanner message={error.userMessage} onRetry={refetch} />}
@@ -142,7 +142,7 @@ export default function ActiveTriggerScreen() {
                 <Text style={styles.payoutAmount}>₹{Math.round(recommendedPayout)}</Text>
                 <View style={styles.arrivalRow}>
                   <View style={styles.pulseDot} />
-                  <Text style={styles.arrivalText}>Estimated arrival: &lt; 60 seconds</Text>
+                  <Text style={styles.arrivalText}>Estimated arrival: {'<'} 60 seconds</Text>
                 </View>
               </View>
             </>

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-nati
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import ProtoRydeLogo from '../../src/components/ProtoRydeLogo';
+import { useRider } from '../../src/hooks/useRider';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -12,6 +13,7 @@ const LOGO_SIZE = 120;
 const RING_SIZE = LOGO_SIZE + 40;
 
 export default function SplashScreen() {
+  const { isBootstrapped } = useRider();
   // Fade in the whole content
   const fadeAnim = useRef(new Animated.Value(0)).current;
   // Scale-in for logo entrance
@@ -124,8 +126,11 @@ export default function SplashScreen() {
         useNativeDriver: true,
       }).start(() => {
         // Navigate: if authenticated → Home, else → Onboarding
-        // For now, go to welcome-screen (onboarding step 1)
-        router.replace('/welcome-screen');
+        if (isBootstrapped) {
+          router.replace('/(tabs)/home-screen');
+        } else {
+          router.replace('/welcome-screen');
+        }
       });
     }, 1500);
 

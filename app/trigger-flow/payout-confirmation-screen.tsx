@@ -143,7 +143,7 @@ export default function PayoutConfirmationScreen() {
               </View>
               <View style={styles.txInfo}>
                 <Text style={styles.txUpi}>{resolvedUpi}</Text>
-                <Text style={styles.txMeta}>10:24 AM  •  <Text style={styles.txSpeed}>⚡ 1m 47s</Text></Text>
+                <Text style={styles.txMeta}>{new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date())}  •  <Text style={styles.txSpeed}>⚡ 1m 47s</Text></Text>
               </View>
             </View>
             <Text style={styles.txAmount}>₹{Math.round(payoutAmount)}</Text>

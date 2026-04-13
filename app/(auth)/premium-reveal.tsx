@@ -126,7 +126,7 @@ export default function PremiumReveal() {
                 </View>
                 <View style={styles.featureRow}>
                   <Text style={styles.featureIcon}>⚡</Text>
-                  <Text style={styles.featureText}>Payout Speed: &lt; 2 minutes</Text>
+                  <Text style={styles.featureText}>Payout Speed: {'<'} 2 minutes</Text>
                 </View>
                 <View style={styles.featureRow}>
                   <Text style={styles.featureIcon}>✨</Text>
@@ -143,7 +143,14 @@ export default function PremiumReveal() {
                 <Text style={styles.breakdownValue}>₹{basePremium}</Text>
               </View>
               
-              {premium?.adjustments.map((adj, index) => (
+              {(() => {
+                const rawAdj = premium?.adjustments;
+                if (!rawAdj) return null;
+                const adjsArray = Array.isArray(rawAdj) 
+                  ? rawAdj 
+                  : Object.entries(rawAdj).map(([factor, amount]) => ({ factor, amount }));
+                
+                return adjsArray.map((adj, index) => (
                 <View key={index} style={styles.breakdownRow}>
                   <Text style={styles.breakdownLabel}>{adj.factor}</Text>
                   <Text style={[
@@ -153,7 +160,8 @@ export default function PremiumReveal() {
                     {adj.amount < 0 ? `-₹${Math.abs(adj.amount)}` : `+₹${adj.amount}`}
                   </Text>
                 </View>
-              ))}
+                ));
+              })()}
               
               <View style={styles.totalRow}>
                 <Text style={styles.totalLabel}>Total Your premium</Text>

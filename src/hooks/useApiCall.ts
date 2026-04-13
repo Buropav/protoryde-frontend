@@ -52,7 +52,8 @@ export function useApiCall<T>(
     if (immediate) {
       execute();
     }
-  }, dependencies);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [execute, ...dependencies]);
 
   return { 
     data, 
