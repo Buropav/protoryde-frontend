@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface ApiCallError {
   message: string;
@@ -28,25 +28,28 @@ export function useApiCall<T>(
   const [loading, setLoading] = useState<boolean>(immediate);
   const [error, setError] = useState<ApiCallError | null>(null);
 
+  const apiFnRef = useRef(apiFn);
+
+  useEffect(() => {
+    apiFnRef.current = apiFn;
+  }, [apiFn]);
+
   const execute = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await apiFn();
+      const result = await apiFnRef.current();
       setData(result);
       setLoading(false);
       return result;
     } catch (err: any) {
-      // Extract error info (both ApiError and regular Error)
       const message = err.message || 'An unexpected error occurred';
       const userMessage = err.userMessage || message;
       const errorObj: ApiCallError = { message, userMessage };
       setError(errorObj);
       setLoading(false);
-      // We don't re-throw here to prevent unhandled promise rejections in components, 
-      // the 'error' state is intended for UI feedback.
     }
-  }, [apiFn]);
+  }, []);
 
   useEffect(() => {
     if (immediate) {
