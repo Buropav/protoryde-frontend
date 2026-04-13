@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, Platform, Linking } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, PrimaryButton, SectionCard, StatusChip, TopBar } from '../../src/components/ui';
 import { ErrorBanner } from '../../src/components/ErrorBanner';
@@ -8,6 +8,7 @@ import { useApiCall } from '../../src/hooks/useApiCall';
 import { useRider } from '../../src/hooks/useRider';
 import { claimsService } from '../../src/services/claimsService';
 import { policyService } from '../../src/services/policyService';
+import { API_BASE_URL } from '../../src/config/api';
 
 interface LedgerRow {
   id: string;
@@ -183,7 +184,19 @@ export default function WeeklyLedgerScreen() {
 
         <PrimaryButton
           label="Download Full Annual Ledger"
-          onPress={() => alert('Full annual ledger PDF generation is currently in development and will be available soon.')}
+          onPress={() => {
+            if (!riderIdentifier) return;
+            if (riderIdentifier.startsWith('demo_rider_')) {
+              alert("PDF downloads are currently disabled in mock demo mode.");
+              return;
+            }
+            const pdfUrl = `${API_BASE_URL}/policies/${riderIdentifier}/ledger/document`;
+            if (Platform.OS === 'web') {
+              window.open(pdfUrl, '_blank');
+            } else {
+              Linking.openURL(pdfUrl).catch(err => console.error('Ledger download failed:', err));
+            }
+          }}
           rightSlot={<Text style={styles.downloadIcon}>↓</Text>}
         />
       </AppPage>
