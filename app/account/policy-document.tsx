@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Linking } from 'react-native';
+import { StyleSheet, Text, View, Linking, Platform } from 'react-native';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { AppPage, PrimaryButton, SectionCard, StatusChip, TopBar } from '../../src/components/ui';
@@ -46,21 +46,20 @@ export default function PolicyDocumentScreen() {
 
   const exclusions = exclusionsData?.items || [];
 
-  const handleDownloadPdf = async () => {
+  const handleDownloadPdf = () => {
     if (!phoneNumber) return;
-    setIsDownloading(true);
-    try {
-      if (phoneNumber.startsWith('demo_rider_')) {
-        alert("PDF downloads are currently disabled in mock demo mode.");
-        return;
-      }
-      // Opens PDF in the device's default browser/PDF viewer
-      const pdfUrl = `${API_BASE_URL}/policies/${phoneNumber}/current/document`;
-      await Linking.openURL(pdfUrl);
-    } catch (err) {
-      console.error('PDF download failed:', err);
-    } finally {
-      setIsDownloading(false);
+    
+    if (phoneNumber.startsWith('demo_rider_')) {
+      alert("PDF downloads are currently disabled in mock demo mode.");
+      return;
+    }
+    
+    // Exectue synchronously to bypass browser popup blockers on Vercel
+    const pdfUrl = `${API_BASE_URL}/policies/${phoneNumber}/current/document`;
+    if (Platform.OS === 'web') {
+      window.open(pdfUrl, '_blank');
+    } else {
+      Linking.openURL(pdfUrl).catch(err => console.error('PDF download failed:', err));
     }
   };
 

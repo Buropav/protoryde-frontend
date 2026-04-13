@@ -183,7 +183,7 @@ export default function WeeklyLedgerScreen() {
 
         <PrimaryButton
           label="Download Full Annual Ledger"
-          onPress={() => {}}
+          onPress={() => alert('Full annual ledger PDF generation is currently in development and will be available soon.')}
           rightSlot={<Text style={styles.downloadIcon}>↓</Text>}
         />
       </AppPage>
