@@ -8,7 +8,7 @@ export default function SplashScreen() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/(auth)/phone-verification');
+      router.push('/(auth)/phone-verification' as any);
     }, 2500);
     return () => clearTimeout(timer);
   }, [router]);
