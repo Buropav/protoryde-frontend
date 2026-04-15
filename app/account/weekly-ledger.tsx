@@ -1,5 +1,7 @@
-import { useMemo } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, Platform, Linking } from 'react-native';
+import { useMemo, useState } from 'react';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, Platform, Linking, Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { router } from 'expo-router';
 import { AppPage, PrimaryButton, SectionCard, StatusChip, TopBar } from '../../src/components/ui';
 import { ErrorBanner } from '../../src/components/ErrorBanner';
@@ -40,6 +42,7 @@ const formatTriggerLabel = (triggerType: string) =>
 export default function WeeklyLedgerScreen() {
   const { phoneNumber, riderId } = useRider();
   const riderIdentifier = phoneNumber || riderId || '';
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const {
     data: historyData,
@@ -183,21 +186,36 @@ export default function WeeklyLedgerScreen() {
         )}
 
         <PrimaryButton
-          label="Download Full Annual Ledger"
-          onPress={() => {
+          label={isDownloading ? 'Generating PDF...' : 'Download Full Annual Ledger'}
+          onPress={async () => {
             if (!riderIdentifier) return;
             if (riderIdentifier.startsWith('demo_rider_')) {
-              alert("PDF downloads are currently disabled in mock demo mode.");
+              Alert.alert('Notice', "PDF downloads are currently disabled in mock demo mode.");
               return;
             }
             const pdfUrl = `${API_BASE_URL}/policies/${riderIdentifier}/ledger/document`;
             if (Platform.OS === 'web') {
               window.open(pdfUrl, '_blank');
             } else {
-              Linking.openURL(pdfUrl).catch(err => console.error('Ledger download failed:', err));
+              try {
+                setIsDownloading(true);
+                const fileUri = `${FileSystem.documentDirectory}ProtoRyde_Ledger_${riderIdentifier}.pdf`;
+                const result = await FileSystem.downloadAsync(pdfUrl, fileUri);
+                
+                if (await Sharing.isAvailableAsync()) {
+                  await Sharing.shareAsync(result.uri);
+                } else {
+                  Alert.alert('Error', 'Sharing is not available on this device');
+                }
+              } catch (err) {
+                console.error('Ledger download failed:', err);
+                Alert.alert('Download Failed', 'Could not fetch the ledger.');
+              } finally {
+                setIsDownloading(false);
+              }
             }
           }}
-          rightSlot={<Text style={styles.downloadIcon}>↓</Text>}
+          rightSlot={<Text style={styles.downloadIcon}>{isDownloading ? '⏳' : '↓'}</Text>}
         />
       </AppPage>
     </View>

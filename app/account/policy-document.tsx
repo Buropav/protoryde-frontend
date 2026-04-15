@@ -1,4 +1,6 @@
-import { StyleSheet, Text, View, Linking, Platform } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import { StyleSheet, Text, View, Linking, Platform, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { AppPage, PrimaryButton, SectionCard, StatusChip, TopBar } from '../../src/components/ui';
@@ -46,20 +48,34 @@ export default function PolicyDocumentScreen() {
 
   const exclusions = exclusionsData?.items || [];
 
-  const handleDownloadPdf = () => {
+  const handleDownloadPdf = async () => {
     if (!phoneNumber) return;
     
     if (phoneNumber.startsWith('demo_rider_')) {
-      alert("PDF downloads are currently disabled in mock demo mode.");
+      Alert.alert("Notice", "PDF downloads are currently disabled in mock demo mode.");
       return;
     }
     
-    // Exectue synchronously to bypass browser popup blockers on Vercel
     const pdfUrl = `${API_BASE_URL}/policies/${phoneNumber}/current/document`;
     if (Platform.OS === 'web') {
       window.open(pdfUrl, '_blank');
     } else {
-      Linking.openURL(pdfUrl).catch(err => console.error('PDF download failed:', err));
+      try {
+        setIsDownloading(true);
+        const fileUri = `${FileSystem.documentDirectory}ProtoRyde_Policy_${phoneNumber}.pdf`;
+        const result = await FileSystem.downloadAsync(pdfUrl, fileUri);
+        
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(result.uri);
+        } else {
+          Alert.alert('Error', 'Sharing is not available on this device');
+        }
+      } catch (err) {
+        console.error('PDF download failed:', err);
+        Alert.alert('Download Failed', 'Could not fetch the document.');
+      } finally {
+        setIsDownloading(false);
+      }
     }
   };
 

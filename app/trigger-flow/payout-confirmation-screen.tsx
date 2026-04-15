@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, type DimensionValue } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { Linking } from 'react-native';
 import { colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { policyService } from '../../src/services/policyService';
+import { notificationService } from '../../src/services/notificationService';
 import { API_BASE_URL } from '../../src/config/api';
 
 function getCoverageColor(days: number): string {
@@ -44,6 +45,8 @@ export default function PayoutConfirmationScreen() {
     [riderIdentifier]
   );
 
+  const [showSms, setShowSms] = useState(false);
+
   const payoutAmount = Number(recommended_payout || 0);
   const triggerLabel = (trigger_type || 'HEAVY_RAIN').toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   const triggerValueText = `${Math.round(Number(trigger_value || 0))}mm`;
@@ -61,6 +64,24 @@ export default function PayoutConfirmationScreen() {
   const coverageColor = useMemo(() => getCoverageColor(daysRemaining), [daysRemaining]);
   const fillWidth = `${Math.round((daysRemaining / 7) * 100)}%` as DimensionValue;
 
+  useEffect(() => {
+    if (payoutAmount > 0) {
+      notificationService.sendNotification({
+        rider_id: riderIdentifier,
+        phone: phoneNumber || '9876543210',
+        message: `ProtoRyde: claim approved, INR ${Math.round(payoutAmount)} credited.`
+      });
+
+      const t1 = setTimeout(() => setShowSms(true), 500);
+      const t2 = setTimeout(() => setShowSms(false), 4500);
+
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    }
+  }, [payoutAmount, riderIdentifier, phoneNumber]);
+
   const handleDownloadReceipt = async () => {
     if (!riderIdentifier) return;
     if (riderIdentifier.startsWith('demo_rider_')) {
@@ -73,6 +94,18 @@ export default function PayoutConfirmationScreen() {
 
   return (
     <View style={styles.container}>
+      {showSms && (
+        <View style={styles.mockSmsOverlay}>
+          <View style={styles.smsIconWrap}>
+            <Text style={styles.smsIcon}>💬</Text>
+          </View>
+          <View style={styles.smsContent}>
+            <Text style={styles.smsSender}>Messages</Text>
+            <Text style={styles.smsMessage}>ProtoRyde: claim approved, INR {Math.round(payoutAmount)} credited.</Text>
+          </View>
+        </View>
+      )}
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.successHeader}>
         <View style={styles.confettiContainer}>
@@ -203,6 +236,49 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.surfaceContainerLowest,
+  },
+  mockSmsOverlay: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    right: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    zIndex: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 8,
+  },
+  smsIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  smsIcon: {
+    fontSize: 16,
+  },
+  smsContent: {
+    flex: 1,
+  },
+  smsSender: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 2,
+  },
+  smsMessage: {
+    fontSize: 13,
+    color: '#374151',
+    lineHeight: 18,
   },
   successHeader: {
     height: 200,

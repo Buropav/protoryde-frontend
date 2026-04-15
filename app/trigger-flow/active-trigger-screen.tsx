@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { triggerService } from '../../src/services/triggerService';
+import { payoutService } from '../../src/services/payoutService';
 import { ErrorBanner } from '../../src/components/ErrorBanner';
 
 const getLayerTitle = (layer: string) => {
@@ -61,24 +62,52 @@ export default function ActiveTriggerScreen() {
 
   useEffect(() => {
     if (!preview) return;
-    const timer = setTimeout(() => {
-      router.replace({
-        pathname: '/trigger-flow/payout-confirmation-screen',
-        params: {
-          claim_id: String(preview.claim_id || ''),
-          recommended_payout: String(recommendedPayout),
-          trigger_type: String(simulation?.trigger_type || activeTriggerType),
-          trigger_value: String(triggerValue),
-          fraud_check_passed: String(fraudCheckPassed),
-          cancelled_orders: String(delhiveryEvidence?.cancelled_orders || 0),
-          total_banking_orders: String(delhiveryEvidence?.total_banking_orders || 0),
-          upi_id: upiId || '',
-          zone: activeZone,
-        },
-      });
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, [activeTriggerType, activeZone, delhiveryEvidence?.cancelled_orders, delhiveryEvidence?.total_banking_orders, fraudCheckPassed, preview, recommendedPayout, simulation?.trigger_type, triggerValue, upiId]);
+
+    let isNavigating = false;
+    let timer: NodeJS.Timeout;
+
+    const processAndNavigate = async () => {
+      if (fraudCheckPassed && recommendedPayout > 0) {
+        try {
+          await payoutService.initiatePayout({
+            claim_id: String(preview.claim_id || 'mock_clm'),
+            rider_id: riderIdentifier || 'demo_rider',
+            amount: recommendedPayout,
+            upi_id: upiId || 'pranav@okicici',
+          });
+        } catch(e) {
+          console.warn('Silent payout error', e);
+        }
+      }
+
+      if (!isNavigating) {
+        timer = setTimeout(() => {
+          isNavigating = true;
+          router.replace({
+            pathname: '/trigger-flow/payout-confirmation-screen',
+            params: {
+              claim_id: String(preview.claim_id || ''),
+              recommended_payout: String(recommendedPayout),
+              trigger_type: String(simulation?.trigger_type || activeTriggerType),
+              trigger_value: String(triggerValue),
+              fraud_check_passed: String(fraudCheckPassed),
+              cancelled_orders: String(delhiveryEvidence?.cancelled_orders || 0),
+              total_banking_orders: String(delhiveryEvidence?.total_banking_orders || 0),
+              upi_id: upiId || '',
+              zone: activeZone,
+            },
+          });
+        }, 1500);
+      }
+    };
+
+    processAndNavigate();
+
+    return () => {
+      isNavigating = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [activeTriggerType, activeZone, delhiveryEvidence?.cancelled_orders, delhiveryEvidence?.total_banking_orders, fraudCheckPassed, preview, recommendedPayout, simulation?.trigger_type, triggerValue, upiId, riderIdentifier]);
 
   return (
     <View style={styles.container}>

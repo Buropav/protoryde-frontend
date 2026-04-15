@@ -6,6 +6,7 @@ import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { premiumService } from '../../src/services/premiumService';
 import { policyService } from '../../src/services/policyService';
+import { paymentService } from '../../src/services/paymentService';
 import { LoadingOverlay } from '../../src/components/LoadingOverlay';
 import { ErrorBanner } from '../../src/components/ErrorBanner';
 
@@ -30,6 +31,15 @@ export default function PremiumReveal() {
   const basePremium = premium?.base_premium || 0;
   const discountDelta = basePremium - finalPremium;
 
+  // Fetch Lockout Status
+  const { data: lockoutStatus } = useApiCall(
+    () => policyService.getLockoutStatus(zone),
+    true,
+    [zone]
+  );
+  
+  const isLockedOut = lockoutStatus?.lockout_active || false;
+
   const handleActivate = async () => {
     try {
       setIsActivating(true);
@@ -49,6 +59,19 @@ export default function PremiumReveal() {
       setRiderInfo({ riderId: response.rider_id });
       setPolicyId(response.policy_id);
       setBootstrapped(true);
+
+      // Perform frictionless premium collection
+      await paymentService.collectPayment({
+        rider_id: response.rider_id,
+        policy_id: response.policy_id,
+        amount: finalPremium,
+        upi_id: upiId || 'pranav@okicici'
+      });
+
+      Alert.alert(
+        "Coverage Active", 
+        `Premium of ₹${finalPremium} auto-deducted via UPI from ${upiId || 'pranav@okicici'}`
+      );
 
       // Navigate to home
       router.replace('/(tabs)/home-screen');
@@ -93,6 +116,18 @@ export default function PremiumReveal() {
             message={activationError}
             onRetry={handleActivate}
           />
+        )}
+
+        {isLockedOut && (
+          <View style={[styles.infoCard, { backgroundColor: colors.error + '30', marginBottom: 20 }]}>
+            <Text style={[styles.infoIcon, { color: colors.error }]}>⚠️</Text>
+            <View style={styles.infoContent}>
+              <Text style={[styles.infoTitle, { color: colors.error }]}>Enrollment Paused</Text>
+              <Text style={styles.infoText}>
+                Enrollment paused due to active weather advisory. Please wait till weather clears.
+              </Text>
+            </View>
+          </View>
         )}
 
         {loadingPremium ? (
@@ -184,10 +219,10 @@ export default function PremiumReveal() {
 
       <View style={styles.footer}>
         <TouchableOpacity 
-          style={[styles.activateButton, (loadingPremium || isActivating) && styles.disabledButton]}
+          style={[styles.activateButton, (loadingPremium || isActivating || isLockedOut) && styles.disabledButton]}
           onPress={handleActivate}
           activeOpacity={0.98}
-          disabled={loadingPremium || isActivating}
+          disabled={loadingPremium || isActivating || isLockedOut}
         >
             <Text style={styles.activateText}>Activate ProtoRyde (₹{finalPremium})</Text>
           <View style={styles.upiBadge}>
