@@ -124,7 +124,7 @@ export default function PremiumReveal() {
             <View style={styles.infoContent}>
               <Text style={[styles.infoTitle, { color: colors.error }]}>Enrollment Paused</Text>
               <Text style={styles.infoText}>
-                Enrollment paused due to active weather advisory. Please wait till weather clears.
+                {lockoutStatus?.reason || 'Enrollment paused due to active weather advisory. Please wait till weather clears.'}
               </Text>
             </View>
           </View>

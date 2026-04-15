@@ -88,5 +88,12 @@ export const policyService = {
       throw new Error(`Failed to download policy PDF: ${response.status}`);
     }
     return response.blob();
+  },
+  getLockoutStatus: async (zone: string): Promise<{ lockout_active: boolean; reason?: string }> => {
+    try {
+      return await apiGet<{ lockout_active: boolean; reason?: string }>(`/policy/eligibility?zone=${encodeURIComponent(zone)}`);
+    } catch {
+      return { lockout_active: false };
+    }
   }
 };

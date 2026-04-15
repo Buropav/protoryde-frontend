@@ -67,6 +67,13 @@ export interface PolicyHistoryResponse {
   policies: CurrentPolicyResponse[];
 }
 
+export interface LockoutStatusResponse {
+  zone: string;
+  lockout_active: boolean;
+  reason?: string;
+  expires_at?: string;
+}
+
 export interface RiderClaimsResponse {
   rider_id: string;
   count: number;
