@@ -1,51 +1,66 @@
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { Colors } from '../src/constants/colors';
+import { Tabs } from 'expo-router';
+import { Colors } from '../../src/constants/colors'; 
+import { Text, StyleSheet, Platform } from 'react-native';
 
-export default function RootLayout() {
+export default function TabsLayout() {
   return (
-    <>
-      <StatusBar style="light" backgroundColor={Colors.background} />
-      
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: Colors.background },
-          animation: 'fade',
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: Colors.primary,     // #00D4AA (Teal)
+        tabBarInactiveTintColor: Colors.textMuted, // rgba(255, 255, 255, 0.45)
+        tabBarStyle: styles.tabBar,
+        tabBarLabelStyle: styles.tabBarLabel,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>🏠</Text>,
         }}
-      >
-        {/* --- Primary Flows --- */}
-        <Stack.Screen name="index" /> 
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="onboarding" />
-        <Stack.Screen name="(tabs)" />
-
-        {/* --- Nested Sub-Flows --- */}
-        <Stack.Screen name="trigger-flow" />
-        <Stack.Screen name="claims-history" />
-        <Stack.Screen name="account" />
-
-        {/* --- Bottom Sheet Modals --- 
-          These use 'transparentModal' so the background screen remains visible
-          beneath the semi-transparent overlay defined in the Stitch spec.
-        */}
-        <Stack.Screen
-          name="modals/premium-transparency"
-          options={{
-            presentation: 'transparentModal',
-            animation: 'slide_from_bottom',
-            contentStyle: { backgroundColor: 'transparent' }, 
-          }}
-        />
-        <Stack.Screen
-          name="modals/enhanced-coverage-upsell"
-          options={{
-            presentation: 'transparentModal',
-            animation: 'slide_from_bottom',
-            contentStyle: { backgroundColor: 'transparent' },
-          }}
-        />
-      </Stack>
-    </>
+      />
+      <Tabs.Screen
+        name="alerts"
+        options={{
+          title: 'Alerts',
+          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>🔔</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="claims"
+        options={{
+          title: 'Claims',
+          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>📄</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>👤</Text>,
+        }}
+      />
+    </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: Colors.background, // #0A1628 (Deep Navy)
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight, // rgba(255, 255, 255, 0.08)
+    elevation: 0,
+    height: Platform.OS === 'ios' ? 84 : 64, // 64dp constraint (adjusted for iOS safe area)
+    paddingBottom: Platform.OS === 'ios' ? 24 : 8, 
+    paddingTop: 8,
+  },
+  tabBarLabel: {
+    fontSize: 11, // 11sp spec
+    fontWeight: 'bold',
+  },
+  tabIcon: {
+    fontSize: 24, // 24x24dp spec
+    marginBottom: -4,
+  },
+});
