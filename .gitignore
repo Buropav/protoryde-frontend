@@ -42,4 +42,6 @@ yarn-error.*
 
 .codex
 docs/
-.agent
+.agents
+*skills-lock.json
+*DESIGN.md
