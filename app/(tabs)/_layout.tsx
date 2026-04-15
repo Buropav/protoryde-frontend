@@ -1,51 +1,44 @@
 import { Tabs } from 'expo-router';
-import { colors } from '../../src/constants/colors';
-import { Text, StyleSheet } from 'react-native';
+import { Colors } from '../../src/constants/colors'; 
+import { Text, StyleSheet, Platform } from 'react-native';
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.onSurfaceVariant,
+        tabBarActiveTintColor: Colors.primary,
+        tabBarInactiveTintColor: Colors.textMuted,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
       }}
     >
       <Tabs.Screen
-        name="home-screen"
+        name="index"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>🏠</Text>,
         }}
       />
       <Tabs.Screen
-        name="claims-list-screen"
+        name="alerts"
+        options={{
+          title: 'Alerts',
+          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>🔔</Text>,
+        }}
+      />
+      <Tabs.Screen
+        name="claims"
         options={{
           title: 'Claims',
-          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>📋</Text>,
+          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>📄</Text>,
         }}
       />
       <Tabs.Screen
-        name="coverage-screen"
-        options={{
-          title: 'Coverage',
-          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>🛡️</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="profile-screen"
+        name="profile"
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>👤</Text>,
-        }}
-      />
-      <Tabs.Screen
-        name="admin-screen"
-        options={{
-          title: 'Admin',
-          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>⚙️</Text>,
         }}
       />
     </Tabs>
@@ -54,21 +47,20 @@ export default function TabsLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: colors.surfaceContainerLowest,
-    borderTopWidth: 0,
+    backgroundColor: Colors.background, 
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight, 
     elevation: 0,
-    height: 80,
-    paddingBottom: 20,
+    height: Platform.OS === 'ios' ? 84 : 64, 
+    paddingBottom: Platform.OS === 'ios' ? 24 : 8, 
     paddingTop: 8,
   },
   tabBarLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    fontSize: 11, 
+    fontWeight: 'bold',
   },
   tabIcon: {
-    fontSize: 22,
+    fontSize: 24, 
     marginBottom: -4,
   },
 });
