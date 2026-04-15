@@ -7,6 +7,7 @@ import { useApiCall } from '../../src/hooks/useApiCall';
 import { triggerService } from '../../src/services/triggerService';
 import { payoutService } from '../../src/services/payoutService';
 import { ErrorBanner } from '../../src/components/ErrorBanner';
+import { TriggerPayoutFlow } from '../../src/components/TriggerPayoutFlow';
 
 const getLayerTitle = (layer: string) => {
   switch (layer) {
@@ -136,46 +137,33 @@ export default function ActiveTriggerScreen() {
           {loading ? (
             <View style={styles.loadingWrap}>
               <ActivityIndicator size="large" color={colors.primary} />
-              <Text style={styles.loadingText}>Running fraud checks...</Text>
+              <Text style={styles.loadingText}>Loading claim details...</Text>
             </View>
           ) : (
-            <>
-              <View style={styles.timeline}>
-                <View style={styles.timelineLineGreen} />
-                <View style={styles.timelineLineGrey} />
-
-                {fraudLayers.map((layer: any) => (
-                  <View style={styles.timelineStep} key={layer.layer}>
-                    <View style={layer.passed ? styles.stepIcon : styles.stepIconFail}>
-                      <Text style={styles.checkIcon}>{layer.passed ? '✓' : '!'}</Text>
-                    </View>
-                    <View style={styles.stepContent}>
-                      <Text style={styles.stepTitleDone}>{getLayerTitle(layer.layer)}</Text>
-                      <Text style={styles.stepTime}>{layer.passed ? 'Passed' : 'Failed'}</Text>
-                    </View>
-                  </View>
-                ))}
-
-                <View style={styles.timelineStep}>
-                  <View style={styles.stepIconActive}>
-                    <Text style={styles.spinnerIcon}>⟳</Text>
-                  </View>
-                  <View style={styles.stepContent}>
-                    <Text style={styles.stepTitleActive}>Transferring ₹{Math.round(recommendedPayout)} to UPI</Text>
-                    <Text style={styles.stepTime}>In progress</Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.payoutSection}>
-                <Text style={styles.payoutAmount}>₹{Math.round(recommendedPayout)}</Text>
-                <View style={styles.arrivalRow}>
-                  <View style={styles.pulseDot} />
-                  <Text style={styles.arrivalText}>Estimated arrival: {'<'} 60 seconds</Text>
-                </View>
-              </View>
-            </>
+            <TriggerPayoutFlow 
+              payoutAmount={recommendedPayout}
+              utrNumber={`UTR-${Math.floor(Math.random() * 1000000000)}`}
+              onComplete={() => {
+                if (preview) {
+                  router.replace({
+                    pathname: '/trigger-flow/payout-confirmation-screen',
+                    params: {
+                      claim_id: String(preview.claim_id || ''),
+                      recommended_payout: String(recommendedPayout),
+                      trigger_type: String(activeTriggerType),
+                      trigger_value: String(triggerValue),
+                      fraud_check_passed: String(fraudCheckPassed),
+                      cancelled_orders: String(delhiveryEvidence?.cancelled_orders || 0),
+                      total_banking_orders: String(delhiveryEvidence?.total_banking_orders || 0),
+                      upi_id: upiId || '',
+                      zone: activeZone,
+                    },
+                  });
+                }
+              }}
+            />
           )}
+
         </View>
 
         <TouchableOpacity 
@@ -307,117 +295,7 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     marginBottom: -20,
   },
-  timelineLineGreen: {
-    position: 'absolute',
-    left: 18,
-    top: 4,
-    bottom: 52,
-    width: 2,
-    backgroundColor: '#22C55E',
-  },
-  timelineLineGrey: {
-    position: 'absolute',
-    left: 18,
-    bottom: 32,
-    height: 20,
-    width: 2,
-    backgroundColor: colors.surfaceContainerHighest,
-  },
-  timelineStep: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 16,
-    marginBottom: 20,
-  },
-  stepIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#22C55E',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
-  },
-  stepIconFail: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: colors.error,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
-  },
-  stepIconActive: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: colors.surfaceContainerHighest,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
-  },
-  checkIcon: {
-    fontSize: 14,
-    fontWeight: '800',
-    color: '#FFFFFF',
-  },
-  spinnerIcon: {
-    fontSize: 16,
-    color: colors.secondary,
-  },
-  stepContent: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  stepTitleDone: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  stepTitleActive: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#22C55E',
-  },
-  stepTime: {
-    fontSize: 10,
-    fontWeight: '500',
-    color: colors.onSurfaceVariant,
-  },
-  payoutSection: {
-    marginTop: 24,
-    paddingTop:10,
-    borderTopWidth: 1,
-    borderTopColor: colors.surfaceContainer,
-    alignItems: 'center',
-  },
-  payoutAmount: {
-    fontSize: 40,
-    fontWeight: '800',
-    color: colors.primary,
-    letterSpacing: -1,
-  },
-  arrivalRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 8,
-  },
-  pulseDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.secondary,
-  },
-  arrivalText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.secondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
+
   detailsButton: {
     width: '100%',
     paddingVertical: 16,

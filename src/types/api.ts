@@ -7,7 +7,12 @@ export interface PremiumPredictResponse {
   zone: string;
   engine: string;
   base_premium: number;
+  season_multiplier?: number;
+  zone_multiplier?: number;
   final_premium: number;
+  season?: string;
+  pricing_rationale?: string;
+  next_review_date?: string;
   adjustments: PremiumAdjustment[] | Record<string, number>;
   currency: string;
   model_status: string;
@@ -60,6 +65,13 @@ export interface PolicyHistoryResponse {
   rider_id: string;
   count: number;
   policies: CurrentPolicyResponse[];
+}
+
+export interface LockoutStatusResponse {
+  zone: string;
+  lockout_active: boolean;
+  reason?: string;
+  expires_at?: string;
 }
 
 export interface RiderClaimsResponse {

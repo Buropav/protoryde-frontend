@@ -41,6 +41,13 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>👤</Text>,
         }}
       />
+      <Tabs.Screen
+        name="admin-screen"
+        options={{
+          title: 'Admin',
+          tabBarIcon: ({ color }) => <Text style={[styles.tabIcon, { color }]}>⚙️</Text>,
+        }}
+      />
     </Tabs>
   );
 }
