@@ -7,7 +7,12 @@ export interface PremiumPredictResponse {
   zone: string;
   engine: string;
   base_premium: number;
+  season_multiplier?: number;
+  zone_multiplier?: number;
   final_premium: number;
+  season?: string;
+  pricing_rationale?: string;
+  next_review_date?: string;
   adjustments: PremiumAdjustment[] | Record<string, number>;
   currency: string;
   model_status: string;

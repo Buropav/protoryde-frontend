@@ -174,9 +174,22 @@ export default function PremiumReveal() {
               <Text style={styles.breakdownTitle}>PREMIUM BREAKDOWN</Text>
               
               <View style={styles.breakdownRow}>
-                <Text style={styles.breakdownLabel}>Base zone rate ({premium?.zone})</Text>
-                <Text style={styles.breakdownValue}>₹{basePremium}</Text>
+                <Text style={styles.breakdownLabel}>Base rate</Text>
+                <Text style={styles.breakdownValue}>₹{basePremium}/week</Text>
               </View>
+              
+              {premium?.zone_multiplier && premium.zone_multiplier !== 1 && (
+                <View style={styles.breakdownRow}>
+                  <Text style={styles.breakdownLabel}>Zone Factor ({premium.zone})</Text>
+                  <Text style={premium.zone_multiplier > 1 ? styles.addValue : styles.breakdownValue}>×{premium.zone_multiplier}</Text>
+                </View>
+              )}
+              {premium?.season_multiplier && premium.season_multiplier !== 1 && (
+                <View style={styles.breakdownRow}>
+                  <Text style={styles.breakdownLabel}>{premium.season ? premium.season.charAt(0) + premium.season.slice(1).toLowerCase() : 'Season'} Factor</Text>
+                  <Text style={premium.season_multiplier > 1 ? styles.addValue : styles.breakdownValue}>×{premium.season_multiplier}</Text>
+                </View>
+              )}
               
               {(() => {
                 const rawAdj = premium?.adjustments;
@@ -186,7 +199,7 @@ export default function PremiumReveal() {
                   : Object.entries(rawAdj).map(([factor, amount]) => ({ factor, amount }));
                 
                 return adjsArray.map((adj, index) => (
-                <View key={index} style={styles.breakdownRow}>
+                <View key={`adj_${index}`} style={styles.breakdownRow}>
                   <Text style={styles.breakdownLabel}>{adj.factor}</Text>
                   <Text style={[
                     styles.breakdownValue, 
@@ -199,9 +212,20 @@ export default function PremiumReveal() {
               })()}
               
               <View style={styles.totalRow}>
-                <Text style={styles.totalLabel}>Total Your premium</Text>
-                <Text style={styles.totalValue}>₹{finalPremium}</Text>
+                <Text style={styles.totalLabel}>Today's premium</Text>
+                <Text style={styles.totalValue}>₹{finalPremium}/week</Text>
               </View>
+
+              {premium?.next_review_date && premium?.pricing_rationale && (
+                <View style={{ marginTop: 16 }}>
+                  <Text style={{ fontSize: 13, color: colors.onSurfaceVariant }}>
+                    📅 Recalculates {new Date(premium.next_review_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </Text>
+                  <Text style={{ fontSize: 13, color: colors.onSurfaceVariant, fontStyle: 'italic', marginTop: 4 }}>
+                    "{premium.pricing_rationale}"
+                  </Text>
+                </View>
+              )}
             </View>
           </>
         )}
