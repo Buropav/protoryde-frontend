@@ -34,7 +34,7 @@ export default function FirstPremiumPaymentScreen() {
 
         <Pressable 
           style={styles.paymentButton}
-          onPress={() => router.push('/(tabs)/index' as any)}
+          onPress={() => router.replace('/(tabs)' as any)}
         >
           <Text style={styles.paymentText}>Pay ₹49.00 & Activate</Text>
         </Pressable>
