@@ -7,6 +7,7 @@ import { useApiCall } from '../../src/hooks/useApiCall';
 import { triggerService } from '../../src/services/triggerService';
 import { payoutService } from '../../src/services/payoutService';
 import { ErrorBanner } from '../../src/components/ErrorBanner';
+import { TriggerPayoutFlow } from '../../src/components/TriggerPayoutFlow';
 
 const getLayerTitle = (layer: string) => {
   switch (layer) {
@@ -136,46 +137,33 @@ export default function ActiveTriggerScreen() {
           {loading ? (
             <View style={styles.loadingWrap}>
               <ActivityIndicator size="large" color={colors.primary} />
-              <Text style={styles.loadingText}>Running fraud checks...</Text>
+              <Text style={styles.loadingText}>Loading claim details...</Text>
             </View>
           ) : (
-            <>
-              <View style={styles.timeline}>
-                <View style={styles.timelineLineGreen} />
-                <View style={styles.timelineLineGrey} />
-
-                {fraudLayers.map((layer: any) => (
-                  <View style={styles.timelineStep} key={layer.layer}>
-                    <View style={layer.passed ? styles.stepIcon : styles.stepIconFail}>
-                      <Text style={styles.checkIcon}>{layer.passed ? '✓' : '!'}</Text>
-                    </View>
-                    <View style={styles.stepContent}>
-                      <Text style={styles.stepTitleDone}>{getLayerTitle(layer.layer)}</Text>
-                      <Text style={styles.stepTime}>{layer.passed ? 'Passed' : 'Failed'}</Text>
-                    </View>
-                  </View>
-                ))}
-
-                <View style={styles.timelineStep}>
-                  <View style={styles.stepIconActive}>
-                    <Text style={styles.spinnerIcon}>⟳</Text>
-                  </View>
-                  <View style={styles.stepContent}>
-                    <Text style={styles.stepTitleActive}>Transferring ₹{Math.round(recommendedPayout)} to UPI</Text>
-                    <Text style={styles.stepTime}>In progress</Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.payoutSection}>
-                <Text style={styles.payoutAmount}>₹{Math.round(recommendedPayout)}</Text>
-                <View style={styles.arrivalRow}>
-                  <View style={styles.pulseDot} />
-                  <Text style={styles.arrivalText}>Estimated arrival: {'<'} 60 seconds</Text>
-                </View>
-              </View>
-            </>
+            <TriggerPayoutFlow 
+              payoutAmount={recommendedPayout}
+              utrNumber={`UTR-${Math.floor(Math.random() * 1000000000)}`}
+              onComplete={() => {
+                if (preview) {
+                  router.replace({
+                    pathname: '/trigger-flow/payout-confirmation-screen',
+                    params: {
+                      claim_id: String(preview.claim_id || ''),
+                      recommended_payout: String(recommendedPayout),
+                      trigger_type: String(activeTriggerType),
+                      trigger_value: String(triggerValue),
+                      fraud_check_passed: String(fraudCheckPassed),
+                      cancelled_orders: String(delhiveryEvidence?.cancelled_orders || 0),
+                      total_banking_orders: String(delhiveryEvidence?.total_banking_orders || 0),
+                      upi_id: upiId || '',
+                      zone: activeZone,
+                    },
+                  });
+                }
+              }}
+            />
           )}
+
         </View>
 
         <TouchableOpacity 
