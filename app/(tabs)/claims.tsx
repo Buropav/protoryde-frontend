@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { AppPage, SectionCard } from '../../src/components/ui';
-import { colors } from '../../src/constants/colors';
+import { Colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { claimsService } from '../../src/services/claimsService';
@@ -39,7 +39,7 @@ export default function ClaimsListScreen() {
 
         {loadingClaims ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.primary} />
+            <ActivityIndicator size="large" color={Colors.primary} />
             <Text style={styles.loadingText}>Fetching your claims...</Text>
           </View>
         ) : (
@@ -97,7 +97,7 @@ export default function ClaimsListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: Colors.surface,
   },
   header: {
     paddingHorizontal: 20,
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   title: {
-    color: colors.primary,
+    color: Colors.primary,
     fontSize: 24,
     fontWeight: '800',
   },
@@ -117,14 +117,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   claimTitle: {
-    color: colors.onSurface,
+    color: Colors.onSurface,
     fontSize: 15,
     fontWeight: '700',
     flex: 1,
   },
   status: {
-    color: colors.secondary,
-    backgroundColor: colors.secondary + '22',
+    color: Colors.secondary,
+    backgroundColor: Colors.secondary + '22',
     fontSize: 10,
     fontWeight: '800',
     textTransform: 'uppercase',
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   loadingText: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -149,22 +149,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 40,
     gap: 8,
-    backgroundColor: colors.surfaceVariant + '33',
+    backgroundColor: Colors.surfaceVariant + '33',
     borderStyle: 'dashed',
     borderWidth: 1,
-    borderColor: colors.outlineVariant,
+    borderColor: Colors.outlineVariant,
   },
   emptyIcon: {
     fontSize: 32,
     marginBottom: 8,
   },
   emptyTitle: {
-    color: colors.onSurface,
+    color: Colors.onSurface,
     fontSize: 16,
     fontWeight: '700',
   },
   emptyText: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 13,
     textAlign: 'center',
     paddingHorizontal: 20,
@@ -176,30 +176,30 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   claimDate: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 12,
   },
   claimPayout: {
-    color: colors.primary,
+    color: Colors.primary,
     fontSize: 15,
     fontWeight: '800',
   },
   openLink: {
-    color: colors.primary,
+    color: Colors.primary,
     fontSize: 12,
     fontWeight: '700',
   },
   infoCard: {
-    backgroundColor: colors.primaryFixed + '22',
+    backgroundColor: Colors.primaryFixed + '22',
   },
   infoTitle: {
-    color: colors.primary,
+    color: Colors.primary,
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 4,
   },
   infoText: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 12,
     lineHeight: 18,
   },

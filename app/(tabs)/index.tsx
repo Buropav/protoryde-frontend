@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Href, router } from 'expo-router';
 import { AppPage, PrimaryButton, SectionCard, StatusChip } from '../../src/components/ui';
-import { colors } from '../../src/constants/colors';
+import { Colors } from '../../src/constants/colors';
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
 import { policyService } from '../../src/services/policyService';
@@ -305,7 +305,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: Colors.surface,
   },
   header: {
     paddingHorizontal: 20,
@@ -314,28 +314,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: colors.surface,
+    backgroundColor: Colors.surface,
   },
   greeting: {
-    color: colors.primary,
+    color: Colors.primary,
     fontSize: 21,
     fontWeight: '800',
   },
   date: {
     marginTop: 2,
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 12,
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.primary,
+    backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
-    color: colors.onPrimary,
+    color: Colors.onPrimary,
     fontWeight: '700',
   },
   inactiveBadge: {
@@ -450,24 +450,24 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 14,
     padding: 12,
-    backgroundColor: colors.surfaceContainerLow,
+    backgroundColor: Colors.surfaceContainerLow,
   },
   quickIcon: {
     fontSize: 18,
     marginBottom: 8,
   },
   quickTitle: {
-    color: colors.onSurface,
+    color: Colors.onSurface,
     fontSize: 14,
     fontWeight: '700',
   },
   quickCaption: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 10,
     marginTop: 2,
   },
   sectionTitle: {
-    color: colors.onSurface,
+    color: Colors.onSurface,
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 10,
@@ -478,23 +478,23 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: colors.surfaceContainer,
+    backgroundColor: Colors.surfaceContainer,
     borderRadius: 10,
     padding: 10,
   },
   metricLabel: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 10,
     textTransform: 'uppercase',
     marginBottom: 6,
   },
   metricValue: {
-    color: colors.onSurface,
+    color: Colors.onSurface,
     fontSize: 12,
     fontWeight: '700',
   },
   metricState: {
-    color: colors.secondary,
+    color: Colors.secondary,
     fontSize: 10,
     marginTop: 2,
   },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   link: {
-    color: colors.primary,
+    color: Colors.primary,
     fontSize: 12,
     fontWeight: '700',
   },
@@ -527,21 +527,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   activityTitle: {
-    color: colors.onSurface,
+    color: Colors.onSurface,
     fontSize: 13,
     fontWeight: '600',
   },
   activityDate: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 11,
   },
   activityAmount: {
-    color: colors.primary,
+    color: Colors.primary,
     fontSize: 12,
     fontWeight: '700',
   },
   emptyActivityText: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 13,
     textAlign: 'center',
     marginVertical: 12,

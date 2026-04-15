@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Href, router } from 'expo-router';
 import { AppPage, SectionCard } from '../../src/components/ui';
-import { colors } from '../../src/constants/colors';
+import { Colors } from '../../src/constants/colors';
 
 import { useRider } from '../../src/hooks/useRider';
 import { useApiCall } from '../../src/hooks/useApiCall';
@@ -130,7 +130,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.surface,
+    backgroundColor: Colors.surface,
   },
   header: {
     paddingHorizontal: 20,
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   title: {
-    color: colors.primary,
+    color: Colors.primary,
     fontSize: 24,
     fontWeight: '800',
   },
@@ -150,35 +150,35 @@ const styles = StyleSheet.create({
     width: 82,
     height: 82,
     borderRadius: 41,
-    backgroundColor: colors.primary,
+    backgroundColor: Colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 14,
   },
   avatarText: {
-    color: colors.onPrimary,
+    color: Colors.onPrimary,
     fontSize: 29,
     fontWeight: '700',
   },
   name: {
-    color: colors.onSurface,
+    color: Colors.onSurface,
     fontSize: 25,
     fontWeight: '800',
     marginBottom: 2,
   },
   email: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 13,
     marginBottom: 12,
   },
   partnerBadge: {
-    backgroundColor: colors.primaryFixed + '30',
+    backgroundColor: Colors.primaryFixed + '30',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
   },
   badgeText: {
-    color: colors.primary,
+    color: Colors.primary,
     fontSize: 12,
     fontWeight: '700',
   },
@@ -193,13 +193,13 @@ const styles = StyleSheet.create({
   },
   menuDivider: {
     borderTopWidth: 1,
-    borderTopColor: colors.outlineVariant,
+    borderTopColor: Colors.outlineVariant,
   },
   menuIcon: {
     width: 38,
     height: 38,
     borderRadius: 10,
-    backgroundColor: colors.surfaceContainer,
+    backgroundColor: Colors.surfaceContainer,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -210,12 +210,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   menuTitle: {
-    color: colors.onSurface,
+    color: Colors.onSurface,
     fontSize: 14,
     fontWeight: '700',
   },
   menuSubtitle: {
-    color: colors.onSurfaceVariant,
+    color: Colors.onSurfaceVariant,
     fontSize: 11,
     marginTop: 2,
   },
