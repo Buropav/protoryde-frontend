@@ -29,7 +29,7 @@ export default function OTPVerificationScreen() {
 
         <Pressable 
           style={styles.button}
-          onPress={() => router.push('/onboarding/personal-details-kyc')}
+          onPress={() => router.push('/onboarding/personal-details-kyc' as any)}
         >
           <Text style={styles.buttonText}>Verify & Next</Text>
         </Pressable>
