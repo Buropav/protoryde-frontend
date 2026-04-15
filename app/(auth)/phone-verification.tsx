@@ -26,7 +26,7 @@ export default function PhoneVerificationScreen() {
 
         <Pressable 
           style={styles.button}
-          onPress={() => router.push('/(auth)/otp-verification')}
+          onPress={() => router.push('/(auth)/otp-verification' as any)}
         >
           <Text style={styles.buttonText}>Continue</Text>
         </Pressable>
