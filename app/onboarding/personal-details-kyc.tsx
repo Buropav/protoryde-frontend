@@ -31,7 +31,7 @@ export default function PersonalDetailsKYCScreen() {
 
         <Pressable 
           style={styles.button}
-          onPress={() => router.push('/onboarding/partner-profile-setup')}
+          onPress={() => router.push('/onboarding/partner-profile-setup' as any)}
         >
           <Text style={styles.buttonText}>Save & Continue</Text>
         </Pressable>

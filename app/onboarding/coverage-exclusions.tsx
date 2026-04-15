@@ -38,7 +38,7 @@ export default function CoverageExclusionsScreen() {
         <Pressable 
           style={[styles.button, !agreed && styles.buttonDisabled]}
           disabled={!agreed}
-          onPress={() => router.push('/onboarding/first-premium-payment')}
+          onPress={() => router.push('/onboarding/first-premium-payment' as any)}
         >
           <Text style={styles.buttonText}>Acknowledge & Next</Text>
         </Pressable>

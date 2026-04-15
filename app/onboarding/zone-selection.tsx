@@ -37,7 +37,7 @@ export default function ZoneSelectionScreen() {
 
         <Pressable 
           style={styles.button}
-          onPress={() => router.push('/onboarding/coverage-exclusions')}
+          onPress={() => router.push('/onboarding/coverage-exclusions' as any)}
         >
           <Text style={styles.buttonText}>Confirm Zone</Text>
         </Pressable>

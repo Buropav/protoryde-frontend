@@ -32,7 +32,7 @@ export default function PartnerProfileSetupScreen() {
 
         <Pressable 
           style={styles.button}
-          onPress={() => router.push('/onboarding/zone-selection')}
+          onPress={() => router.push('/onboarding/zone-selection' as any)}
         >
           <Text style={styles.buttonText}>Confirm Payout Details</Text>
         </Pressable>
