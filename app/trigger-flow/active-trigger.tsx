@@ -23,7 +23,7 @@ export default function ActiveTriggerScreen() {
 
         <View style={styles.payoutStatusContainer}>
           <Text style={styles.statusLabel}>Trigger Type</Text>
-          <Text style={styles.statusValue}>Rainfall > 15mm/hr</Text>
+          <Text style={styles.statusValue}>Rainfall {'>'} 15mm/hr</Text>
 
           <Text style={[styles.statusLabel, { marginTop: 16 }]}>Predicted Payout</Text>
           <Text style={styles.payoutAmount}>₹250</Text>
