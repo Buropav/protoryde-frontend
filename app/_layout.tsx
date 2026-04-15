@@ -14,12 +14,7 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="index" /> 
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="onboarding" />
         <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="trigger-flow" />
-        <Stack.Screen name="claims-history" />
-        <Stack.Screen name="account" />
         <Stack.Screen
           name="modals/premium-transparency"
           options={{ presentation: 'transparentModal', animation: 'slide_from_bottom', contentStyle: { backgroundColor: 'transparent' } }}
