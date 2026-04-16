@@ -8,11 +8,6 @@ export interface NotificationSendParams {
 
 export const notificationService = {
   sendNotification: async (params: NotificationSendParams): Promise<any> => {
-    try {
-      return await apiPost('/notifications/send', params);
-    } catch (e) {
-      console.warn('Failed to send notification:', e);
-      return { status: 'mock_success' };
-    }
+    return apiPost('/notifications/send', params);
   }
 };

@@ -9,11 +9,6 @@ export interface PaymentCollectParams {
 
 export const paymentService = {
   collectPayment: async (params: PaymentCollectParams): Promise<any> => {
-    try {
-      return await apiPost('/payments/collect', params);
-    } catch (e) {
-      console.warn('Failed to collect payment:', e);
-      return { status: 'mock_success' };
-    }
+    return apiPost('/payments/collect', params);
   }
 };

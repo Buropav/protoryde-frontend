@@ -25,7 +25,7 @@ export interface TriggerSimulateResponse {
   trigger_event: Record<string, any>;
   riders_evaluated: number;
   claims_preview: any[];
-  fixture_version: string;
+  fixture_version?: string | null;
 }
 
 export interface PolicyActivateResponse {
@@ -166,5 +166,7 @@ export interface BranchMetricsResponse {
   closure_rate_pct: number;
   threshold_pct: number;
   trigger_breached: boolean;
+  source?: string;
+  fetched_at?: string;
   fixture_version?: string;
 }

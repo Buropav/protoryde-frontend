@@ -14,75 +14,15 @@ export interface PolicyActivateParams {
 
 export const policyService = {
   activatePolicy: async (params: PolicyActivateParams): Promise<PolicyActivateResponse> => {
-    if (params.rider_id && params.rider_id.startsWith('demo_rider_')) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            policy_id: `mock_pol_${Date.now()}`,
-            rider_id: params.rider_id,
-            zone: params.zone,
-            status: 'active',
-            base_premium: 30.54,
-            final_premium: 30.54,
-            premium_breakdown: [],
-            premium_engine: 'mock',
-            exclusions_version: 'v1.0.0',
-            exclusions_acknowledged_at: new Date().toISOString()
-          });
-        }, 600); // Simulate network delay for UX
-      });
-    }
     return apiPost<PolicyActivateResponse>('/policies/activate', params);
   },
   getCurrentPolicy: async (riderId: string): Promise<CurrentPolicyResponse> => {
-    if (!riderId || riderId.startsWith('demo_rider_')) {
-      return {
-        policy_id: `mock_pol_${Date.now()}`,
-        rider_id: riderId || 'unknown',
-        week_start_date: new Date().toISOString(),
-        week_end_date: new Date(Date.now() + 7 * 86400000).toISOString(),
-        base_premium: 30.54,
-        final_premium: 30.54,
-        premium_breakdown: [],
-        coverage_cap: 2300,
-        status: 'active',
-        exclusions_version: 'v1.0.0',
-        exclusions_acknowledged_at: new Date().toISOString()
-      };
-    }
-    try {
-      return await apiGet<CurrentPolicyResponse>(`/policies/${riderId}/current`);
-    } catch {
-      // Fallback so tab screens don't break when backend can't find the rider
-      return {
-        policy_id: `mock_pol_${Date.now()}`,
-        rider_id: riderId,
-        week_start_date: new Date().toISOString(),
-        week_end_date: new Date(Date.now() + 7 * 86400000).toISOString(),
-        base_premium: 30.54,
-        final_premium: 30.54,
-        premium_breakdown: [],
-        coverage_cap: 2300,
-        status: 'active',
-        exclusions_version: 'v1.0.0',
-        exclusions_acknowledged_at: new Date().toISOString()
-      };
-    }
+    return apiGet<CurrentPolicyResponse>(`/policies/${riderId}/current`);
   },
   getPolicyHistory: async (riderId: string): Promise<PolicyHistoryResponse> => {
-    if (riderId.startsWith('demo_rider_')) {
-      return {
-        rider_id: riderId,
-        count: 0,
-        policies: [] // No prior entries for the mock rider
-      };
-    }
     return apiGet<PolicyHistoryResponse>(`/policies/${riderId}/history`);
   },
   downloadPolicyPdf: async (riderId: string): Promise<Blob> => {
-    if (riderId.startsWith('demo_rider_')) {
-      return new Blob(["Mock PDF Content"], { type: "application/pdf" });
-    }
     const response = await fetch(`${API_BASE_URL}/policies/${riderId}/current/document`);
     if (!response.ok) {
       throw new Error(`Failed to download policy PDF: ${response.status}`);
@@ -90,10 +30,6 @@ export const policyService = {
     return response.blob();
   },
   getLockoutStatus: async (zone: string): Promise<{ lockout_active: boolean; reason?: string }> => {
-    try {
-      return await apiGet<{ lockout_active: boolean; reason?: string }>(`/policy/eligibility?zone=${encodeURIComponent(zone)}`);
-    } catch {
-      return { lockout_active: false };
-    }
+    return apiGet<{ lockout_active: boolean; reason?: string }>(`/policy/eligibility?zone=${encodeURIComponent(zone)}`);
   }
 };

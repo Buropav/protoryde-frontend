@@ -10,23 +10,7 @@ export interface AdminClaimsParams {
 
 export const claimsService = {
   getRiderClaims: async (riderId: string): Promise<RiderClaimsResponse> => {
-    if (!riderId || riderId.startsWith('demo_rider_')) {
-      return {
-        rider_id: riderId || 'unknown',
-        count: 0,
-        claims: []
-      };
-    }
-    try {
-      return await apiGet<RiderClaimsResponse>(`/claims/${riderId}`);
-    } catch {
-      // Fallback: return empty claims so screens don't break
-      return {
-        rider_id: riderId,
-        count: 0,
-        claims: []
-      };
-    }
+    return apiGet<RiderClaimsResponse>(`/claims/${riderId}`);
   },
   getAdminClaims: async (params?: AdminClaimsParams): Promise<RiderClaimsResponse> => {
     let url = '/claims';
