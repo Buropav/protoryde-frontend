@@ -1,11 +1,39 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../src/constants/colors';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { RiderContext } from '../../src/context/RiderContext';
+import { claimsService } from '../../src/services/claimsService';
+import { ClaimItem } from '../../src/types/api';
 
 export default function ClaimReceiptScreen() {
   const router = useRouter();
+  const { id } = useLocalSearchParams();
+  const { riderId } = useContext(RiderContext)!;
+  const [claim, setClaim] = useState<ClaimItem | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (riderId && typeof id === 'string') {
+      claimsService.getRiderClaims(riderId)
+        .then(res => {
+          const found = res.claims.find(c => c.claim_id === id);
+          setClaim(found ?? null);
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [riderId, id]);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -19,15 +47,21 @@ export default function ClaimReceiptScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.receiptCard}>
           <Text style={styles.successIcon}>✅</Text>
-          <Text style={styles.payoutStatus}>Payout Successful</Text>
-          <Text style={styles.payoutAmount}>₹250.00</Text>
-          <Text style={styles.payoutDate}>Paid on 12 Apr 2026</Text>
+          <Text style={styles.payoutStatus}>
+            {(claim?.payout_amount || 0) > 0 ? 'Payout Successful' : 'No Payout'}
+          </Text>
+          <Text style={styles.payoutAmount}>₹{(claim?.payout_amount || 0).toFixed(2)}</Text>
+          <Text style={styles.payoutDate}>
+            {claim?.created_at
+              ? `Recorded on ${new Date(claim.created_at).toLocaleDateString('en-IN')}`
+              : 'No claim date available'}
+          </Text>
 
           <View style={styles.divider} />
 
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Transaction ID</Text>
-            <Text style={styles.detailValue}>TXN-987654321</Text>
+            <Text style={styles.detailValue}>{claim?.claim_id || 'N/A'}</Text>
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Trigger Verification</Text>
@@ -51,6 +85,7 @@ export default function ClaimReceiptScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
+  centered: { flex: 1, backgroundColor: Colors.background, justifyContent: 'center', alignItems: 'center' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
   backButton: { width: 60 },
   backText: { fontSize: 18, color: Colors.primary, fontWeight: 'bold' },

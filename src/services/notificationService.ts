@@ -1,13 +1,20 @@
-import { apiPost } from './apiClient';
+import { apiGet } from './apiClient';
 
-export interface NotificationSendParams {
-  rider_id: string;
-  phone: string;
-  message: string;
+export interface Notification {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  type: string;
+  isRead?: boolean;
+}
+
+export interface NotificationsResponse {
+  notifications: Notification[];
 }
 
 export const notificationService = {
-  sendNotification: async (params: NotificationSendParams): Promise<any> => {
-    return apiPost('/notifications/send', params);
+  getNotifications: async (riderId: string): Promise<NotificationsResponse> => {
+    return apiGet<NotificationsResponse>(`/notifications/${riderId}`);
   }
 };

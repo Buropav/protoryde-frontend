@@ -59,6 +59,9 @@ export interface CurrentPolicyResponse {
   status: string;
   exclusions_version: string;
   exclusions_acknowledged_at: string;
+  created_at?: string;
+  payout_amount?: number;
+  payout_status?: string;
 }
 
 export interface PolicyHistoryResponse {
@@ -169,4 +172,49 @@ export interface BranchMetricsResponse {
   source?: string;
   fetched_at?: string;
   fixture_version?: string;
+}
+
+export interface AdminMetricsResponse {
+  active_policies: number;
+  total_premiums: number;
+  total_claims_paid: number;
+}
+
+export interface AdminClaimsMapItem {
+  id: string;
+  zone: string;
+  latitude: number;
+  longitude: number;
+  payout_amount: number;
+  fraud_check_passed: boolean;
+}
+
+export interface AdminClaimsMapResponse {
+  claims: AdminClaimsMapItem[];
+}
+
+export interface AdminFraudFlagItem {
+  claim_id: string;
+  rider_id: string;
+  zone: string;
+  trigger_type: string;
+  created_at: string;
+  fraud_layers: FraudLayer[];
+}
+
+export interface AdminFraudFlagsResponse {
+  flags: AdminFraudFlagItem[];
+}
+
+export interface RiderCalendarItem {
+  date: string;
+  delhivery_earnings: number;
+  claim_payout: number;
+  total_earnings: number;
+  protected: boolean;
+}
+
+export interface RiderCalendarResponse {
+  rider_id: string;
+  calendar: RiderCalendarItem[];
 }

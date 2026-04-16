@@ -31,5 +31,8 @@ export const policyService = {
   },
   getLockoutStatus: async (zone: string): Promise<{ lockout_active: boolean; reason?: string }> => {
     return apiGet<{ lockout_active: boolean; reason?: string }>(`/policy/eligibility?zone=${encodeURIComponent(zone)}`);
+  },
+  upgradePolicy: async (policyId: string): Promise<PolicyActivateResponse> => {
+    return apiPost<PolicyActivateResponse>(`/policy/${policyId}/upgrade`, {});
   }
 };

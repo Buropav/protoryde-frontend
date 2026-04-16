@@ -1,21 +1,55 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../src/constants/colors';
-
-const MOCK_ALERTS = [
-  { id: '1', title: 'Coverage Activated', description: 'Your policy is now active in the Downtown Zone.', time: '2h ago', isRead: false },
-  { id: '2', title: 'Payment Successful', description: '₹49 was deducted for your daily premium.', time: '5h ago', isRead: true },
-  { id: '3', title: 'Weather Warning', description: 'Expect moderate rainfall between 2 PM - 5 PM.', time: '1d ago', isRead: true },
-];
+import { RiderContext } from '../../src/context/RiderContext';
+import { notificationService, Notification } from '../../src/services/notificationService';
 
 export default function AlertsScreen() {
+  const { riderId } = useContext(RiderContext)!;
+  const [alerts, setAlerts] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async () => {
+    if (!riderId) return;
+    try {
+      const res = await notificationService.getNotifications(riderId);
+      setAlerts(res.notifications.map((item) => ({ ...item, isRead: item.isRead ?? true })));
+    } catch (err) {
+      console.error('Failed to fetch notifications:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [riderId]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
+
+  if (loading && !refreshing) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.container}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.primary} />}
+      >
         <Text style={styles.headerTitle}>Notifications</Text>
-        
-        {MOCK_ALERTS.map((alert) => (
+
+        {alerts.map((alert) => (
           <View key={alert.id} style={[styles.alertItem, !alert.isRead && styles.unreadItem]}>
             <View style={styles.alertContent}>
               <View style={styles.titleRow}>
@@ -23,7 +57,9 @@ export default function AlertsScreen() {
                 {!alert.isRead && <View style={styles.unreadDot} />}
               </View>
               <Text style={styles.alertDesc}>{alert.description}</Text>
-              <Text style={styles.alertTime}>{alert.time}</Text>
+              <Text style={styles.alertTime}>
+                {new Date(alert.time).toLocaleString('en-IN')}
+              </Text>
             </View>
           </View>
         ))}
@@ -33,6 +69,7 @@ export default function AlertsScreen() {
 }
 
 const styles = StyleSheet.create({
+  centered: { flex: 1, backgroundColor: Colors.background, justifyContent: 'center', alignItems: 'center' },
   safeArea: { flex: 1, backgroundColor: Colors.background },
   container: { flexGrow: 1, padding: 24, paddingBottom: 100 },
   headerTitle: { fontSize: 28, fontWeight: 'bold', color: Colors.textPrimary, marginBottom: 24 },

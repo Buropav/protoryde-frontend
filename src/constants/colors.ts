@@ -25,3 +25,20 @@ export const Colors = {
   // --- Overlays ---
   modalOverlay: 'rgba(10, 22, 40, 0.60)',     // 60% opacity dark navy for bottom sheets
 };
+
+// Backward-compatible alias used by legacy components.
+export const colors = {
+  ...Colors,
+  surface: Colors.background,
+  onSurface: Colors.textPrimary,
+  onSurfaceVariant: Colors.textSecondary,
+  onPrimary: Colors.background,
+  onPrimaryContainer: Colors.textSecondary,
+  secondary: Colors.alert,
+  tertiaryContainer: Colors.primary,
+  tertiaryFixedDim: Colors.primary,
+  surfaceContainer: Colors.cardFill,
+  surfaceContainerLow: Colors.cardFill,
+  surfaceContainerHigh: Colors.cardFill,
+  surfaceContainerHighest: Colors.border,
+};
