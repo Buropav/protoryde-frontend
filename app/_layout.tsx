@@ -17,8 +17,8 @@ const PHONE_FRAME_CSS = `
     min-height: 100vh !important;
   }
   #root {
-    width: 360px !important;
-    max-width: 360px !important;
+    width: 340px !important;
+    max-width: 340px !important;
     height: 780px !important;
     max-height: 95vh !important;
     border-radius: 36px !important;
