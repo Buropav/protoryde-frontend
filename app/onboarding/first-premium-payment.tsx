@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Colors } from "../../src/constants/colors";
 import { RiderContext } from "../../src/context/RiderContext";
+import { policyService } from "../../src/services/policyService";
 import { ApiError } from "../../src/services/apiClient";
 
 export default function FirstPremiumPaymentScreen() {
@@ -33,10 +34,14 @@ export default function FirstPremiumPaymentScreen() {
     setError("");
     setLoading(true);
     try {
-      // Mock the policy activation for now
-      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate network request
-      
-      setPolicyId("MOCK_POLICY_" + Math.floor(Math.random() * 1000));
+      const response = await policyService.activatePolicy({
+        rider_id: riderId,
+        zone: zone,
+        exclusions_accepted: true,
+        coverage_cap: 2300, // Default Standard
+      });
+
+      setPolicyId(response.policy_id);
       setBootstrapped(true);
       Alert.alert("Success", "Policy activated! Welcome to ProtoRyde.");
       router.replace("/(tabs)" as any);
