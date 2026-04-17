@@ -65,9 +65,9 @@ export default function SplashScreen() {
       }).start(() => {
         // Navigate
         if (isBootstrapped) {
-          router.replace('/(tabs)');
+          router.replace('/(tabs)' as any);
         } else {
-          router.replace('/(auth)/phone-verification');
+          router.replace('/(auth)/phone-verification' as any);
         }
       });
     }, 2000);
