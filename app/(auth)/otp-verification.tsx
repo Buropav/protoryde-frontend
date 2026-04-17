@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, StyleSheet, Pressable, Dimensions, TextInput, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../src/constants/colors';
-import { Feather } from '@expo/vector-icons';
 import Svg, { Path, Circle } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
@@ -27,16 +26,7 @@ const RiderGraphic = () => (
 export default function OTPVerificationScreen() {
   const router = useRouter();
   const [code, setCode] = useState<string>('');
-
-  const handlePress = (val: string) => {
-    if (code.length < 6) {
-      setCode(prev => prev + val);
-    }
-  };
-
-  const handleBackspace = () => {
-    setCode(prev => prev.slice(0, -1));
-  };
+  const inputRef = useRef<TextInput>(null);
 
   const handleVerify = () => {
     // Keeps functionality mocked so any value (or no value) can be entered and passed
@@ -63,93 +53,72 @@ export default function OTPVerificationScreen() {
     return boxes;
   };
 
-  const keys = [
-    ['1', '2', '3'],
-    ['4', '5', '6'],
-    ['7', '8', '9'],
-    ['*', '0', 'delete']
-  ];
-
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        
-        <View style={styles.topSection}>
-          <View style={styles.graphicContainer}>
-             <RiderGraphic />
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoidingView}
+      >
+        <View style={styles.container}>
+          
+          <View style={styles.topSection}>
+            <View style={styles.graphicContainer}>
+               <RiderGraphic />
+            </View>
+            
+            <Text style={styles.title}>
+              Enter the 6-digit code sent{'\n'}to +91 98XXX XXXXX
+            </Text>
+
+            {/* Hidden Input wrapped over visual boxes */}
+            <View style={styles.otpWrapper}>
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() => inputRef.current?.focus()}
+                style={styles.boxesContainer}
+              >
+                {renderBoxes()}
+              </TouchableOpacity>
+              
+              <TextInput
+                ref={inputRef}
+                value={code}
+                onChangeText={(text) => {
+                  const numericValue = text.replace(/[^0-9]/g, '');
+                  setCode(numericValue);
+                }}
+                maxLength={6}
+                keyboardType="number-pad"
+                autoFocus={true}
+                textContentType="oneTimeCode"
+                style={styles.hiddenInput}
+              />
+            </View>
+            
+            <Text style={styles.resendText}>Resend in 0:45</Text>
+          </View>
+
+          <View style={styles.bottomSection}>
+            <Pressable style={styles.verifyBtn} onPress={handleVerify}>
+              <Text style={styles.verifyBtnText}>Verify</Text>
+            </Pressable>
           </View>
           
-          <Text style={styles.title}>
-            Enter the 6-digit code sent{'\n'}to +91 98XXX XXXXX
-          </Text>
-
-          <View style={styles.boxesContainer}>
-            {renderBoxes()}
-          </View>
-          
-          <Text style={styles.resendText}>Resend in 0:45</Text>
         </View>
-
-        <View style={styles.bottomSection}>
-          <Pressable style={styles.verifyBtn} onPress={handleVerify}>
-            <Text style={styles.verifyBtnText}>Verify</Text>
-          </Pressable>
-
-          <View style={styles.keypad}>
-            {keys.map((row, rowIndex) => (
-              <View key={rowIndex} style={styles.keyRow}>
-                {row.map((key) => {
-                  if (key === 'delete') {
-                    return (
-                      <Pressable 
-                        key={key} 
-                        style={styles.keyButton} 
-                        onPress={handleBackspace}
-                      >
-                        <View style={styles.bsIcon}>
-                          <Feather name="delete" size={18} color="#FFFFFF" />
-                        </View>
-                      </Pressable>
-                    );
-                  }
-                  
-                  return (
-                    <Pressable 
-                      key={key} 
-                      style={styles.keyButton}
-                      onPress={() => handlePress(key)}
-                    >
-                      <Text style={styles.keyText}>{key}</Text>
-                      {key !== '*' && key !== '0' && <Text style={styles.keySubText}>{
-                         key === '2' ? 'ABC' : 
-                         key === '3' ? 'DEF' : 
-                         key === '4' ? 'GHI' : 
-                         key === '5' ? 'JKL' : 
-                         key === '6' ? 'MNO' : 
-                         key === '7' ? 'PQRS' : 
-                         key === '8' ? 'TUV' : 
-                         key === '9' ? 'WXYZ' : ''
-                      }</Text>}
-                    </Pressable>
-                  );
-                })}
-              </View>
-            ))}
-          </View>
-        </View>
-        
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#0B121C' },
+  keyboardAvoidingView: { flex: 1 },
   container: { flex: 1, justifyContent: 'space-between' },
   topSection: {
     paddingHorizontal: 24,
     paddingTop: 40,
     alignItems: 'center',
+    flex: 1,
   },
   graphicContainer: {
     marginBottom: 32,
@@ -164,11 +133,22 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     letterSpacing: -0.5,
   },
+  otpWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
   boxesContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 10,
-    marginBottom: 24,
+    width: '100%',
+  },
+  hiddenInput: {
+    position: 'absolute',
+    width: 1,
+    height: 1,
+    opacity: 0,
   },
   otpBox: {
     width: 45,
@@ -193,11 +173,7 @@ const styles = StyleSheet.create({
     color: '#8A94A6',
   },
   bottomSection: {
-    backgroundColor: '#0E1624',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
     paddingHorizontal: 24,
-    paddingTop: 24,
     paddingBottom: 32,
   },
   verifyBtn: {
@@ -206,42 +182,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
   },
   verifyBtnText: {
     color: '#0B121C',
     fontSize: 18,
     fontWeight: '700',
-  },
-  keypad: {
-    gap: 16,
-  },
-  keyRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  keyButton: {
-    flex: 1,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  keyText: {
-    fontSize: 24,
-    fontWeight: '500',
-    color: '#FFFFFF',
-  },
-  keySubText: {
-    fontSize: 10,
-    color: '#5C6A7D',
-    marginTop: 2,
-    fontWeight: '600',
-  },
-  bsIcon: {
-    backgroundColor: '#1C2738',
-    padding: 8,
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
   }
 });
