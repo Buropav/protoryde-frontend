@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors } from '../../src/constants/colors';
-import { useRouter } from 'expo-router';
+import React from "react";
+import { View, Text, StyleSheet, ScrollView, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors } from "../../src/constants/colors";
+import { useRouter } from "expo-router";
 
 export default function WeatherRadarScreen() {
   const router = useRouter();
@@ -32,7 +32,9 @@ export default function WeatherRadarScreen() {
           <View style={styles.forecastRow}>
             <Text style={styles.timeLabel}>02:00 PM</Text>
             <Text style={styles.weatherCondition}>🌧 Heavy Rain</Text>
-            <Text style={[styles.chanceLabel, { color: Colors.alert }]}>85%</Text>
+            <Text style={[styles.chanceLabel, { color: Colors.alert }]}>
+              85%
+            </Text>
           </View>
           <View style={[styles.forecastRow, { borderBottomWidth: 0 }]}>
             <Text style={styles.timeLabel}>06:00 PM</Text>
@@ -47,17 +49,62 @@ export default function WeatherRadarScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 24, paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderLight,
+  },
   backButton: { width: 60 },
-  backText: { fontSize: 18, color: Colors.primary, fontWeight: 'bold' },
-  headerTitle: { fontSize: 18, fontWeight: 'bold', color: Colors.textPrimary },
+  backText: { fontSize: 18, color: Colors.primary, fontWeight: "bold" },
+  headerTitle: { fontSize: 18, fontWeight: "bold", color: Colors.textPrimary },
   container: { flexGrow: 1, padding: 24 },
-  radarPlaceholder: { height: 250, backgroundColor: Colors.cardFill, borderRadius: 16, borderColor: Colors.border, borderWidth: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 32 },
+  radarPlaceholder: {
+    height: 250,
+    backgroundColor: Colors.cardFill,
+    borderRadius: 16,
+    borderColor: Colors.border,
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 32,
+  },
   radarText: { fontSize: 16, color: Colors.textMuted },
-  sectionTitle: { fontSize: 20, fontWeight: 'bold', color: Colors.textPrimary, marginBottom: 16 },
-  forecastCard: { backgroundColor: Colors.cardFill, borderRadius: 16, borderColor: Colors.border, borderWidth: 1, padding: 16 },
-  forecastRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: Colors.textPrimary,
+    marginBottom: 16,
+  },
+  forecastCard: {
+    backgroundColor: Colors.cardFill,
+    borderRadius: 16,
+    borderColor: Colors.border,
+    borderWidth: 1,
+    padding: 16,
+  },
+  forecastRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderLight,
+  },
   timeLabel: { fontSize: 16, color: Colors.textPrimary, flex: 1 },
-  weatherCondition: { fontSize: 16, color: Colors.textSecondary, flex: 1, textAlign: 'center' },
-  chanceLabel: { fontSize: 16, fontWeight: 'bold', color: Colors.primary, flex: 1, textAlign: 'right' },
+  weatherCondition: {
+    fontSize: 16,
+    color: Colors.textSecondary,
+    flex: 1,
+    textAlign: "center",
+  },
+  chanceLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: Colors.primary,
+    flex: 1,
+    textAlign: "right",
+  },
 });

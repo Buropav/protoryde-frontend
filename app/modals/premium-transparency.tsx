@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { Colors } from '../../src/constants/colors';
-import { useRouter } from 'expo-router';
+import React from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { Colors } from "../../src/constants/colors";
+import { useRouter } from "expo-router";
 
 export default function PremiumTransparencyModal() {
   const router = useRouter();
@@ -11,9 +11,11 @@ export default function PremiumTransparencyModal() {
       <Pressable style={styles.backdrop} onPress={() => router.back()} />
       <View style={styles.sheet}>
         <View style={styles.dragHandle} />
-        
+
         <Text style={styles.title}>Premium Transparency</Text>
-        <Text style={styles.subtitle}>How your ₹49 premium is utilized based on our risk models.</Text>
+        <Text style={styles.subtitle}>
+          How your ₹49 premium is utilized based on our risk models.
+        </Text>
 
         <View style={styles.breakdownContainer}>
           <View style={styles.row}>
@@ -34,10 +36,7 @@ export default function PremiumTransparencyModal() {
           </View>
         </View>
 
-        <Pressable 
-          style={styles.doneButton}
-          onPress={() => router.back()}
-        >
+        <Pressable style={styles.doneButton} onPress={() => router.back()}>
           <Text style={styles.doneButtonText}>Got it</Text>
         </Pressable>
       </View>
@@ -48,8 +47,8 @@ export default function PremiumTransparencyModal() {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(10, 22, 40, 0.6)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(10, 22, 40, 0.6)",
+    justifyContent: "flex-end",
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
@@ -66,24 +65,44 @@ const styles = StyleSheet.create({
     height: 4,
     backgroundColor: Colors.border,
     borderRadius: 2,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginBottom: 24,
   },
-  title: { fontSize: 22, fontWeight: 'bold', color: Colors.textPrimary, marginBottom: 8 },
-  subtitle: { fontSize: 14, color: Colors.textSecondary, marginBottom: 24, lineHeight: 20 },
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    marginBottom: 24,
+    lineHeight: 20,
+  },
   breakdownContainer: { marginBottom: 32 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderLight,
+  },
   label: { fontSize: 16, color: Colors.textSecondary },
-  value: { fontSize: 16, color: Colors.textPrimary, fontWeight: '600' },
+  value: { fontSize: 16, color: Colors.textPrimary, fontWeight: "600" },
   totalRow: { borderBottomWidth: 0, marginTop: 8 },
-  totalLabel: { fontSize: 16, color: Colors.textPrimary, fontWeight: 'bold' },
-  totalValue: { fontSize: 16, color: Colors.textPrimary, fontWeight: 'bold' },
+  totalLabel: { fontSize: 16, color: Colors.textPrimary, fontWeight: "bold" },
+  totalValue: { fontSize: 16, color: Colors.textPrimary, fontWeight: "bold" },
   doneButton: {
     backgroundColor: Colors.primary,
     paddingVertical: 16,
     borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 'auto',
+    alignItems: "center",
+    marginTop: "auto",
   },
-  doneButtonText: { color: Colors.background, fontSize: 18, fontWeight: 'bold' },
+  doneButtonText: {
+    color: Colors.background,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });

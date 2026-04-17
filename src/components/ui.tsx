@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -9,16 +9,20 @@ import {
   TextStyle,
   StyleProp,
   ScrollViewProps,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { colors } from '../constants/colors';
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { colors } from "../constants/colors";
 
 interface AppPageProps extends ScrollViewProps {
   children: ReactNode;
   contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
-export function AppPage({ children, contentContainerStyle, ...rest }: AppPageProps) {
+export function AppPage({
+  children,
+  contentContainerStyle,
+  ...rest
+}: AppPageProps) {
   return (
     <ScrollView
       style={styles.page}
@@ -48,7 +52,11 @@ export function TopBar({ title, onBack, rightSlot }: TopBarProps) {
         ) : null}
         <Text style={styles.topBarTitle}>{title}</Text>
       </View>
-      {rightSlot ?? <View style={styles.avatarStub}><Text style={styles.avatarText}>PN</Text></View>}
+      {rightSlot ?? (
+        <View style={styles.avatarStub}>
+          <Text style={styles.avatarText}>PN</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -60,13 +68,20 @@ interface PrimaryButtonProps {
   rightSlot?: ReactNode;
 }
 
-export function PrimaryButton({ label, subLabel, onPress, rightSlot }: PrimaryButtonProps) {
+export function PrimaryButton({
+  label,
+  subLabel,
+  onPress,
+  rightSlot,
+}: PrimaryButtonProps) {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.95}>
       <View style={styles.primaryButton}>
         <View>
           <Text style={styles.primaryLabel}>{label}</Text>
-          {subLabel ? <Text style={styles.primarySubLabel}>{subLabel}</Text> : null}
+          {subLabel ? (
+            <Text style={styles.primarySubLabel}>{subLabel}</Text>
+          ) : null}
         </View>
         {rightSlot}
       </View>
@@ -85,11 +100,15 @@ export function SectionCard({ children, style }: SectionCardProps) {
 
 interface StatusChipProps {
   label: string;
-  tone?: 'default' | 'active' | 'success' | 'warning' | 'error';
+  tone?: "default" | "active" | "success" | "warning" | "error";
   style?: StyleProp<ViewStyle>;
 }
 
-export function StatusChip({ label, tone = 'default', style }: StatusChipProps) {
+export function StatusChip({
+  label,
+  tone = "default",
+  style,
+}: StatusChipProps) {
   const toneStyle = chipToneMap[tone];
   return (
     <View style={[styles.chip, toneStyle.container, style]}>
@@ -98,25 +117,28 @@ export function StatusChip({ label, tone = 'default', style }: StatusChipProps) 
   );
 }
 
-const chipToneMap: Record<NonNullable<StatusChipProps['tone']>, { container: ViewStyle; text: TextStyle }> = {
+const chipToneMap: Record<
+  NonNullable<StatusChipProps["tone"]>,
+  { container: ViewStyle; text: TextStyle }
+> = {
   default: {
     container: { backgroundColor: colors.surfaceContainerHigh },
     text: { color: colors.onSurfaceVariant },
   },
   active: {
-    container: { backgroundColor: colors.tertiaryContainer + '24' },
+    container: { backgroundColor: colors.tertiaryContainer + "24" },
     text: { color: colors.tertiaryFixedDim },
   },
   success: {
-    container: { backgroundColor: 'rgba(74, 222, 128, 0.1)' },
-    text: { color: '#4ADE80' },
+    container: { backgroundColor: "rgba(74, 222, 128, 0.1)" },
+    text: { color: "#4ADE80" },
   },
   warning: {
-    container: { backgroundColor: colors.secondary + '26' },
+    container: { backgroundColor: colors.secondary + "26" },
     text: { color: colors.secondary },
   },
   error: {
-    container: { backgroundColor: colors.error + '26' },
+    container: { backgroundColor: colors.error + "26" },
     text: { color: colors.error },
   },
 };
@@ -135,14 +157,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 24,
     paddingBottom: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.surface + 'F0',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: colors.surface + "F0",
   },
   topBarLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   backBtn: {
@@ -150,52 +172,52 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
     backgroundColor: colors.surfaceContainerLow,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   backText: {
     color: colors.primary,
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   topBarTitle: {
     color: colors.primary,
     fontSize: 20,
-    fontWeight: '800',
+    fontWeight: "800",
   },
   avatarStub: {
     width: 34,
     height: 34,
     borderRadius: 17,
     backgroundColor: colors.surfaceContainerHigh,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   avatarText: {
     color: colors.onSurface,
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   primaryButton: {
     minHeight: 56,
     borderRadius: 14,
     paddingHorizontal: 18,
     paddingVertical: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     backgroundColor: colors.primary,
   },
   primaryLabel: {
     color: colors.onPrimary,
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: "800",
   },
   primarySubLabel: {
     color: colors.onPrimaryContainer,
     marginTop: 2,
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   card: {
     backgroundColor: colors.surfaceContainerLow,
@@ -203,15 +225,15 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   chip: {
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     borderRadius: 999,
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
   chipText: {
     fontSize: 10,
-    fontWeight: '700',
-    textTransform: 'uppercase',
+    fontWeight: "700",
+    textTransform: "uppercase",
     letterSpacing: 0.6,
   },
 });

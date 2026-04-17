@@ -1,4 +1,4 @@
-import { apiPost } from './apiClient';
+import { apiPost } from "./apiClient";
 
 export interface PayoutInitiateParams {
   claim_id: string;
@@ -9,6 +9,6 @@ export interface PayoutInitiateParams {
 
 export const payoutService = {
   initiatePayout: async (params: PayoutInitiateParams): Promise<any> => {
-    return apiPost('/payouts/initiate', params);
-  }
+    return apiPost("/payouts/initiate", params);
+  },
 };

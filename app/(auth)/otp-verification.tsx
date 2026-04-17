@@ -1,43 +1,52 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { Colors } from '../../src/constants/colors';
+import React, { useMemo, useState } from "react";
+import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { Colors } from "../../src/constants/colors";
 
 export default function OTPVerificationScreen() {
   const router = useRouter();
-  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
-  const [error, setError] = useState('');
+  const [otpDigits, setOtpDigits] = useState<string[]>([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
+  const [error, setError] = useState("");
 
-  const otpCode = useMemo(() => otpDigits.join(''), [otpDigits]);
+  const otpCode = useMemo(() => otpDigits.join(""), [otpDigits]);
   const canContinue = otpCode.length === 6 && /^[0-9]{6}$/.test(otpCode);
 
   const updateDigit = (index: number, value: string) => {
-    const digit = value.replace(/\D/g, '').slice(0, 1);
+    const digit = value.replace(/\D/g, "").slice(0, 1);
     const next = [...otpDigits];
     next[index] = digit;
     setOtpDigits(next);
-    if (error) setError('');
+    if (error) setError("");
   };
 
   const handleContinue = () => {
     if (!canContinue) {
-      setError('Enter the 6-digit OTP.');
+      setError("Enter the 6-digit OTP.");
       return;
     }
-    setError('');
-    router.push('/onboarding/personal-details-kyc' as any);
+    setError("");
+    router.push("/onboarding/personal-details-kyc" as any);
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Text style={styles.title}>Enter OTP</Text>
-        <Text style={styles.subtitle}>We've sent a 6-digit code to your mobile number.</Text>
-        
+        <Text style={styles.subtitle}>
+          We've sent a 6-digit code to your mobile number.
+        </Text>
+
         <View style={styles.otpContainer}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <TextInput 
+            <TextInput
               key={i}
               style={styles.otpBox}
               maxLength={1}
@@ -53,7 +62,7 @@ export default function OTPVerificationScreen() {
 
         <View style={styles.spacer} />
 
-        <Pressable 
+        <Pressable
           style={[styles.button, !canContinue && styles.buttonDisabled]}
           onPress={handleContinue}
         >
@@ -66,10 +75,19 @@ export default function OTPVerificationScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: Colors.background },
-  container: { flex: 1, padding: 24, justifyContent: 'center' },
-  title: { fontSize: 28, fontWeight: 'bold', color: Colors.textPrimary, marginBottom: 8 },
+  container: { flex: 1, padding: 24, justifyContent: "center" },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
   subtitle: { fontSize: 16, color: Colors.textSecondary, marginBottom: 32 },
-  otpContainer: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
+  otpContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 8,
+  },
   errorText: { color: Colors.error, fontSize: 13, marginTop: 10 },
   otpBox: {
     flex: 1,
@@ -80,16 +98,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: Colors.textPrimary,
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   spacer: { flex: 1 },
   button: {
     backgroundColor: Colors.primary,
     height: 56,
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: Colors.background, fontSize: 18, fontWeight: 'bold' },
+  buttonText: { color: Colors.background, fontSize: 18, fontWeight: "bold" },
 });

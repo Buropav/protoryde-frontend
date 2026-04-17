@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Read environment variables from file.
@@ -12,7 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
+  testDir: "./tests",
   timeout: 120_000,
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -23,34 +23,32 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'http://localhost:8081',
+    baseURL: "http://localhost:8081",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: "on-first-retry",
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: "chromium",
       use: {
-        ...devices['Desktop Chrome'],
-        channel: 'chrome',
+        ...devices["Desktop Chrome"],
+        channel: "chrome",
       },
-
     },
-
 
     /* Test against mobile viewports. */
     {
-      name: 'Mobile Chrome',
+      name: "Mobile Chrome",
       use: {
-        ...devices['Pixel 5'],
-        channel: 'chrome',
+        ...devices["Pixel 5"],
+        channel: "chrome",
       },
     },
     // {
@@ -72,16 +70,17 @@ export default defineConfig({
   /* Run your local dev servers before starting the tests */
   webServer: [
     {
-      command: 'npm run web',
-      url: 'http://localhost:8081',
+      command: "npm run web",
+      url: "http://localhost:8081",
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
     },
     {
-      command: 'cd ../protoryde-backend && source venv/bin/activate && uvicorn main:app --port 8000',
-      url: 'http://localhost:8000/health',
+      command:
+        "cd ../protoryde-backend && source venv/bin/activate && uvicorn main:app --port 8000",
+      url: "http://localhost:8000/health",
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
-    }
+    },
   ],
 });

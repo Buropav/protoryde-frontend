@@ -1,5 +1,5 @@
-import { apiPost, apiGet } from './apiClient';
-import { TriggerSimulateResponse, ExclusionsResponse } from '../types/api';
+import { apiPost, apiGet } from "./apiClient";
+import { TriggerSimulateResponse, ExclusionsResponse } from "../types/api";
 
 export interface SimulateTriggerParams {
   zone: string;
@@ -9,10 +9,12 @@ export interface SimulateTriggerParams {
 }
 
 export const triggerService = {
-  simulateTrigger: async (params: SimulateTriggerParams): Promise<TriggerSimulateResponse> => {
-    return apiPost<TriggerSimulateResponse>('/triggers/simulate', params);
+  simulateTrigger: async (
+    params: SimulateTriggerParams,
+  ): Promise<TriggerSimulateResponse> => {
+    return apiPost<TriggerSimulateResponse>("/triggers/simulate", params);
   },
   getExclusions: async (): Promise<ExclusionsResponse> => {
-    return apiGet<ExclusionsResponse>('/exclusions');
-  }
+    return apiGet<ExclusionsResponse>("/exclusions");
+  },
 };

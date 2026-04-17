@@ -1,18 +1,34 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, TextInput, Dimensions, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { Ionicons, Feather, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { Colors } from '../../src/constants/colors';
-import { RiderContext } from '../../src/context/RiderContext';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  TextInput,
+  Dimensions,
+  Image,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import {
+  Ionicons,
+  Feather,
+  MaterialCommunityIcons,
+  MaterialIcons,
+} from "@expo/vector-icons";
+import { Colors } from "../../src/constants/colors";
+import { RiderContext } from "../../src/context/RiderContext";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export default function PartnerProfileSetupScreen() {
   const router = useRouter();
-  const { setRiderInfo } = (React.useContext(RiderContext) || { setRiderInfo: () => {} }) as any;
-  const [upiId, setUpiId] = useState('');
-  const [error, setError] = useState('');
+  const { setRiderInfo } = (React.useContext(RiderContext) || {
+    setRiderInfo: () => {},
+  }) as any;
+  const [upiId, setUpiId] = useState("");
+  const [error, setError] = useState("");
 
   const isValidUpi = (value: string) =>
     /^[A-Za-z0-9._-]{2,}@[A-Za-z]{2,}$/.test(value.trim());
@@ -20,17 +36,20 @@ export default function PartnerProfileSetupScreen() {
   const handleContinue = () => {
     const normalizedUpi = upiId.trim();
     if (!isValidUpi(normalizedUpi)) {
-      setError('Enter a valid UPI ID (example: yourname@upi).');
+      setError("Enter a valid UPI ID (example: yourname@upi).");
       return;
     }
-    setError('');
+    setError("");
     setRiderInfo({ upiId: normalizedUpi });
-    router.push('/onboarding/zone-selection' as any);
+    router.push("/onboarding/zone-selection" as any);
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Header / Nav */}
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -46,14 +65,20 @@ export default function PartnerProfileSetupScreen() {
 
         <View style={styles.content}>
           <Text style={styles.title}>Set Up Your Account</Text>
-          <Text style={styles.subtitle}>Tell us about your Delhivery partner profile.</Text>
-          
+          <Text style={styles.subtitle}>
+            Tell us about your Delhivery partner profile.
+          </Text>
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>DELHIVERY PARTNER ID</Text>
             <View style={styles.cardInput}>
               <Text style={styles.partnerIdValue}>DEL-BLR-284719</Text>
               <View style={styles.badge}>
-                <Ionicons name="checkmark-circle-outline" size={14} color={Colors.success} />
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={14}
+                  color={Colors.success}
+                />
                 <Text style={styles.badgeText}>VERIFIED</Text>
               </View>
             </View>
@@ -62,9 +87,19 @@ export default function PartnerProfileSetupScreen() {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>VEHICLE TYPE</Text>
             <View style={styles.cardInput}>
-              <MaterialCommunityIcons name="moped" size={24} color={Colors.primary} style={{ marginRight: 12 }} />
+              <MaterialCommunityIcons
+                name="moped"
+                size={24}
+                color={Colors.primary}
+                style={{ marginRight: 12 }}
+              />
               <Text style={styles.vehicleText}>Bike (Two-Wheeler)</Text>
-              <Feather name="chevron-down" size={20} color={Colors.textPrimary} style={{ marginLeft: 'auto' }} />
+              <Feather
+                name="chevron-down"
+                size={20}
+                color={Colors.textPrimary}
+                style={{ marginLeft: "auto" }}
+              />
             </View>
           </View>
 
@@ -72,7 +107,12 @@ export default function PartnerProfileSetupScreen() {
             <View style={styles.mapGraphicPlaceholder}>
               <View style={styles.mapLines} />
               <View style={styles.mapLines2} />
-              <Ionicons name="location" size={32} color={Colors.primary} style={styles.mapPin} />
+              <Ionicons
+                name="location"
+                size={32}
+                color={Colors.primary}
+                style={styles.mapPin}
+              />
             </View>
             <View style={styles.mapCardContent}>
               <View>
@@ -87,36 +127,57 @@ export default function PartnerProfileSetupScreen() {
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>UPI ID</Text>
-            <View style={[styles.inputWrapper, { borderColor: Colors.primary }]}>
+            <View
+              style={[styles.inputWrapper, { borderColor: Colors.primary }]}
+            >
               <View style={styles.iconContainer}>
-                <MaterialCommunityIcons name="wallet-bifold-outline" size={24} color={Colors.primary} />
+                <MaterialCommunityIcons
+                  name="wallet-bifold-outline"
+                  size={24}
+                  color={Colors.primary}
+                />
               </View>
-              <TextInput 
-                style={styles.flexInput} 
-                placeholderTextColor={Colors.textMuted} 
+              <TextInput
+                style={styles.flexInput}
+                placeholderTextColor={Colors.textMuted}
                 placeholder="yourname@upi"
                 value={upiId}
                 onChangeText={(value) => {
                   setUpiId(value);
-                  if (error) setError('');
+                  if (error) setError("");
                 }}
               />
             </View>
             <View style={styles.infoTextRow}>
-              <Ionicons name="information-circle" size={14} color={Colors.primary} />
-              <Text style={styles.helperText}>This is where your payouts will be sent.</Text>
+              <Ionicons
+                name="information-circle"
+                size={14}
+                color={Colors.primary}
+              />
+              <Text style={styles.helperText}>
+                This is where your payouts will be sent.
+              </Text>
             </View>
           </View>
 
           <View style={styles.premiumCard}>
             <View style={styles.premiumIconBox}>
-              <MaterialCommunityIcons name="diamond-stone" size={24} color={Colors.payment} />
+              <MaterialCommunityIcons
+                name="diamond-stone"
+                size={24}
+                color={Colors.payment}
+              />
             </View>
             <View>
-              <Text style={styles.premiumLabel}>HSR Layout typical premium:</Text>
+              <Text style={styles.premiumLabel}>
+                HSR Layout typical premium:
+              </Text>
               <Text style={styles.premiumValue}>
                 <Text style={{ color: Colors.primary }}>₹82</Text>
-                <Text style={{ color: Colors.primary, opacity: 0.8 }}> / week</Text>
+                <Text style={{ color: Colors.primary, opacity: 0.8 }}>
+                  {" "}
+                  / week
+                </Text>
               </Text>
             </View>
           </View>
@@ -124,10 +185,7 @@ export default function PartnerProfileSetupScreen() {
           <View style={styles.spacer} />
           {!!error && <Text style={styles.errorText}>{error}</Text>}
 
-          <Pressable 
-            style={styles.button}
-            onPress={handleContinue}
-          >
+          <Pressable style={styles.button} onPress={handleContinue}>
             <Text style={styles.buttonText}>Continue</Text>
           </Pressable>
         </View>
@@ -148,13 +206,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   progressContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 8,
   },
   progressSegment: {
     flex: 1,
     height: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 2,
   },
   progressActive: {
@@ -165,31 +223,48 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingBottom: 24,
   },
-  title: { fontSize: 24, fontWeight: '700', color: Colors.textPrimary, marginBottom: 8, letterSpacing: -0.5 },
-  subtitle: { fontSize: 15, color: Colors.textSecondary, marginBottom: 32, lineHeight: 22 },
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: Colors.textPrimary,
+    marginBottom: 8,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: Colors.textSecondary,
+    marginBottom: 32,
+    lineHeight: 22,
+  },
   inputGroup: { marginBottom: 24 },
-  label: { fontSize: 12, color: Colors.textSecondary, marginBottom: 8, letterSpacing: 1, fontWeight: '600' },
+  label: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    marginBottom: 8,
+    letterSpacing: 1,
+    fontWeight: "600",
+  },
   cardInput: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: Colors.cardFill,
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: "transparent",
     borderRadius: 12,
     paddingHorizontal: 16,
     height: 60,
-    alignItems: 'center',
+    alignItems: "center",
   },
   partnerIdValue: {
     flex: 1,
     color: Colors.primary,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     letterSpacing: 0.5,
   },
   badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 200, 83, 0.15)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 200, 83, 0.15)",
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 16,
@@ -198,7 +273,7 @@ const styles = StyleSheet.create({
   badgeText: {
     color: Colors.success,
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 0.5,
   },
   vehicleText: {
@@ -209,31 +284,31 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.cardFill,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'transparent',
-    overflow: 'hidden',
+    borderColor: "transparent",
+    overflow: "hidden",
     marginBottom: 24,
   },
   mapGraphicPlaceholder: {
     height: 100,
-    backgroundColor: '#132840',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#132840",
+    justifyContent: "center",
+    alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255,255,255,0.05)',
+    borderBottomColor: "rgba(255,255,255,0.05)",
   },
   mapLines: {
-    position: 'absolute',
-    width: '150%',
+    position: "absolute",
+    width: "150%",
     height: 1,
-    backgroundColor: 'rgba(0, 212, 170, 0.1)',
-    transform: [{ rotate: '25deg' }],
+    backgroundColor: "rgba(0, 212, 170, 0.1)",
+    transform: [{ rotate: "25deg" }],
   },
   mapLines2: {
-    position: 'absolute',
-    width: '150%',
+    position: "absolute",
+    width: "150%",
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-    transform: [{ rotate: '-45deg' }],
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    transform: [{ rotate: "-45deg" }],
   },
   mapPin: {
     elevation: 5,
@@ -243,15 +318,15 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   mapCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
   },
   mapCardTitle: {
     color: Colors.textPrimary,
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
     marginBottom: 2,
   },
   mapCardSubtitle: {
@@ -260,7 +335,7 @@ const styles = StyleSheet.create({
   },
   editZoneBtn: {
     borderWidth: 1,
-    borderColor: 'rgba(0, 212, 170, 0.3)',
+    borderColor: "rgba(0, 212, 170, 0.3)",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 6,
@@ -268,33 +343,33 @@ const styles = StyleSheet.create({
   editZoneText: {
     color: Colors.primary,
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   inputWrapper: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: Colors.cardFill,
     borderWidth: 1,
-    borderColor: 'transparent',
+    borderColor: "transparent",
     borderRadius: 12,
     height: 60,
-    alignItems: 'center',
-    overflow: 'hidden',
+    alignItems: "center",
+    overflow: "hidden",
   },
   iconContainer: {
     paddingHorizontal: 16,
-    height: '100%',
-    justifyContent: 'center',
+    height: "100%",
+    justifyContent: "center",
   },
   flexInput: {
     flex: 1,
     color: Colors.textPrimary,
     paddingRight: 16,
     fontSize: 16,
-    height: '100%',
+    height: "100%",
   },
   infoTextRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 8,
     paddingHorizontal: 2,
     gap: 6,
@@ -302,27 +377,27 @@ const styles = StyleSheet.create({
   helperText: {
     color: Colors.primary,
     fontSize: 13,
-    fontStyle: 'italic',
+    fontStyle: "italic",
     opacity: 0.9,
   },
   premiumCard: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: Colors.cardFill,
     borderRadius: 12,
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
     gap: 16,
     marginTop: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
+    borderColor: "rgba(255,255,255,0.05)",
   },
   premiumIconBox: {
     width: 48,
     height: 48,
     borderRadius: 12,
-    backgroundColor: 'rgba(245, 166, 35, 0.1)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(245, 166, 35, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   premiumLabel: {
     color: Colors.textSecondary,
@@ -331,17 +406,22 @@ const styles = StyleSheet.create({
   },
   premiumValue: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   spacer: { flex: 1, minHeight: 40 },
-  errorText: { color: Colors.error, fontSize: 13, marginBottom: 12, textAlign: 'center' },
+  errorText: {
+    color: Colors.error,
+    fontSize: 13,
+    marginBottom: 12,
+    textAlign: "center",
+  },
   button: {
     backgroundColor: Colors.primary,
     height: 56,
     borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 8,
   },
-  buttonText: { color: Colors.background, fontSize: 16, fontWeight: '700' },
+  buttonText: { color: Colors.background, fontSize: 16, fontWeight: "700" },
 });

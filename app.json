@@ -29,10 +29,7 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-router",
-      "expo-sharing"
-    ],
+    "plugins": ["expo-router", "expo-sharing"],
     "experiments": {
       "typedRoutes": true,
       "baseUrl": "/"

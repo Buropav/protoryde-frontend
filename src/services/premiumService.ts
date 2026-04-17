@@ -1,5 +1,5 @@
-import { apiPost, apiGet } from './apiClient';
-import { PremiumPredictResponse, ModelStatusResponse } from '../types/api';
+import { apiPost, apiGet } from "./apiClient";
+import { PremiumPredictResponse, ModelStatusResponse } from "../types/api";
 
 export interface PredictPremiumParams {
   zone: string;
@@ -10,10 +10,12 @@ export interface PredictPremiumParams {
 }
 
 export const premiumService = {
-  predictPremium: async (params: PredictPremiumParams): Promise<PremiumPredictResponse> => {
-    return apiPost<PremiumPredictResponse>('/premium/predict', params);
+  predictPremium: async (
+    params: PredictPremiumParams,
+  ): Promise<PremiumPredictResponse> => {
+    return apiPost<PremiumPredictResponse>("/premium/predict", params);
   },
   getModelStatus: async (): Promise<ModelStatusResponse> => {
-    return apiGet<ModelStatusResponse>('/premium/model-status');
-  }
+    return apiGet<ModelStatusResponse>("/premium/model-status");
+  },
 };

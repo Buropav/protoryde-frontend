@@ -1,4 +1,4 @@
-import { apiPost } from './apiClient';
+import { apiPost } from "./apiClient";
 
 export interface PaymentCollectParams {
   rider_id: string;
@@ -9,6 +9,6 @@ export interface PaymentCollectParams {
 
 export const paymentService = {
   collectPayment: async (params: PaymentCollectParams): Promise<any> => {
-    return apiPost('/payments/collect', params);
-  }
+    return apiPost("/payments/collect", params);
+  },
 };

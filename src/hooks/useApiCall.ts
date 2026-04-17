@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 
 interface ApiCallError {
   message: string;
@@ -13,7 +13,7 @@ interface ApiCallState<T> {
 
 /**
  * Custom hook to manage the lifecycle of an API call.
- * 
+ *
  * @param apiFn - The async function to execute.
  * @param immediate - Whether to execute the function on mount.
  * @param dependencies - Dependencies that trigger re-execution if `immediate` is true.
@@ -22,7 +22,7 @@ interface ApiCallState<T> {
 export function useApiCall<T>(
   apiFn: () => Promise<T>,
   immediate = true,
-  dependencies: any[] = []
+  dependencies: any[] = [],
 ) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(immediate);
@@ -43,7 +43,7 @@ export function useApiCall<T>(
       setLoading(false);
       return result;
     } catch (err: any) {
-      const message = err.message || 'An unexpected error occurred';
+      const message = err.message || "An unexpected error occurred";
       const userMessage = err.userMessage || message;
       const errorObj: ApiCallError = { message, userMessage };
       setError(errorObj);
@@ -58,11 +58,11 @@ export function useApiCall<T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [execute, ...dependencies]);
 
-  return { 
-    data, 
-    loading, 
-    error, 
+  return {
+    data,
+    loading,
+    error,
     execute, // Also referred to as 'refetch' in the task list
-    refetch: execute 
+    refetch: execute,
   };
 }

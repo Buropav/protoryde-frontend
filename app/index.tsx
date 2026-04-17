@@ -1,10 +1,17 @@
-import { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Easing, Dimensions } from 'react-native';
-import { router } from 'expo-router';
-import ProtoRydeLogo from '../src/components/ProtoRydeLogo';
-import { useRider } from '../src/hooks/useRider';
+import { useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  Easing,
+  Dimensions,
+} from "react-native";
+import { router } from "expo-router";
+import ProtoRydeLogo from "../src/components/ProtoRydeLogo";
+import { useRider } from "../src/hooks/useRider";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const LOGO_SIZE = 140;
 
@@ -51,7 +58,7 @@ export default function SplashScreen() {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
     pulseDots.start();
 
@@ -65,9 +72,9 @@ export default function SplashScreen() {
       }).start(() => {
         // Navigate
         if (isBootstrapped) {
-          router.replace('/(tabs)' as any);
+          router.replace("/(tabs)" as any);
         } else {
-          router.replace('/(auth)/phone-verification' as any);
+          router.replace("/(auth)/phone-verification" as any);
         }
       });
     }, 2000);
@@ -90,7 +97,7 @@ export default function SplashScreen() {
         ]}
       >
         <ProtoRydeLogo width={LOGO_SIZE} height={LOGO_SIZE} />
-        
+
         <Text style={styles.title}>ProtoRyde</Text>
         <Text style={styles.tagline}>Your income. Protected.</Text>
       </Animated.View>
@@ -101,32 +108,32 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgb(11,30,44)', // matches SVG background
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgb(11,30,44)", // matches SVG background
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
-    color: '#3ED8B0',
+    fontWeight: "700",
+    color: "#3ED8B0",
     marginTop: 16,
     letterSpacing: 0.5,
   },
   tagline: {
     fontSize: 16,
-    fontWeight: '400',
-    color: '#E0E6ED',
+    fontWeight: "400",
+    color: "#E0E6ED",
     letterSpacing: 0.3,
     marginTop: 8,
   },
   loadingText: {
     fontSize: 11,
-    fontWeight: '600',
-    color: '#3ED8B0',
+    fontWeight: "600",
+    color: "#3ED8B0",
     letterSpacing: 1.5,
     opacity: 0.6,
   },

@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
-import { Platform } from 'react-native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { RiderProvider } from '../src/context/RiderContext';
-import { Colors } from '../src/constants/colors';
+import { useEffect } from "react";
+import { Platform } from "react-native";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { RiderProvider } from "../src/context/RiderContext";
+import { Colors } from "../src/constants/colors";
 
 const PHONE_FRAME_CSS = `
 @media (min-width: 640px) {
@@ -32,12 +32,14 @@ const PHONE_FRAME_CSS = `
 
 export default function RootLayout() {
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      const style = document.createElement('style');
-      style.id = 'phone-frame-css';
+    if (Platform.OS === "web") {
+      const style = document.createElement("style");
+      style.id = "phone-frame-css";
       style.textContent = PHONE_FRAME_CSS;
       document.head.appendChild(style);
-      return () => { style.remove(); };
+      return () => {
+        style.remove();
+      };
     }
   }, []);
 
@@ -50,7 +52,7 @@ export default function RootLayout() {
             screenOptions={{
               headerShown: false,
               contentStyle: { backgroundColor: Colors.background },
-              animation: 'fade',
+              animation: "fade",
             }}
           >
             <Stack.Screen name="index" />
@@ -58,11 +60,19 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen
               name="modals/premium-transparency"
-              options={{ presentation: 'transparentModal', animation: 'slide_from_bottom', contentStyle: { backgroundColor: 'transparent' } }}
+              options={{
+                presentation: "transparentModal",
+                animation: "slide_from_bottom",
+                contentStyle: { backgroundColor: "transparent" },
+              }}
             />
             <Stack.Screen
               name="modals/enhanced-coverage-upsell"
-              options={{ presentation: 'transparentModal', animation: 'slide_from_bottom', contentStyle: { backgroundColor: 'transparent' } }}
+              options={{
+                presentation: "transparentModal",
+                animation: "slide_from_bottom",
+                contentStyle: { backgroundColor: "transparent" },
+              }}
             />
           </Stack>
         </RiderProvider>

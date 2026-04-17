@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode } from "react";
 
 // Context State shape defined
 export interface RiderContextState {
@@ -9,17 +9,23 @@ export interface RiderContextState {
   upiId: string;
   policyId: string | null;
   isBootstrapped: boolean;
-  setRiderInfo: (info: { riderId?: string | null; riderName?: string; phoneNumber?: string; zone?: string; upiId?: string }) => void;
+  setRiderInfo: (info: {
+    riderId?: string | null;
+    riderName?: string;
+    phoneNumber?: string;
+    zone?: string;
+    upiId?: string;
+  }) => void;
   setPolicyId: (id: string | null) => void;
   setBootstrapped: (val: boolean) => void;
 }
 
 const defaultState: RiderContextState = {
   riderId: null,
-  riderName: '',
-  phoneNumber: '',
-  zone: 'HSR Layout',
-  upiId: '',
+  riderName: "",
+  phoneNumber: "",
+  zone: "HSR Layout",
+  upiId: "",
   policyId: null,
   isBootstrapped: false,
   setRiderInfo: () => {},
@@ -27,18 +33,28 @@ const defaultState: RiderContextState = {
   setBootstrapped: () => {},
 };
 
-export const RiderContext = createContext<RiderContextState | undefined>(undefined);
+export const RiderContext = createContext<RiderContextState | undefined>(
+  undefined,
+);
 
-export const RiderProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const RiderProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [riderId, setRiderId] = useState<string | null>(null);
-  const [riderName, setRiderName] = useState<string>('');
-  const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [zone, setZone] = useState<string>('HSR Layout');
-  const [upiId, setUpiId] = useState<string>('');
+  const [riderName, setRiderName] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [zone, setZone] = useState<string>("HSR Layout");
+  const [upiId, setUpiId] = useState<string>("");
   const [policyId, setPolicyId] = useState<string | null>(null);
   const [isBootstrapped, setIsBootstrapped] = useState<boolean>(false);
 
-  const setRiderInfo = (info: { riderId?: string | null; riderName?: string; phoneNumber?: string; zone?: string; upiId?: string }) => {
+  const setRiderInfo = (info: {
+    riderId?: string | null;
+    riderName?: string;
+    phoneNumber?: string;
+    zone?: string;
+    upiId?: string;
+  }) => {
     if (info.riderId !== undefined) setRiderId(info.riderId);
     if (info.riderName !== undefined) setRiderName(info.riderName);
     if (info.phoneNumber !== undefined) setPhoneNumber(info.phoneNumber);

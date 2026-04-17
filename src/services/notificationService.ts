@@ -1,4 +1,4 @@
-import { apiGet } from './apiClient';
+import { apiGet } from "./apiClient";
 
 export interface Notification {
   id: string;
@@ -16,5 +16,5 @@ export interface NotificationsResponse {
 export const notificationService = {
   getNotifications: async (riderId: string): Promise<NotificationsResponse> => {
     return apiGet<NotificationsResponse>(`/notifications/${riderId}`);
-  }
+  },
 };
