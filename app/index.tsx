@@ -13,7 +13,7 @@ import { useRider } from "../src/hooks/useRider";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const LOGO_SIZE = 140;
+const LOGO_SIZE = 180;
 
 export default function SplashScreen() {
   const { isBootstrapped } = useRider();
