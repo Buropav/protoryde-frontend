@@ -11,10 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Checkout backend
-        uses: actions/checkout@v4
-        with:
-          repository: Buropav/protoryde-backend
-          path: ../protoryde-backend
+        run: git clone https://github.com/Buropav/protoryde-backend.git ../protoryde-backend
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
