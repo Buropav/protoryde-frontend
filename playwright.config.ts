@@ -77,7 +77,7 @@ export default defineConfig({
     },
     {
       command:
-        "cd ../protoryde-backend && source venv/bin/activate && uvicorn main:app --port 8000",
+        "cd ../protoryde-backend && . venv/bin/activate && uvicorn main:app --port 8000",
       url: "http://localhost:8000/health",
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
