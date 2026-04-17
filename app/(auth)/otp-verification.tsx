@@ -25,32 +25,51 @@ const RiderGraphic = () => (
 
 export default function OTPVerificationScreen() {
   const router = useRouter();
-  const [code, setCode] = useState<string>('');
-  const inputRef = useRef<TextInput>(null);
+  // Using an array of refs and individual state for the professional 6-input box setup
+  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
+  const inputsRef = useRef<(TextInput | null)[]>([]);
 
   const handleVerify = () => {
     // Keeps functionality mocked so any value (or no value) can be entered and passed
     router.push('/onboarding/personal-details-kyc' as any);
   };
 
-  const renderBoxes = () => {
-    const boxes = [];
-    for (let i = 0; i < 6; i++) {
-      const isActive = i === code.length || (i === 5 && code.length === 6);
-      const isFilled = i < code.length;
-      boxes.push(
-        <View 
-          key={i} 
-          style={[
-            styles.otpBox, 
-            isActive && styles.otpBoxActive
-          ]}
-        >
-          <Text style={styles.otpText}>{isFilled ? code[i] : ''}</Text>
-        </View>
-      );
+  const handleOtpChange = (text: string, index: number) => {
+    const numericText = text.replace(/[^0-9]/g, '');
+    const newOtp = [...otpDigits];
+
+    if (numericText.length > 1) {
+      // Handle paste
+      const pastedArray = numericText.split('').slice(0, 6 - index);
+      for (let i = 0; i < pastedArray.length; i++) {
+        newOtp[index + i] = pastedArray[i];
+      }
+      setOtpDigits(newOtp);
+      
+      const nextIndex = Math.min(index + pastedArray.length, 5);
+      if (inputsRef.current[nextIndex]) {
+        inputsRef.current[nextIndex]?.focus();
+      }
+      return;
     }
-    return boxes;
+
+    newOtp[index] = numericText;
+    setOtpDigits(newOtp);
+
+    // Auto advance
+    if (numericText && index < 5) {
+      inputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyPress = (e: any, index: number) => {
+    if (e.nativeEvent.key === 'Backspace' && !otpDigits[index] && index > 0) {
+      // If box is empty and user hits backspace, focus the previous box and clear it
+      inputsRef.current[index - 1]?.focus();
+      const newOtp = [...otpDigits];
+      newOtp[index - 1] = '';
+      setOtpDigits(newOtp);
+    }
   };
 
   return (
@@ -70,29 +89,36 @@ export default function OTPVerificationScreen() {
               Enter the 6-digit code sent{'\n'}to +91 98XXX XXXXX
             </Text>
 
-            {/* Hidden Input wrapped over visual boxes */}
-            <View style={styles.otpWrapper}>
-              <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => inputRef.current?.focus()}
-                style={styles.boxesContainer}
-              >
-                {renderBoxes()}
-              </TouchableOpacity>
-              
-              <TextInput
-                ref={inputRef}
-                value={code}
-                onChangeText={(text) => {
-                  const numericValue = text.replace(/[^0-9]/g, '');
-                  setCode(numericValue);
-                }}
-                maxLength={6}
-                keyboardType="number-pad"
-                autoFocus={true}
-                textContentType="oneTimeCode"
-                style={styles.hiddenInput}
-              />
+            <View style={styles.boxesContainer}>
+              {otpDigits.map((digit, index) => {
+                const isFilled = digit.length > 0;
+                // Currently active box is the first empty box, or the last box if all are full
+                const firstEmptyIndex = otpDigits.findIndex(d => d === '');
+                const activeIndex = firstEmptyIndex === -1 ? 5 : firstEmptyIndex;
+                const isActive = index === activeIndex;
+
+                return (
+                  <View 
+                    key={index}
+                    style={[
+                      styles.otpBoxWrapper,
+                      isActive && styles.otpBoxActive
+                    ]}
+                  >
+                    <TextInput
+                      ref={(ref) => { inputsRef.current[index] = ref; }}
+                      style={styles.otpInput}
+                      keyboardType="number-pad"
+                      maxLength={index === 0 ? 6 : 1} // allow paste only on first box natively
+                      value={digit}
+                      onChangeText={(text) => handleOtpChange(text, index)}
+                      onKeyPress={(e) => handleKeyPress(e, index)}
+                      textContentType="oneTimeCode"
+                      autoFocus={index === 0}
+                    />
+                  </View>
+                );
+              })}
             </View>
             
             <Text style={styles.resendText}>Resend in 0:45</Text>
@@ -133,24 +159,14 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     letterSpacing: -0.5,
   },
-  otpWrapper: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
   boxesContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 10,
     width: '100%',
+    marginBottom: 24,
   },
-  hiddenInput: {
-    position: 'absolute',
-    width: 1,
-    height: 1,
-    opacity: 0,
-  },
-  otpBox: {
+  otpBoxWrapper: {
     width: 45,
     height: 54,
     backgroundColor: '#121C2B',
@@ -163,29 +179,7 @@ const styles = StyleSheet.create({
   otpBoxActive: {
     borderColor: Colors.primary,
   },
-  otpText: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
-  resendText: {
-    fontSize: 14,
-    color: '#8A94A6',
-  },
-  bottomSection: {
-    paddingHorizontal: 24,
-    paddingBottom: 32,
-  },
-  verifyBtn: {
-    backgroundColor: Colors.primary,
-    height: 56,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  verifyBtnText: {
-    color: '#0B121C',
-    fontSize: 18,
-    fontWeight: '700',
-  }
-});
+  otpInput: {
+    width: '100%',
+    height: '100%',
+    textAlign: 'center',
