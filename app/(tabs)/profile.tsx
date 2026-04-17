@@ -18,7 +18,7 @@ export default function ProfileScreen() {
     if (riderId) {
       policyService.getCurrentPolicy(riderId)
         .then(setPolicy)
-        .catch(err => console.log('Policy fetch skipped or failed:', err));
+        .catch(err => console.error('Policy fetch skipped or failed:', err));
     }
   }, [riderId, policyId]);
 

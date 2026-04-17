@@ -13,7 +13,7 @@ export interface PremiumPredictResponse {
   season?: string;
   pricing_rationale?: string;
   next_review_date?: string;
-  adjustments: PremiumAdjustment[] | Record<string, number>;
+  adjustments: PremiumAdjustment[];
   currency: string;
   model_status: string;
 }
@@ -35,7 +35,7 @@ export interface PolicyActivateResponse {
   status: string;
   base_premium: number;
   final_premium: number;
-  premium_breakdown: PremiumAdjustment[] | Record<string, number>;
+  premium_breakdown: PremiumAdjustment[];
   premium_engine: string;
   exclusions_version: string;
   exclusions_acknowledged_at: string;

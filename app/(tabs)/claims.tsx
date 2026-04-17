@@ -79,7 +79,7 @@ export default function ClaimsScreen() {
               }
             >
               <View style={styles.claimLeft}>
-                <Text style={styles.claimType}>{claim.trigger_type.replace('_', ' ')}</Text>
+                <Text style={styles.claimType}>{claim.trigger_type.replaceAll('_', ' ')}</Text>
                 <Text style={styles.claimDate}>
                   {claim.created_at
                     ? new Date(claim.created_at).toLocaleDateString('en-IN')

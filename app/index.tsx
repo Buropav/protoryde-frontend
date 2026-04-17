@@ -123,26 +123,11 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
     marginTop: 8,
   },
-  bottomContainer: {
-    position: 'absolute',
-    bottom: 60,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-  },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#3ED8B0',
-    opacity: 0.8,
-  },
   loadingText: {
     fontSize: 11,
     fontWeight: '600',
     color: '#3ED8B0',
     letterSpacing: 1.5,
     opacity: 0.6,
-  }
+  },
 });
