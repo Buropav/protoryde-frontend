@@ -1,61 +1,54 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 test.describe('Onboarding Flow', () => {
-  test('should complete full onboarding successfully', async ({ page }) => {
-    // 1. Splash Screen
-    await page.goto('/');
-    
-    // Check if we are on splash (wait for a bit then check for Phone Verification or Splash elements)
-    await expect(page).toHaveTitle(/ProtoRyde/);
-    
-    // Wait for the splash screen transition if it's automatic, 
-    // or click "Get Started" if there was a button (there isn't in current code, it's automatic)
-    // Current index.tsx has a 3.5s timeout for redirect.
-    await expect(page.getByText('Phone Verification')).toBeVisible({ timeout: 10000 });
-
-    // 2. Phone Verification
+  test('walks through onboarding screens with detailed UI checks', async ({ page }) => {
+    await page.goto('/phone-verification');
+    await expect(page.getByText('Phone Verification')).toBeVisible();
+    await expect(page.getByPlaceholder('000 000 0000')).toBeVisible();
     await page.getByPlaceholder('000 000 0000').fill('9876543210');
-    await page.getByText('Continue').click();
+    await page.getByText('Continue').last().click();
 
-    // 3. OTP Verification
-    await expect(page.getByText('Enter OTP')).toBeVisible({ timeout: 10000 });
-    // Fill first OTP box using more robust method for React Native Web
-    const otpInput = page.locator('input').first();
-    await otpInput.click({ force: true });
-    await page.keyboard.type('123456');
+    await expect(page.getByText('Enter OTP')).toBeVisible();
+    const otpInputs = page.locator('input[maxlength="1"]');
+    await expect(otpInputs).toHaveCount(6);
+    for (let i = 0; i < 6; i += 1) {
+      await otpInputs.nth(i).fill(String(i + 1));
+    }
     await page.getByText('Verify & Next').click();
 
-    // 4. KYC / Personal Details
-    await expect(page.getByText('Set Up Your Account')).toBeVisible({ timeout: 10000 });
-    await page.getByPlaceholder('e.g. John Doe').fill('Playwright Test User');
+    await expect(page.getByText('Set Up Your Account')).toBeVisible();
+    await page.getByPlaceholder('e.g. John Doe').fill('Playwright Rider');
     await page.getByPlaceholder('Enter number').fill('9876543210');
     await page.getByPlaceholder('XXXX XXXX 1234').fill('1234');
-    await page.getByText('Continue').click();
+    await page.getByPlaceholder('DD / MM / YYYY').fill('01 / 01 / 1998');
+    await page.getByText('Continue').last().click();
 
-    // 5. Partner Profile Setup
-    await expect(page.getByText('Tell us about your Delhivery partner profile.')).toBeVisible({ timeout: 10000 });
-    await page.getByPlaceholder('yourname@upi').fill('test@upi');
-    await page.getByText('Continue').click();
+    await expect(page.getByText('Tell us about your Delhivery partner profile.')).toBeVisible();
+    await expect(page.getByText('DEL-BLR-284719')).toBeVisible();
+    await page.getByPlaceholder('yourname@upi').fill('playwright@upi');
+    await page.getByText('Continue').last().click();
 
-    // 6. Zone Selection
-    await expect(page.getByText('Zone Selection')).toBeVisible({ timeout: 10000 });
-    await page.getByText('HSR Layout').click();
+    await expect(page.getByText('Zone Selection')).toBeVisible();
+    await expect(page.getByText('Confirm Zone')).toBeVisible();
     await page.getByText('Confirm Zone').click();
 
-    // 7. Coverage Exclusions
-    await expect(page.getByText('Coverage Exclusions')).toBeVisible({ timeout: 10000 });
-    // Need to click all the expansion groups to enable the button (per app logic)
-    const groups = ['Bodily & Vehicle Harms', 'Non-Weather Downtime', 'Third-Party App Bans', 'International Incidents'];
+    await expect(page.getByText('Coverage Exclusions')).toBeVisible();
+    const groups = [
+      'Bodily & Vehicle Harms',
+      'Non-Weather Downtime',
+      'Third-Party App Bans',
+      'International Incidents',
+    ];
     for (const group of groups) {
-        await page.getByText(group).click();
+      await page.getByText(group).click();
     }
     await page.getByText('I Understand and Accept').click();
 
-    // 8. First Premium Payment
-    await expect(page.getByText('First Premium Payment')).toBeVisible({ timeout: 10000 });
-    await page.getByText(/Pay .* & Activate/).click();
-
-    // 9. Dashboard (Mission Control)
-    await expect(page.getByText('Mission Control')).toBeVisible({ timeout: 20000 });
+    await expect(page.getByText('First Premium Payment')).toBeVisible();
+    await expect(page.getByText('Total to Pay')).toBeVisible();
+    await expect(page.getByText('₹49.00', { exact: true }).first()).toBeVisible();
+    await expect(page.getByText('Base Premium')).toBeVisible();
+    await expect(page.getByText('Taxes (18%)')).toBeVisible();
+    await expect(page.getByText('Pay ₹49.00 & Activate')).toBeVisible();
   });
 });

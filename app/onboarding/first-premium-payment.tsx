@@ -8,7 +8,7 @@ import { policyService } from '../../src/services/policyService';
 
 export default function FirstPremiumPaymentScreen() {
   const router = useRouter();
-  const { riderId, zone, setPolicyId } = useContext(RiderContext)!;
+  const { riderId, zone, setPolicyId, setBootstrapped } = useContext(RiderContext)!;
   const [loading, setLoading] = useState(false);
 
   const handlePayment = async () => {
@@ -27,6 +27,7 @@ export default function FirstPremiumPaymentScreen() {
       });
       
       setPolicyId(response.policy_id);
+      setBootstrapped(true);
       Alert.alert("Success", "Policy activated! Welcome to ProtoRyde.");
       router.replace('/(tabs)' as any);
     } catch (err) {

@@ -12,7 +12,11 @@ export default function AlertsScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
-    if (!riderId) return;
+    if (!riderId) {
+      setAlerts([]);
+      setLoading(false);
+      return;
+    }
     try {
       const res = await notificationService.getNotifications(riderId);
       setAlerts(res.notifications.map((item) => ({ ...item, isRead: item.isRead ?? true })));

@@ -15,7 +15,11 @@ export default function ClaimsScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
-    if (!riderId) return;
+    if (!riderId) {
+      setHistory({ rider_id: '', count: 0, claims: [] });
+      setLoading(false);
+      return;
+    }
     try {
       const res = await claimsService.getRiderClaims(riderId);
       setHistory(res);

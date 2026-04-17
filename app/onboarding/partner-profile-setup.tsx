@@ -4,11 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons, Feather, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '../../src/constants/colors';
+import { RiderContext } from '../../src/context/RiderContext';
 
 const { width } = Dimensions.get('window');
 
 export default function PartnerProfileSetupScreen() {
   const router = useRouter();
+  const { setRiderInfo } = (React.useContext(RiderContext) || { setRiderInfo: () => {} }) as any;
   const [upiId, setUpiId] = useState('');
 
   return (
@@ -105,7 +107,10 @@ export default function PartnerProfileSetupScreen() {
 
           <Pressable 
             style={styles.button}
-            onPress={() => router.push('/onboarding/zone-selection' as any)}
+            onPress={() => {
+              setRiderInfo({ upiId: upiId.trim() });
+              router.push('/onboarding/zone-selection' as any);
+            }}
           >
             <Text style={styles.buttonText}>Continue</Text>
           </Pressable>

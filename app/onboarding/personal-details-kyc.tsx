@@ -4,11 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons, Feather } from '@expo/vector-icons';
 import { Colors } from '../../src/constants/colors';
+import { RiderContext } from '../../src/context/RiderContext';
 
 const { width } = Dimensions.get('window');
 
 export default function PersonalDetailsKYCScreen() {
   const router = useRouter();
+  const { setRiderInfo } = (React.useContext(RiderContext) || { setRiderInfo: () => {} }) as any;
 
   const [fullName, setFullName] = useState('Pranav');
   const [mobile, setMobile] = useState('');
@@ -110,7 +112,17 @@ export default function PersonalDetailsKYCScreen() {
 
           <Pressable 
             style={styles.button}
-            onPress={() => router.push('/onboarding/partner-profile-setup' as any)}
+            onPress={() => {
+              const normalizedPhone = mobile.replace(/\D/g, '');
+              const safePhone = normalizedPhone || '0000000000';
+              const generatedRiderId = `rider_${safePhone}`;
+              setRiderInfo({
+                riderId: generatedRiderId,
+                riderName: fullName.trim() || 'Rider',
+                phoneNumber: safePhone,
+              });
+              router.push('/onboarding/partner-profile-setup' as any);
+            }}
           >
             <Text style={styles.buttonText}>Continue</Text>
           </Pressable>
