@@ -1,14 +1,30 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Dashboard Navigation', () => {
+  test.beforeAll(async ({ request }) => {
+    // Bootstrap the real backend with a test rider
+    const response = await request.post('http://localhost:8000/api/demo/bootstrap', {
+      data: {
+        rider_id: 'test_rider_1',
+        name: 'Playwright Tester',
+        zone: 'HSR Layout',
+        upi_id: 'test@upi',
+        exclusions_accepted: true
+      }
+    });
+    expect(response.ok()).toBeTruthy();
+  });
+
   test.beforeEach(async ({ page }) => {
-    // Navigate to dashboard (skipping onboarding for these tests if possible, 
-    // or assuming bootstrapped state)
+    // Navigate and set the riderId in localStorage to simulate being logged in
     await page.goto('/');
-    // If it redirects to phone-verification, it means state isn't persisted.
-    // For now, we'll assume we start at the root and wait for mission control.
-    // In a real CI, we'd inject localStorage/state here.
-    await expect(page.getByText('Mission Control')).toBeVisible({ timeout: 10000 });
+    await page.evaluate(() => {
+      localStorage.setItem('protoryde_rider_id', 'test_rider_1');
+      localStorage.setItem('protoryde_zone', 'HSR Layout');
+    });
+    await page.reload(); // Reload to pick up the state
+    
+    await expect(page.getByText('Mission Control')).toBeVisible({ timeout: 15000 });
   });
 
   test('should navigate between all tabs', async ({ page }) => {

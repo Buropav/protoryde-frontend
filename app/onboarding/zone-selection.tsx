@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../src/constants/colors';
 import { Ionicons, Feather } from '@expo/vector-icons';
+import { RiderContext } from '../../src/context/RiderContext';
 
 const { width } = Dimensions.get('window');
 
@@ -20,6 +21,7 @@ const ZONES = [
 
 export default function ZoneSelectionScreen() {
   const router = useRouter();
+  const { setRiderInfo } = (React.useContext(RiderContext) || { setRiderInfo: () => {} }) as any;
   const [selectedZone, setSelectedZone] = useState('hsr');
 
   const getRiskColor = (risk: string) => {
@@ -97,7 +99,13 @@ export default function ZoneSelectionScreen() {
       <View style={styles.footer}>
         <Pressable 
           style={styles.button}
-          onPress={() => router.push('/onboarding/coverage-exclusions' as any)}
+          onPress={() => {
+            const zone = ZONES.find((item) => item.id === selectedZone)?.name;
+            if (zone) {
+              setRiderInfo({ zone });
+            }
+            router.push('/onboarding/coverage-exclusions' as any);
+          }}
         >
           <Text style={styles.buttonText}>Confirm Zone</Text>
         </Pressable>

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { View, StyleSheet, ActivityIndicator, Text, Platform } from 'react-native';
+// Only import MapView on non-web platforms to avoid crash
+const MapView = Platform.OS === 'web' ? View : require('react-native-maps').default;
+const Marker = Platform.OS === 'web' ? View : require('react-native-maps').Marker;
+const PROVIDER_GOOGLE = Platform.OS === 'web' ? undefined : require('react-native-maps').PROVIDER_GOOGLE;
 import { Colors } from '../../src/constants/colors';
 import { adminService } from '../../src/services/adminService';
 import { AdminClaimsMapResponse } from '../../src/types/api';
@@ -30,6 +33,43 @@ export default function ClaimsMap() {
     latitudeDelta: 0.1,
     longitudeDelta: 0.1,
   };
+
+  if (Platform.OS === 'web') {
+    return (
+      <View style={styles.container}>
+        <View style={styles.webMapPlaceholder}>
+          <Text style={styles.placeholderTitle}>Web Map Placeholder</Text>
+          <Text style={styles.placeholderSubtitle}>Native maps are disabled in this environment.</Text>
+          <View style={styles.mockMap}>
+            {data?.claims.map((claim) => (
+              <View 
+                key={claim.id} 
+                style={[
+                  styles.mockMarker, 
+                  { 
+                    left: `${((claim.longitude - 77.6) * 1000) % 100}%`,
+                    top: `${((claim.latitude - 12.9) * 1000) % 100}%`,
+                    backgroundColor: claim.fraud_check_passed ? Colors.success : Colors.error
+                  }
+                ]} 
+              />
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.legend}>
+          <View style={styles.legendItem}>
+            <View style={[styles.dot, { backgroundColor: Colors.success }]} />
+            <Text style={styles.legendText}>Verified</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.dot, { backgroundColor: Colors.error }]} />
+            <Text style={styles.legendText}>Suspicious</Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -87,5 +127,10 @@ const styles = StyleSheet.create({
   },
   legendItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   dot: { width: 10, height: 10, borderRadius: 5, marginRight: 8 },
-  legendText: { color: Colors.textSecondary, fontSize: 12 }
+  legendText: { color: Colors.textSecondary, fontSize: 12 },
+  webMapPlaceholder: { flex: 1, padding: 24, justifyContent: 'center', alignItems: 'center' },
+  placeholderTitle: { color: Colors.textPrimary, fontSize: 20, fontWeight: 'bold', marginBottom: 8 },
+  placeholderSubtitle: { color: Colors.textSecondary, fontSize: 14, marginBottom: 32 },
+  mockMap: { width: '100%', aspectRatio: 1, backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: 16, position: 'relative', overflow: 'hidden' },
+  mockMarker: { position: 'absolute', width: 12, height: 12, borderRadius: 6, borderWidth: 2, borderColor: '#fff' }
 });
