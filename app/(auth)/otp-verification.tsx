@@ -183,3 +183,28 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     textAlign: 'center',
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  resendText: {
+    fontSize: 14,
+    color: '#8A94A6',
+  },
+  bottomSection: {
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+  },
+  verifyBtn: {
+    backgroundColor: Colors.primary,
+    height: 56,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  verifyBtnText: {
+    color: '#0B121C',
+    fontSize: 18,
+    fontWeight: '700',
+  }
+});
