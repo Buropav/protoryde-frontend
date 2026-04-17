@@ -10,6 +10,7 @@ import {
 import { router } from "expo-router";
 import ProtoRydeLogo from "../src/components/ProtoRydeLogo";
 import { useRider } from "../src/hooks/useRider";
+import { Colors } from "../src/constants/colors";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -108,7 +109,7 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgb(11,30,44)", // matches SVG background
+    backgroundColor: Colors.background, // matches SVG background
     justifyContent: "center",
     alignItems: "center",
   },

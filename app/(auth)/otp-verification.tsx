@@ -3,25 +3,7 @@ import { View, Text, StyleSheet, Pressable, Dimensions, TextInput, KeyboardAvoid
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../src/constants/colors';
-import Svg, { Path, Circle } from 'react-native-svg';
-
-const { width } = Dimensions.get('window');
-
-const RiderGraphic = () => (
-  <Svg width="140" height="100" viewBox="0 0 140 100" fill="none">
-    {/* Umbrella/Shield Arch */}
-    <Path d="M 25 35 C 50 15, 90 15, 115 35 L 115 45 C 90 30, 50 30, 25 45 Z" stroke="#6893B8" strokeWidth="2.5" strokeLinejoin="round" />
-    <Path d="M 33 41 L 33 60 M 107 41 L 107 60" stroke="#6893B8" strokeWidth="2" strokeLinecap="round" />
-    <Circle cx="70" cy="40" r="7" stroke="#6893B8" strokeWidth="2.5" />
-    <Path d="M 52 65 C 55 52, 85 52, 88 65 L 85 70 C 80 62, 60 62, 55 70 Z" stroke="#6893B8" strokeWidth="2.5" strokeLinejoin="round" />
-    <Path d="M 64 65 L 64 90 M 76 65 L 76 90" stroke="#6893B8" strokeWidth="2.5" strokeLinecap="round" />
-    <Path d="M 55 68 L 85 68" stroke="#6893B8" strokeWidth="2.5" strokeLinecap="round" />
-    <Circle cx="70" cy="68" r="5" fill="#DEB169" />
-    <Path d="M 68 90 L 68 100 M 72 90 L 72 100" stroke="#6893B8" strokeWidth="2.5" strokeLinecap="round" />
-    {/* Curved road line */}
-    <Path d="M 20 95 L 60 95 C 75 95, 80 82, 100 70 L 125 70" stroke="#6893B8" strokeWidth="3" strokeLinecap="round" />
-  </Svg>
-);
+import ProtoRydeLogo from '../../src/components/ProtoRydeLogo';
 
 export default function OTPVerificationScreen() {
   const router = useRouter();
@@ -82,7 +64,7 @@ export default function OTPVerificationScreen() {
           
           <View style={styles.topSection}>
             <View style={styles.graphicContainer}>
-               <RiderGraphic />
+               <ProtoRydeLogo width={140} height={140} />
             </View>
             
             <Text style={styles.title}>
@@ -137,7 +119,7 @@ export default function OTPVerificationScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#0B121C' },
+  safeArea: { flex: 1, backgroundColor: Colors.background },
   keyboardAvoidingView: { flex: 1 },
   container: { flex: 1, justifyContent: 'space-between' },
   topSection: {
