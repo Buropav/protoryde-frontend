@@ -1,6 +1,24 @@
 import { expect, test } from '@playwright/test';
 
 test.describe('Onboarding Flow', () => {
+  test('enforces validation on key onboarding steps', async ({ page }) => {
+    await page.goto('/phone-verification');
+    await page.getByText('Continue').last().click();
+    await expect(page.getByText('Enter a valid 10-digit mobile number.')).toBeVisible();
+
+    await page.goto('/otp-verification');
+    await page.getByText('Verify & Next').click();
+    await expect(page.getByText('Enter the 6-digit OTP.')).toBeVisible();
+
+    await page.goto('/onboarding/personal-details-kyc');
+    await page.getByText('Continue').last().click();
+    await expect(page.getByText('Enter a valid 10-digit mobile number.')).toBeVisible();
+
+    await page.goto('/onboarding/partner-profile-setup');
+    await page.getByText('Continue').last().click();
+    await expect(page.getByText('Enter a valid UPI ID (example: yourname@upi).')).toBeVisible();
+  });
+
   test('walks through onboarding screens with detailed UI checks', async ({ page }) => {
     await page.goto('/phone-verification');
     await expect(page.getByText('Phone Verification')).toBeVisible();

@@ -5,11 +5,13 @@ import { useRouter } from 'expo-router';
 import { Colors } from '../../src/constants/colors';
 import { RiderContext } from '../../src/context/RiderContext';
 import { policyService } from '../../src/services/policyService';
+import { ApiError } from '../../src/services/apiClient';
 
 export default function FirstPremiumPaymentScreen() {
   const router = useRouter();
   const { riderId, zone, setPolicyId, setBootstrapped } = useContext(RiderContext)!;
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handlePayment = async () => {
     if (!riderId || !zone) {
@@ -17,6 +19,7 @@ export default function FirstPremiumPaymentScreen() {
       return;
     }
 
+    setError('');
     setLoading(true);
     try {
       const response = await policyService.activatePolicy({
@@ -32,7 +35,12 @@ export default function FirstPremiumPaymentScreen() {
       router.replace('/(tabs)' as any);
     } catch (err) {
       console.error('Activation failed:', err);
-      Alert.alert("Activation Failed", "We couldn't activate your policy. Please try again.");
+      const message =
+        err instanceof ApiError
+          ? err.userMessage
+          : "We couldn't activate your policy. Please try again.";
+      setError(message);
+      Alert.alert("Activation Failed", message);
     } finally {
       setLoading(false);
     }
@@ -60,6 +68,7 @@ export default function FirstPremiumPaymentScreen() {
         </View>
 
         <Text style={styles.secureText}>🔒 Secure connection via UPI or Cards</Text>
+        {!!error && <Text style={styles.errorText}>{error}</Text>}
 
         <View style={styles.spacer} />
 
@@ -100,6 +109,7 @@ const styles = StyleSheet.create({
   rowLabel: { fontSize: 16, color: Colors.textSecondary },
   rowValue: { fontSize: 16, color: Colors.textPrimary, fontWeight: '500' },
   secureText: { fontSize: 14, color: Colors.success, marginTop: 20 },
+  errorText: { color: Colors.error, fontSize: 13, marginTop: 10, textAlign: 'center' },
   spacer: { flex: 1, minHeight: 40 },
   paymentButton: {
     backgroundColor: Colors.payment, // Special payment CTA rule

@@ -12,6 +12,21 @@ export default function PartnerProfileSetupScreen() {
   const router = useRouter();
   const { setRiderInfo } = (React.useContext(RiderContext) || { setRiderInfo: () => {} }) as any;
   const [upiId, setUpiId] = useState('');
+  const [error, setError] = useState('');
+
+  const isValidUpi = (value: string) =>
+    /^[A-Za-z0-9._-]{2,}@[A-Za-z]{2,}$/.test(value.trim());
+
+  const handleContinue = () => {
+    const normalizedUpi = upiId.trim();
+    if (!isValidUpi(normalizedUpi)) {
+      setError('Enter a valid UPI ID (example: yourname@upi).');
+      return;
+    }
+    setError('');
+    setRiderInfo({ upiId: normalizedUpi });
+    router.push('/onboarding/zone-selection' as any);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -81,7 +96,10 @@ export default function PartnerProfileSetupScreen() {
                 placeholderTextColor={Colors.textMuted} 
                 placeholder="yourname@upi"
                 value={upiId}
-                onChangeText={setUpiId}
+                onChangeText={(value) => {
+                  setUpiId(value);
+                  if (error) setError('');
+                }}
               />
             </View>
             <View style={styles.infoTextRow}>
@@ -104,13 +122,11 @@ export default function PartnerProfileSetupScreen() {
           </View>
 
           <View style={styles.spacer} />
+          {!!error && <Text style={styles.errorText}>{error}</Text>}
 
           <Pressable 
             style={styles.button}
-            onPress={() => {
-              setRiderInfo({ upiId: upiId.trim() });
-              router.push('/onboarding/zone-selection' as any);
-            }}
+            onPress={handleContinue}
           >
             <Text style={styles.buttonText}>Continue</Text>
           </Pressable>
@@ -318,6 +334,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   spacer: { flex: 1, minHeight: 40 },
+  errorText: { color: Colors.error, fontSize: 13, marginBottom: 12, textAlign: 'center' },
   button: {
     backgroundColor: Colors.primary,
     height: 56,

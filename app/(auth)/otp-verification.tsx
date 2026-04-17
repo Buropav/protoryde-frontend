@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -6,6 +6,28 @@ import { Colors } from '../../src/constants/colors';
 
 export default function OTPVerificationScreen() {
   const router = useRouter();
+  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
+  const [error, setError] = useState('');
+
+  const otpCode = useMemo(() => otpDigits.join(''), [otpDigits]);
+  const canContinue = otpCode.length === 6 && /^[0-9]{6}$/.test(otpCode);
+
+  const updateDigit = (index: number, value: string) => {
+    const digit = value.replace(/\D/g, '').slice(0, 1);
+    const next = [...otpDigits];
+    next[index] = digit;
+    setOtpDigits(next);
+    if (error) setError('');
+  };
+
+  const handleContinue = () => {
+    if (!canContinue) {
+      setError('Enter the 6-digit OTP.');
+      return;
+    }
+    setError('');
+    router.push('/onboarding/personal-details-kyc' as any);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -22,15 +44,18 @@ export default function OTPVerificationScreen() {
               keyboardType="number-pad"
               textAlign="center"
               placeholderTextColor={Colors.textMuted}
+              value={otpDigits[i - 1]}
+              onChangeText={(value) => updateDigit(i - 1, value)}
             />
           ))}
         </View>
+        {!!error && <Text style={styles.errorText}>{error}</Text>}
 
         <View style={styles.spacer} />
 
         <Pressable 
-          style={styles.button}
-          onPress={() => router.push('/onboarding/personal-details-kyc' as any)}
+          style={[styles.button, !canContinue && styles.buttonDisabled]}
+          onPress={handleContinue}
         >
           <Text style={styles.buttonText}>Verify & Next</Text>
         </Pressable>
@@ -45,6 +70,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: 'bold', color: Colors.textPrimary, marginBottom: 8 },
   subtitle: { fontSize: 16, color: Colors.textSecondary, marginBottom: 32 },
   otpContainer: { flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
+  errorText: { color: Colors.error, fontSize: 13, marginTop: 10 },
   otpBox: {
     flex: 1,
     aspectRatio: 1,
@@ -64,5 +90,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  buttonDisabled: { opacity: 0.5 },
   buttonText: { color: Colors.background, fontSize: 18, fontWeight: 'bold' },
 });

@@ -16,6 +16,61 @@ export default function PersonalDetailsKYCScreen() {
   const [mobile, setMobile] = useState('');
   const [aadhaar, setAadhaar] = useState('');
   const [dob, setDob] = useState('');
+  const [error, setError] = useState('');
+
+  const isValidDob = (value: string) => {
+    const match = value.match(/^(\d{2})\s*\/\s*(\d{2})\s*\/\s*(\d{4})$/);
+    if (!match) return false;
+    const day = Number(match[1]);
+    const month = Number(match[2]);
+    const year = Number(match[3]);
+    const date = new Date(year, month - 1, day);
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      return false;
+    }
+    const now = new Date();
+    let age = now.getFullYear() - year;
+    const monthDiff = now.getMonth() - (month - 1);
+    if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < day)) age -= 1;
+    return age >= 18;
+  };
+
+  const handleContinue = () => {
+    const normalizedName = fullName.trim();
+    const normalizedPhone = mobile.replace(/\D/g, '');
+    const normalizedAadhaar = aadhaar.replace(/\D/g, '');
+    const normalizedDob = dob.trim();
+
+    if (normalizedName.length < 3) {
+      setError('Enter your full name (at least 3 characters).');
+      return;
+    }
+    if (normalizedPhone.length !== 10) {
+      setError('Enter a valid 10-digit mobile number.');
+      return;
+    }
+    if (!/^[0-9]{4}$/.test(normalizedAadhaar)) {
+      setError('Enter the last 4 digits of Aadhaar.');
+      return;
+    }
+    if (!isValidDob(normalizedDob)) {
+      setError('Enter a valid DOB in DD / MM / YYYY format (18+).');
+      return;
+    }
+
+    setError('');
+    const generatedRiderId = `rider_${normalizedPhone}`;
+    setRiderInfo({
+      riderId: generatedRiderId,
+      riderName: normalizedName,
+      phoneNumber: normalizedPhone,
+    });
+    router.push('/onboarding/partner-profile-setup' as any);
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -62,7 +117,10 @@ export default function PersonalDetailsKYCScreen() {
                 placeholder="Enter number" 
                 keyboardType="phone-pad"
                 value={mobile}
-                onChangeText={setMobile}
+                onChangeText={(value) => {
+                  setMobile(value.replace(/\D/g, '').slice(0, 10));
+                  if (error) setError('');
+                }}
               />
             </View>
           </View>
@@ -77,7 +135,10 @@ export default function PersonalDetailsKYCScreen() {
                 keyboardType="numeric"
                 maxLength={4}
                 value={aadhaar}
-                onChangeText={setAadhaar}
+                onChangeText={(value) => {
+                  setAadhaar(value.replace(/\D/g, '').slice(0, 4));
+                  if (error) setError('');
+                }}
               />
               <View style={styles.iconContainer}>
                 <Feather name="lock" size={20} color={Colors.primary} />
@@ -93,7 +154,10 @@ export default function PersonalDetailsKYCScreen() {
                 placeholderTextColor={Colors.textMuted} 
                 placeholder="DD / MM / YYYY" 
                 value={dob}
-                onChangeText={setDob}
+                onChangeText={(value) => {
+                  setDob(value);
+                  if (error) setError('');
+                }}
               />
               <View style={styles.iconContainer}>
                 <Feather name="calendar" size={20} color={Colors.textMuted} />
@@ -109,20 +173,11 @@ export default function PersonalDetailsKYCScreen() {
           </View>
 
           <View style={styles.spacer} />
+          {!!error && <Text style={styles.errorText}>{error}</Text>}
 
           <Pressable 
             style={styles.button}
-            onPress={() => {
-              const normalizedPhone = mobile.replace(/\D/g, '');
-              const safePhone = normalizedPhone || '0000000000';
-              const generatedRiderId = `rider_${safePhone}`;
-              setRiderInfo({
-                riderId: generatedRiderId,
-                riderName: fullName.trim() || 'Rider',
-                phoneNumber: safePhone,
-              });
-              router.push('/onboarding/partner-profile-setup' as any);
-            }}
+            onPress={handleContinue}
           >
             <Text style={styles.buttonText}>Continue</Text>
           </Pressable>
@@ -232,6 +287,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   spacer: { flex: 1, minHeight: 40 },
+  errorText: { color: Colors.error, fontSize: 13, marginBottom: 12, textAlign: 'center' },
   button: {
     backgroundColor: Colors.primary,
     height: 56,
