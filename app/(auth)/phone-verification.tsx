@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: -10,
   },
   buttonDisabled: { 
     opacity: 0.5 
