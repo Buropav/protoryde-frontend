@@ -119,7 +119,10 @@ export default function PartnerProfileSetupScreen() {
                 <Text style={styles.mapCardTitle}>HSR Layout</Text>
                 <Text style={styles.mapCardSubtitle}>Active Coverage Zone</Text>
               </View>
-              <Pressable style={styles.editZoneBtn}>
+              <Pressable
+                style={styles.editZoneBtn}
+                onPress={() => router.push("/onboarding/zone-selection" as any)}
+              >
                 <Text style={styles.editZoneText}>Edit Zone</Text>
               </Pressable>
             </View>

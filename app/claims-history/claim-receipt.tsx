@@ -6,6 +6,7 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "../../src/constants/colors";
@@ -89,7 +90,12 @@ export default function ClaimReceiptScreen() {
 
         <View style={styles.spacer} />
 
-        <Pressable style={styles.downloadButton}>
+        <Pressable
+          style={styles.downloadButton}
+          onPress={() =>
+            Alert.alert("Coming Soon", "Downloading PDF is not supported yet.")
+          }
+        >
           <Text style={styles.downloadText}>Download PDF</Text>
         </Pressable>
       </ScrollView>

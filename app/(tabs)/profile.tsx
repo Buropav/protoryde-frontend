@@ -17,8 +17,15 @@ import { CurrentPolicyResponse } from "../../src/types/api";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { riderId, riderName, phoneNumber, policyId, setPolicyId } =
-    useContext(RiderContext)!;
+  const {
+    riderId,
+    riderName,
+    phoneNumber,
+    policyId,
+    setPolicyId,
+    setRiderInfo,
+    setBootstrapped,
+  } = useContext(RiderContext)!;
 
   const [policy, setPolicy] = useState<CurrentPolicyResponse | null>(null);
   const [upgrading, setUpgrading] = useState(false);
@@ -132,7 +139,21 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
 
-        <Pressable style={styles.logoutButton}>
+        <Pressable
+          style={styles.logoutButton}
+          onPress={() => {
+            setRiderInfo({
+              riderId: null,
+              riderName: "",
+              phoneNumber: "",
+              zone: "HSR Layout",
+              upiId: "",
+            });
+            setPolicyId(null);
+            setBootstrapped(false);
+            router.replace("/(auth)/phone-verification" as any);
+          }}
+        >
           <Text style={styles.logoutText}>Log Out</Text>
         </Pressable>
       </ScrollView>
