@@ -14,6 +14,8 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { RiderContext } from "../../src/context/RiderContext";
 import { claimsService } from "../../src/services/claimsService";
 import { ClaimItem } from "../../src/types/api";
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
 
 export default function ClaimReceiptScreen() {
   const router = useRouter();
@@ -21,6 +23,43 @@ export default function ClaimReceiptScreen() {
   const { riderId } = useContext(RiderContext)!;
   const [claim, setClaim] = useState<ClaimItem | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const generateAndSharePDF = async () => {
+    try {
+      if (!claim) return;
+      const html = `
+        <html>
+          <head>
+            <style>
+              body { font-family: 'Helvetica', sans-serif; padding: 20px; color: #333; }
+              h1 { color: #007aff; }
+              .receipt-container { border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+              .detail { margin-bottom: 10px; }
+              .label { font-weight: bold; }
+            </style>
+          </head>
+          <body>
+            <h1>Claim Receipt</h1>
+            <div class="receipt-container">
+              <div class="detail"><span class="label">Transaction ID:</span> ${claim.claim_id}</div>
+              <div class="detail"><span class="label">Amount:</span> ₹${(claim.payout_amount || 0).toFixed(2)}</div>
+              <div class="detail"><span class="label">Status:</span> ${claim.payout_amount && claim.payout_amount > 0 ? "Payout Successful" : "No Payout"}</div>
+              <div class="detail"><span class="label">Date:</span> ${claim.created_at ? new Date(claim.created_at).toLocaleDateString("en-IN") : "N/A"}</div>
+            </div>
+          </body>
+        </html>
+      `;
+      const { uri } = await Print.printToFileAsync({ html });
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri);
+      } else {
+        Alert.alert("Error", "Sharing is not available on this device");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "Failed to generate PDF");
+    }
+  };
 
   useEffect(() => {
     if (riderId && typeof id === "string") {
@@ -92,9 +131,7 @@ export default function ClaimReceiptScreen() {
 
         <Pressable
           style={styles.downloadButton}
-          onPress={() =>
-            Alert.alert("Coming Soon", "Downloading PDF is not supported yet.")
-          }
+          onPress={generateAndSharePDF}
         >
           <Text style={styles.downloadText}>Download PDF</Text>
         </Pressable>
