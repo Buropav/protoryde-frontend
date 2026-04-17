@@ -101,7 +101,7 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#060F1A',
+    backgroundColor: 'rgb(11,30,44)', // matches SVG background
     justifyContent: 'center',
     alignItems: 'center',
   },
